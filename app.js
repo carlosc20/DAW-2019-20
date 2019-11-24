@@ -4,6 +4,11 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://127.0.0.1:27017/uminho_isn', {useNewUrlParser: true, useUnifiedTopology: true})
+  .then(()=> console.log('Mongo ready: ' + mongoose.connection.readyState))
+  .catch((erro)=> console.log('Mongo: erro na conexão: ' + erro));
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
