@@ -1,5 +1,8 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  nav.navbar.navbar-expand-sm.bg-dark.navbar-dark
+    form.form-inline(action='/action_page.php')
+      input.form-control.mr-sm-2(type='text' placeholder='Search')
+      button.btn.btn-success(type='submit') Search
+
