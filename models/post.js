@@ -1,10 +1,18 @@
+var mongoose = require('mongoose')
+const Schema = mongoose.Schema
 class Post {
+    constructor({title, hashTags, comments}){
+        this.title = title
+        this.hashTags = hashTags
+        this.comments = comments
+    }
+
     constructor(title){
         this.title = title;
         this.hashTags = new Set();
-        this.id = null
+        this._id = null
         this.comments = new Array;
-    }
+    }    
 
     addHashTag(tag){
         return this.hashTags.add(tag)
@@ -38,8 +46,23 @@ class Post {
                 res += tag + "; "
         }else res += "none"
         return res
+    } 
+
+    save(){
+        console.log(this)
+        var post =  new Post.model(this)
+        console.log(post)
+        return post.save()
     }
 }
+
+Post.Schema = new Schema({
+    title: String,
+    hashTags: Array,
+    comments: Array
+})
+
+Post.model = mongoose.model('posts', Post.Schema)
 
 module.exports = Post
 
