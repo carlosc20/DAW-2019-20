@@ -3,16 +3,70 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const lhost = require('../config/env').host;
 
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://127.0.0.1:27017/uminho_isn', {useNewUrlParser: true, useUnifiedTopology: true})
-  .then(()=> console.log('Mongo ready: ' + mongoose.connection.readyState))
-  .catch((erro)=> console.log('Mongo: erro na conexão: ' + erro));
+// Módulos de suporte à autenticação
+var uuid = require('uuid/v4');
+var session = require('express-session');
+var FileStore = require('session-file-store')(session);
+
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var axios = require('axios');
+var flash = require('connect-flash');
+
+
+// Passport
+passport.use(new LocalStrategy(
+  {usernameField: 'email'}, (email, password, done) => {
+    axios.get(lhost + '/users/' + email)
+      .then(dados => {
+        const user = dados.data
+        if(!user) {
+          return done(null, false, {message: 'Utilizador inexistente!\n'})
+        }
+        if(password != user.password) {
+          return done(null, false, {message: 'Password inválida!\n'})
+        }
+        return done(null, user)
+      })
+      .catch(erro => done(erro))
+}))
+
+passport.serializeUser((user,done) => {
+  console.log('Vou serializar o user: ' + JSON.stringify(user))
+  done(null, user.email)
+})
+
+passport.deserializeUser((email, done) => {
+  console.log('Vou desserializar o utilizador: ' + email)
+  axios.get(lhost + '/users/' + email)
+    .then(dados => done(null, dados.data))
+    .catch(erro => done(erro, false))
+})
+
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+
+app.use(session({
+  genid: req => {
+    console.log('Dentro do middleware da sessão...');
+    console.log(req.sessionID);
+    return uuid();
+  },
+  store: new FileStore(),
+  secret: 'O meu segredo',
+  resave: false,
+  saveUninitialized: true
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(flash());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
