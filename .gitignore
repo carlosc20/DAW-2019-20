@@ -1,3 +1,4 @@
 node_modules/
-
-uminho-isn/sessions/
+/uminho-isn/sessions/*
+/uminho-isn/node_modules/
+/api/node_modules/
