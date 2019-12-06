@@ -18,29 +18,27 @@ var flash = require('connect-flash')
 // Configuração da estratégia local
 passport.use(new LocalStrategy(
   {usernameField: 'email'}, (email, password, done) => {
-    axios.get(lhost + '/users/' + email)
-      .then(dados => {
-        const user = dados.data
-        if(!user) {
-          return done(null, false, {message: 'Utilizador inexistente!\n'})
-        }
-        if(password != user.password) {
-          return done(null, false, {message: 'Password inválida!\n'})
-        }
-        return done(null, user)
-      })
-      .catch(erro => done(erro))
+  axios.get('http://localhost:5003/utilizadores/' + email)
+    .then(dados => {
+      const user = dados.data
+      if(!user) { return done(null, false, {message: 'Utilizador inexistente!\n'})}
+      if(password != user.password) { return done(null, false, {message: 'Password inválida!\n'})}
+      return done(null, user)
+  })
+  .catch(erro => done(erro))
 }))
 
 // Indica-se ao passport como serializar o utilizador
 passport.serializeUser((user,done) => {
   console.log('Vou serializar o user: ' + JSON.stringify(user))
+  // Serialização do utilizador. O passport grava o utilizador na sessão aqui.
   done(null, user.email)
 })
-
+  
+// Desserialização: a partir do id obtem-se a informação do utilizador
 passport.deserializeUser((email, done) => {
   console.log('Vou desserializar o utilizador: ' + email)
-  axios.get(lhost + '/users/' + email)
+  axios.get('http://localhost:5003/utilizadores/' + email)
     .then(dados => done(null, dados.data))
     .catch(erro => done(erro, false))
 })
@@ -56,15 +54,15 @@ app.set('view engine', 'pug');
 
 app.use(session({
   genid: req => {
-    console.log('Dentro do middleware da sessão...');
-    console.log(req.sessionID);
-    return uuid();
+    console.log('Dentro do middleware da sessão...')
+    console.log(req.sessionID)
+    return uuid()
   },
   store: new FileStore(),
   secret: 'O meu segredo',
   resave: false,
   saveUninitialized: true
-}));
+}))
 
 app.use(passport.initialize());
 app.use(passport.session());
