@@ -4,6 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+var apiHost = require('./config/env').apiHost;
+
 // Módulos de suporte à autenticação
 var uuid = require('uuid/v4')
 var session = require('express-session')
@@ -16,29 +18,33 @@ var flash = require('connect-flash')
 //-----------------------------------
 
 // Configuração da estratégia local
+// Passport
 passport.use(new LocalStrategy(
   {usernameField: 'email'}, (email, password, done) => {
-  axios.get('http://localhost:5003/utilizadores/' + email)
-    .then(dados => {
-      const user = dados.data
-      if(!user) { return done(null, false, {message: 'Utilizador inexistente!\n'})}
-      if(password != user.password) { return done(null, false, {message: 'Password inválida!\n'})}
-      return done(null, user)
-  })
-  .catch(erro => done(erro))
+    axios.get(apiHost + '/users/' + email)
+      .then(dados => {
+        const user = dados.data
+        console.dir(user)
+        if(!user) {
+          return done(null, false, {message: 'Utilizador inexistente!\n'})
+        }
+        if(password != user.password) {
+          return done(null, false, {message: 'Password inválida!\n'})
+        }
+        console.log('Autentificação feita com sucesso')
+        return done(null, user)
+      })
+      .catch(erro => done(erro))
 }))
 
-// Indica-se ao passport como serializar o utilizador
 passport.serializeUser((user,done) => {
   console.log('Vou serializar o user: ' + JSON.stringify(user))
-  // Serialização do utilizador. O passport grava o utilizador na sessão aqui.
   done(null, user.email)
 })
-  
-// Desserialização: a partir do id obtem-se a informação do utilizador
+
 passport.deserializeUser((email, done) => {
   console.log('Vou desserializar o utilizador: ' + email)
-  axios.get('http://localhost:5003/utilizadores/' + email)
+  axios.get(apiHost + '/users/' + email)
     .then(dados => done(null, dados.data))
     .catch(erro => done(erro, false))
 })

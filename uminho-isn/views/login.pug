@@ -1,26 +1,27 @@
-extends layout
+extends authLayout
 
 block content
-	.container
-		.d-flex.justify-content-center.h-100
-			.card
-				.card-header
-					h3 Sign In
-				.card-body
-					form(action="/login" method="POST")
-						.input-group.form-group
-							.input-group-prepend
-								span.input-group-text
-									i.fas.fa-user
-							input.form-control(type='text' placeholder='email' name='mail')
-						.input-group.form-group
-							.input-group-prepend
-								span.input-group-text
-									i.fas.fa-key
-							input.form-control(type='password' placeholder='password' name="password")
-						.form-group
-							input.btn.float-right.login_btn(type='submit' value='Login')
-				.card-footer
-					.d-flex.justify-content-center.links
-						| Não tens uma conta?
-						a(href='#') Sign Up
+	.authContainer
+		.container
+			.d-flex.justify-content-center.h-100
+				.card
+					.card-header
+						h3 Sign In
+					.card-body
+						form(action="/login" method="POST")
+							.input-group.form-group
+								.input-group-prepend
+									span.input-group-text
+										i.fas.fa-user
+								input.form-control(type='text' placeholder='email' name='email')
+							.input-group.form-group
+								.input-group-prepend
+									span.input-group-text
+										i.fas.fa-key
+								input.form-control(type='password' placeholder='password' name="password")
+							.form-group
+								input.btn.float-right.login_btn(type='submit' value='Login')
+					.card-footer
+						.d-flex.justify-content-center.links
+							| Não tens uma conta?
+							a(href='http://localhost:3000/regist') Sign Up
