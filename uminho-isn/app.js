@@ -3,7 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const lhost = require('../config/env').host;
+const lhost = require('./config/env').host;
 
 // Módulos de suporte à autenticação
 var uuid = require('uuid/v4');

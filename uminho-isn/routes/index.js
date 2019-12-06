@@ -17,8 +17,9 @@ router.get('/eventos/:id', checkAuth, function(req, res) {
     .catch(e => res.render('error', {error: e}))
 });
 
-router.get('/login', function(_, res) {
-  res.render('login');
+router.get('/login', function(req, res) {
+  console.log("Sending Login?")
+  res.render('login')
 });
 
 router.post('/login', passport.authenticate('local', {  
