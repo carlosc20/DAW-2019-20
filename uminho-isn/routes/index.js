@@ -5,7 +5,8 @@ var passport = require('passport');
 const lhost = require('../config/env').host;
 
 /* GET home page. */
-router.get('/', checkAuth, function(_, res) {
+router.get('/', checkAuth, function(req, res) {
+  console.log("ola")
   axios.get(lhost)
     .then(dados => res.render('index', {lista: dados.data}))
     .catch(e => res.render('error', {error: e}))
@@ -18,8 +19,7 @@ router.get('/eventos/:id', checkAuth, function(req, res) {
 });
 
 router.get('/login', function(req, res) {
-  console.log("Sending Login?")
-  res.render('login')
+  res.render('login');
 });
 
 router.post('/login', passport.authenticate('local', {  
@@ -31,6 +31,7 @@ router.post('/login', passport.authenticate('local', {
 );
 
 function checkAuth(req,res,next) {
+  console.log("Autenticado:", req.isAuthenticated())
   if(req.isAuthenticated()){
     next();
   } else {
