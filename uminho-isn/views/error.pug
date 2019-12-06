@@ -1,39 +1,6 @@
 extends layout
 
 block content
-  .container
-    .d-flex.justify-content-center.h-100
-      .card
-        .card-header
-          h3 Sign In
-          .d-flex.justify-content-end.social_icon
-            span
-              i.fab.fa-facebook-square
-            span
-              i.fab.fa-google-plus-square
-            span
-              i.fab.fa-twitter-square
-        .card-body
-          form
-            .input-group.form-group
-              .input-group-prepend
-                span.input-group-text
-                  i.fas.fa-user
-              input.form-control(type='text' placeholder='username')
-            .input-group.form-group
-              .input-group-prepend
-                span.input-group-text
-                  i.fas.fa-key
-              input.form-control(type='password' placeholder='password')
-            .row.align-items-center.remember
-              input(type='checkbox')
-              | Remember Me
-            .form-group
-              input.btn.float-right.login_btn(type='submit' value='Login')
-        .card-footer
-          .d-flex.justify-content-center.links
-            | Don&apos;t have an account?
-            a(href='#') Sign Up
-          .d-flex.justify-content-center
-            a(href='#') Forgot your password?
-
+  h1= message
+  h2= error.status
+  pre #{error.stack}
