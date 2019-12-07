@@ -3,8 +3,6 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const lhost = require('./config/env').host;
-
 var apiHost = require('./config/env').apiHost;
 
 // Módulos de suporte à autenticação
@@ -19,7 +17,6 @@ var flash = require('connect-flash')
 //-----------------------------------
 
 // Configuração da estratégia local
-// Passport
 passport.use(new LocalStrategy(
   {usernameField: 'email'}, (email, password, done) => {
     axios.get(apiHost + '/users/' + email)

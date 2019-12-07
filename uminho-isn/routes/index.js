@@ -2,12 +2,12 @@ var express = require('express');
 var router = express.Router();
 var axios = require('axios');
 var passport = require('passport');
-const lhost = require('../config/env').host;
 const apiHost = require('../config/env').apiHost;
 
 /* GET home page. */
-router.get('/', checkAuth, function(_, res) {
-  axios.get(lhost)
+router.get('/', checkAuth, function(req, res) {
+  console.log("ola")
+  axios.get(apiHost)
     .then(dados => res.render('index', {lista: dados.data}))
     .catch(e => res.render('error', {error: e}))
 });
@@ -19,13 +19,13 @@ router.post('/', function(req, res){
 
 
 router.get('/eventos/:id', checkAuth, function(req, res) {
-  axios.get(lhost + req.params.id)
+  axios.get(apiHost + req.params.id)
     .then(dados => res.render('evento', {evento: dados.data}))
     .catch(e => res.render('error', {error: e}))
 });
 
 router.get('/login', function(req, res) {
-  res.render('login')
+  res.render('login');
 });
 
 router.post('/login', passport.authenticate('local', {  
@@ -49,6 +49,7 @@ router.post('/regist', function(req, res){
 })
 
 function checkAuth(req,res,next) {
+  console.log("Autenticado:", req.isAuthenticated())
   if(req.isAuthenticated()){
     next();
   } else {
