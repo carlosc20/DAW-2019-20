@@ -10,10 +10,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/uminho-isn', {useNewUrlParser: true,
   .catch(() => console.log('Mongo: connection error(' + mongoose.connection.readyState + ')'));
 
 var usersRouter = require('./routes/users');
-<<<<<<< HEAD
 //var apiRouter = require('./routes/api')
-=======
->>>>>>> 289f5eed2d17e2cb95ffa0c23b8592f4a48bb3f7
 
 var app = express();
 
@@ -24,10 +21,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/users', usersRouter);
-<<<<<<< HEAD
 //app.use('/api', apiRouter);
-=======
->>>>>>> 289f5eed2d17e2cb95ffa0c23b8592f4a48bb3f7
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
