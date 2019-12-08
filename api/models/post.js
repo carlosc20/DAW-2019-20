@@ -1,12 +1,6 @@
 var mongoose = require('mongoose')
 const Schema = mongoose.Schema
 class Post {
-    constructor({title, hashTags, comments}){
-        this.title = title
-        this.hashTags = hashTags
-        this.comments = comments
-    }
-
     constructor(title){
         this.title = title;
         this.hashTags = new Set();

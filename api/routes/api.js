@@ -21,8 +21,9 @@ router.get('/post/:id', function(req, res, next) {
 
 /* GET all posts. */
 router.get('/posts', function(req, res, next) {
-    post.listar()
-        .then(dados => { res.jsonp(dados) })
+    console.log('At api /posts')
+    post.list()
+        .then(dados => { console.log(dados);res.jsonp(dados) })
         .catch(erro => { res.status(500).jsonp(erro) })
 });
 

@@ -6,8 +6,8 @@ const apiHost = require('../config/env').apiHost;
 
 /* GET home page. */
 router.get('/', checkAuth, function(req, res) {
-  console.log("ola")
-  axios.get(apiHost)
+  console.log(apiHost + '/api/posts')
+  axios.get(apiHost + '/api/posts')
     .then(dados => res.render('index', {lista: dados.data}))
     .catch(e => res.render('error', {error: e}))
 });
