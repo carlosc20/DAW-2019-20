@@ -8,7 +8,7 @@ const apiHost = require('../config/env').apiHost;
 router.get('/', checkAuth, function(req, res) {
   console.log(apiHost + '/api/posts')
   axios.get(apiHost + '/api/posts')
-    .then(dados => res.render('index', {lista: dados.data}))
+    .then(dados => {console.log(dados.data); res.render('index', {lista: dados.data})})
     .catch(e => res.render('error', {error: e}))
 });
 
@@ -41,10 +41,20 @@ router.get('/regist', function(req, res){
 })
 
 router.post('/regist', function(req, res){
-  console.log('I am at regist POST')
   var user = req.body;
-  axios.post( apiHost + '/users', user)
+  axios.post(apiHost + '/users', user)
     .then(dados => {res.redirect('/login') })
+    .catch(erro => res.status(500).render('error', {error: erro}))
+})
+
+router.get('/publish', checkAuth, function(req, res){
+  res.render('publish')
+})
+
+router.post('/publish', checkAuth, function(req, res){
+  var post = req.body;
+  axios.post(apiHost + '/api/post', post)
+    .then(dados => res.redirect('/'))
     .catch(erro => res.status(500).render('error', {error: erro}))
 })
 

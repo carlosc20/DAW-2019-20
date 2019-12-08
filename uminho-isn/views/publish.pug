@@ -1,0 +1,9 @@
+extends mainLayout
+
+block page
+	.container
+		form(action='/publish' method='POST')
+			.form-group
+				label(for='title') Titulo
+				input#title.form-control(type='text' placeholder='Introduzir titulo')
+			button.btn.btn-primary(type='submit') Publicar

@@ -3,17 +3,18 @@ const Schema = mongoose.Schema
 class Post {
     constructor(title){
         this.title = title;
-        this.hashTags = new Set();
+        this.date = new Date().toISOString();
+        this.hashTags = new Array;
         this._id = null
         this.comments = new Array;
     }    
 
     addHashTag(tag){
-        return this.hashTags.add(tag)
+        this.hashTags.push('#'+tag)
     }
 
-    removeHashTag(tag){
-        return this.hashTags.delete(tag)
+    removeHashTagIndex(tag){
+        this.hashTags.splice(index, 1)
     }
 
     addComment(comment){
@@ -43,6 +44,9 @@ class Post {
     } 
 
     save(){
+        if(this.hashTags.length == 0){
+            this.addHashTag('public');
+        }
         console.log(this)
         var post =  new Post.model(this)
         console.log(post)
@@ -52,6 +56,7 @@ class Post {
 
 Post.Schema = new Schema({
     title: String,
+    date : String,
     hashTags: Array,
     comments: Array
 })
@@ -60,10 +65,9 @@ Post.model = mongoose.model('posts', Post.Schema)
 
 module.exports = Post
 
-/*
+
 console.log("POST.JS DEBUGGING...")
 var post = new Post("Test title")
 post.addHashTag("IAmaTag")
 post.addHashTag("AnotherTag")
 console.log(post.toString());
-*/
