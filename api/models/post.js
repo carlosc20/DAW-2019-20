@@ -1,20 +1,20 @@
 var mongoose = require('mongoose')
-const Schema = mongoose.Schema
+
 class Post {
     constructor(title){
         this.title = title;
         this.date = new Date().toISOString();
-        this.hashTags = new Array;
+        this.tags = new Array;
         this._id = null
         this.comments = new Array;
     }    
 
     addHashTag(tag){
-        this.hashTags.push('#'+tag)
+        this.tags.push('#'+tag)
     }
 
     removeHashTagIndex(tag){
-        this.hashTags.splice(index, 1)
+        this.tags.splice(index, 1)
     }
 
     addComment(comment){
@@ -33,18 +33,8 @@ class Post {
         return this.id
     }
 
-    toString(){
-        var res = "title: " + this.title + "\nhashtags : ";
-        console.log(this.hashTags)
-        if(this.hashTags.size > 0){
-            for(var tag of this.hashTags)
-                res += tag + "; "
-        }else res += "none"
-        return res
-    } 
-
     save(){
-        if(this.hashTags.length == 0){
+        if(this.tags.length == 0){
             this.addHashTag('public');
         }
         console.log(this)
@@ -54,20 +44,30 @@ class Post {
     }
 }
 
-Post.Schema = new Schema({
-    title: String,
-    date : String,
-    hashTags: Array,
-    comments: Array
+var fileSchema = new mongoose.Schema({
+    name: String,
+    mimetype: String,
+    size: Number
 })
 
-Post.model = mongoose.model('posts', Post.Schema)
+Post.Schema = new mongoose.Schema({
+    title: String,
+    poster: String,
+    date: String,
+    tags: Array,
+    files: [fileSchema],
+    comments: Array
+    // likes/dislikes, updates/edits   
+})
 
-module.exports = Post
+Post.model = mongoose.model('post', Post.Schema);
+
+module.exports = Post;
 
 
 console.log("POST.JS DEBUGGING...")
 var post = new Post("Test title")
 post.addHashTag("IAmaTag")
 post.addHashTag("AnotherTag")
-console.log(post.toString());
+
+console.dir(post);

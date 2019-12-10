@@ -15,7 +15,6 @@ router.get('/:email', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-  console.log('req.body ' + req.body + 'at api Users Post' )
   Users.insert(req.body)
     .then(data => res.jsonp(data))
     .catch(e => res.status(500).jsonp(e))
