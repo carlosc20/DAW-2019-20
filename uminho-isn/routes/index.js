@@ -17,7 +17,7 @@ router.post('/', function(req, res){
   res.redirect('/login')
 })
 
-
+// O QUE É ISTO? (César)
 router.get('/eventos/:id', checkAuth, function(req, res) {
   axios.get(apiHost + req.params.id)
     .then(dados => res.render('evento', {evento: dados.data}))
@@ -52,8 +52,11 @@ router.get('/publish', checkAuth, function(req, res){
 })
 
 router.post('/publish', checkAuth, function(req, res){
-  var post = req.body;
-  axios.post(apiHost + '/api/post', post)
+  axios.post(apiHost + '/api/post', req.body, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
     .then(dados => res.redirect('/'))
     .catch(erro => res.status(500).render('error', {error: erro}))
 })
