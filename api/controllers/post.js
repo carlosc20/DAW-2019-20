@@ -9,6 +9,8 @@ module.exports.list = () => {
 
 module.exports.insert = (post)  => {
     var p = new Post(post)
+    console.log("Inserting post:")
+    console.dir(post)
     return p.save();
 }
 

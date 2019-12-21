@@ -51,8 +51,8 @@ router.get('/publish', checkAuth, function(req, res){
   res.render('publish')
 })
 
-router.post('/publish', checkAuth, function(req, res){
-  axios.post(apiHost + '/api/post', req.body, {
+router.post('/publish', /* checkAuth,*/ function(req, res){
+  axios.post(apiHost + '/api/post', req, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
