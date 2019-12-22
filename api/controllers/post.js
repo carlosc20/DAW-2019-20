@@ -9,6 +9,7 @@ module.exports.list = () => {
 
 module.exports.insert = (post)  => {
     var p = new Post(post)
+    //post.files[0].size = new Number(post.files[0].size)
     console.log("Inserting post:")
     console.dir(post)
     return p.save();

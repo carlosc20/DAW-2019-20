@@ -4,6 +4,13 @@ var axios = require('axios');
 var passport = require('passport');
 const apiHost = require('../config/env').apiHost;
 
+/* To handle multipat/form-data requests */
+const FormData = require('form-data');
+const multer = require('multer')
+const upload = multer()
+
+///////////////////////////////////////////
+
 /* GET home page. */
 router.get('/', checkAuth, function(req, res) {
   console.log(apiHost + '/api/posts')
@@ -51,8 +58,19 @@ router.get('/publish', checkAuth, function(req, res){
   res.render('publish')
 })
 
-router.post('/publish', /* checkAuth,*/ function(req, res){
-  axios.post(apiHost + '/api/post', req, {
+router.post('/publish', upload.array('files'), /* checkAuth,*/ function(req, res){
+  let form = new FormData()
+  console.log(req.files)
+  console.log(req.body.title)
+  console.log(req.body.description)
+  form.append('title', req.body.title)
+  form.append('description', req.body.description)
+  req.files.forEach(file => {
+    form.append('files' , file.buffer, file.originalname)
+    console.log(file.originalname)
+  })
+  console.dir(form)
+  axios.post(apiHost + '/api/post', form, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }

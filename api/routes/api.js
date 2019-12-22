@@ -11,10 +11,11 @@ router.post('/post', upload.array('files'), function(req, res, next) {
     console.log('A introduzir um post')
     let data = new Date()
     let newPost = req.body
-    newPost.files = new Array
+    newPost.files = []
     newPost.date = data.toISOString()
 
     console.log("Ola 1")
+    console.log(req.files)
     for(var i = 0; i < req.files.length; i++){
         let oldPath = __dirname + '/../' + req.files[i].path
         let newPath = __dirname + '/../public/ficheiros/' + req.files[i].originalname
@@ -35,8 +36,8 @@ router.post('/post', upload.array('files'), function(req, res, next) {
     console.log("Ola 3")
     //por alguma razao há erro 500 aqui, mas os dados sao inseridos na base de dados
     post.insert(newPost)
-        .then(dados => {console.log("Adding post " + newPost);res.jsonp(dados)})
-        .catch(erro => res.status(500).jsonp(erro))
+        .then(dados => {console.log("Adding post " + dados);res.jsonp(dados)})
+        .catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})
 });
 
 /* GET a post by ID. */
