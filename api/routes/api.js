@@ -11,11 +11,14 @@ router.post('/post', upload.array('files'), function(req, res, next) {
     console.log('A introduzir um post')
     let data = new Date()
     let newPost = req.body
-    newPost.files = []
+    if(newPost.files == undefined)
+        newPost.files = []
     newPost.date = data.toISOString()
 
     console.log("Ola 1")
     console.log(req.files)
+    console.log(req.body)
+    console.dir(req.headers)
     for(var i = 0; i < req.files.length; i++){
         let oldPath = __dirname + '/../' + req.files[i].path
         let newPath = __dirname + '/../public/ficheiros/' + req.files[i].originalname
@@ -59,7 +62,9 @@ router.get('/posts', function(req, res, next) {
 router.get('/posts/:tag', function(req, res, next) {
     res.render('index', { title: 'Express' });
 });
-  
 
+router.get('download/:fnome', function(req, res){
+    res.download( __dirname + '/../public/ficheiros' + req.params.fnome)
+})
 
 module.exports = router;

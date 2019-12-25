@@ -72,7 +72,7 @@ router.post('/publish', upload.array('files'), /* checkAuth,*/ function(req, res
   console.dir(form)
   axios.post(apiHost + '/api/post', form, {
     headers: {
-      'Content-Type': 'multipart/form-data'
+      'Content-Type': 'multipart/form-data; boundary='+form._boundary
     }
   })
     .then(dados => res.redirect('/'))

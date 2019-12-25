@@ -79,6 +79,18 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 //app.use(cookieParser());
+
+//Middleware que devolve os pedidos dos ficheiros
+app.use((req, res, next) =>{
+  console.log('PATH DO FICHEIRO ' + req.path)
+  if(req.path.startsWith('/ficheiros')){
+    console.log('a buscar o ficheiro')
+    axios.get(apiHost + req.path)
+      .then(dados => res.send(dados.data))
+      .catch(erro => res.status(500).end())
+  } else 
+    next();
+})
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
