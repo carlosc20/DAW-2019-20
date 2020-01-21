@@ -15,10 +15,6 @@ router.post('/post', upload.array('files'), function(req, res, next) {
         newPost.files = []
     newPost.date = data.toISOString()
 
-    console.log("Ola 1")
-    console.log(req.files)
-    console.log(req.body)
-    console.dir(req.headers)
     for(var i = 0; i < req.files.length; i++){
         let oldPath = __dirname + '/../' + req.files[i].path
         let newPath = __dirname + '/../public/ficheiros/' + req.files[i].originalname
@@ -36,8 +32,6 @@ router.post('/post', upload.array('files'), function(req, res, next) {
         }
         newPost.files.push(novoFicheiro)
     }
-    console.log("Ola 3")
-    //por alguma razao há erro 500 aqui, mas os dados sao inseridos na base de dados
     post.insert(newPost)
         .then(dados => {console.log("Adding post " + dados);res.jsonp(dados)})
         .catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})
@@ -65,6 +59,14 @@ router.get('/posts/:tag', function(req, res, next) {
 
 router.get('download/:fnome', function(req, res){
     res.download( __dirname + '/../public/ficheiros' + req.params.fnome)
+})
+
+router.post('/comment/:idPost', function(req,res){
+    console.log(req.params.idPost)
+    console.dir(req.body)
+    post.addComment(req.params.idPost, req.body)
+        .then(dados => { console.log(dados);res.jsonp(dados) })
+        .catch(erro => { res.status(500).jsonp(erro) })
 })
 
 module.exports = router;

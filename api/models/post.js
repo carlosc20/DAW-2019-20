@@ -6,6 +6,11 @@ var fileSchema = new mongoose.Schema({
     size: Number
 })
 
+var commentSchema = new mongoose.Schema({
+    text : String,
+    owner : String
+})
+
 var Post = new mongoose.Schema({
     title: String,
     poster: String,
@@ -13,7 +18,7 @@ var Post = new mongoose.Schema({
     date: String,
     tags: Array,
     files: [fileSchema],
-    comments: Array
+    comments: [commentSchema]
     // likes/dislikes, updates/edits   
 })
 

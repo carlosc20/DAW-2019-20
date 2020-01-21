@@ -9,8 +9,6 @@ module.exports.list = () => {
 
 module.exports.insert = (post)  => {
     var p = new Post(post)
-    //post.files[0].size = new Number(post.files[0].size)
-    console.log("Inserting post:")
     console.dir(post)
     return p.save();
 }
@@ -22,4 +20,10 @@ module.exports.getById = (id) => {
 module.exports.getByTag = (tag) => {
     return Post.find({hashTags: tag}, {})
         .exec()
+}
+
+module.exports.addComment = (idPost, comment) => {
+    console.log("adding comment to " + idPost)
+    console.dir(comment)
+    return Post.updateOne({_id: ObjectId(idPost)}, {$push: { comments: comment }}).exec()
 }

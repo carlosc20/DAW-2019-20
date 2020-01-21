@@ -82,11 +82,17 @@ app.use(express.urlencoded({ extended: false }));
 
 //Middleware que devolve os pedidos dos ficheiros
 app.use((req, res, next) =>{
-  console.log('PATH DO FICHEIRO ' + req.path)
   if(req.path.startsWith('/ficheiros')){
-    console.log('a buscar o ficheiro')
-    axios.get(apiHost + req.path)
-      .then(dados => res.send(dados.data))
+    console.log(req.headers)
+    axios.get(apiHost + req.path, { responseType: 'arraybuffer' })
+      .then(dados => {
+        let blob = new Blob(
+          [dados.data], 
+          { type: dados.headers['content-type'] }
+        )
+        let image = URL.createObjectURL(blob)
+        return image
+      })
       .catch(erro => res.status(500).end())
   } else 
     next();

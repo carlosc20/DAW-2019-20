@@ -20,7 +20,6 @@ router.get('/', checkAuth, function(req, res) {
 });
 
 router.post('/', function(req, res){
-  console.dir('LOGIN TEST: ' + req.body)
   res.redirect('/login')
 })
 
@@ -79,6 +78,13 @@ router.post('/publish', upload.array('files'), /* checkAuth,*/ function(req, res
     .catch(erro => res.status(500).render('error', {error: erro}))
 })
 
+/*
+router.get("/ficheiros/:name", function(req,res) {
+  axios.get(apiHost + "/ficheiros/" + req.params.name)
+    .then(dados => {console.dir(dados.data);res.send(dados.data)})
+    .catch(erro => res.status(500).render('error', {error: erro}))
+})
+*/
 function checkAuth(req,res,next) {
   console.log("Autenticado:", req.isAuthenticated())
   if(req.isAuthenticated()){
