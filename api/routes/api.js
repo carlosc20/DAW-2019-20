@@ -6,19 +6,20 @@ const fs = require('fs')
 var multer = require('multer')
 var upload = multer({dest: 'uploads/'})
 
+var passport = require('passport');
+
 /* POST a post */
 router.post('/post', upload.array('files'), function(req, res, next) {
     console.log('A introduzir um post')
-    let data = new Date()
     let newPost = req.body
     if(newPost.files == undefined)
         newPost.files = []
-    newPost.date = data.toISOString()
+    newPost.date = new Date().toISOString()
 
     for(var i = 0; i < req.files.length; i++){
         let oldPath = __dirname + '/../' + req.files[i].path
         let newPath = __dirname + '/../public/ficheiros/' + req.files[i].originalname
-        console.log("oldPath:" + oldPath + "\nnewPath: " + newPath)
+        console.log("oldPath:" + oldPath + "\newPath: " + newPath)
         fs.rename(oldPath, newPath, function (err){
             if (err) {
                 throw err
@@ -32,7 +33,7 @@ router.post('/post', upload.array('files'), function(req, res, next) {
         newPost.files.push(novoFicheiro)
     }
     post.insert(newPost)
-        .then(dados => {console.log("Adding post " + dados);res.jsonp(dados)})
+        .then(dados => {console.log("Adding post " + dados); res.jsonp(dados)})
         .catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})
 });
 
@@ -83,5 +84,6 @@ router.post('/comment/:idPost', function(req,res){
         .then(dados => { console.log(dados);res.jsonp(dados) })
         .catch(erro => { res.status(500).jsonp(erro) })
 })
+
 
 module.exports = router;

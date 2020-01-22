@@ -16,19 +16,28 @@ var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy
 var axios = require('axios')
 var flash = require('connect-flash')
+
+var bcrypt = require('bcryptjs')
+var jwt = require('jsonwebtoken')
 //-----------------------------------
 
 // Configuração da estratégia local
 passport.use(new LocalStrategy(
   {usernameField: 'email'}, (email, password, done) => {
-    axios.get(apiHost + '/users/' + email)
+    var token = jwt.sign({}, "daw2019", 
+    {
+        expiresIn: 3000, 
+        issuer: "Servidor myAgenda"
+    })
+    //token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiZW1haWwiOiJjZXNhckBhdGxldGEuY29tIiwiaWF0IjoxNTE2MjM5MDIyfQ.WMcEeBB5tSapvHMQWUxok87mK2arePQdLyzNi5gDg7w';
+    axios.get(apiHost + '/users/' + email + '?token=' + token)
       .then(dados => {
         const user = dados.data
         console.dir(user)
         if(!user) {
           return done(null, false, {message: 'Utilizador inexistente!\n'})
         }
-        if(password != user.password) {
+        if(!bcrypt.compareSync(password, user.password)) {
           return done(null, false, {message: 'Password inválida!\n'})
         }
         console.log('Autentificação feita com sucesso')
@@ -37,17 +46,24 @@ passport.use(new LocalStrategy(
       .catch(erro => done(erro))
 }))
 
+
 passport.serializeUser((user,done) => {
   console.log('Vou serializar o user: ' + JSON.stringify(user))
   done(null, user.email)
 })
 
 passport.deserializeUser((email, done) => {
+  var token = jwt.sign({}, "daw2019", 
+  {
+      expiresIn: 3000, 
+      issuer: "Servidor myAgenda"
+  })
   console.log('Vou desserializar o utilizador: ' + email)
-  axios.get(apiHost + '/users/' + email)
+  axios.get(apiHost + '/users/' + email + '?token=' + token)
     .then(dados => done(null, dados.data))
     .catch(erro => done(erro, false))
 })
+
 
 
 var indexRouter = require('./routes/index');
@@ -79,7 +95,7 @@ app.use(flash());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-//app.use(cookieParser());
+app.use(cookieParser());
 
 //Middleware que devolve os pedidos dos ficheiros
 app.use((req, res, next) =>{
