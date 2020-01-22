@@ -8,7 +8,10 @@ var fileSchema = new mongoose.Schema({
 
 var commentSchema = new mongoose.Schema({
     text : String,
-    owner : String
+    owner : String,
+    date : String,
+    upVotes : Number,
+    downVotes : Number
 })
 
 var Post = new mongoose.Schema({

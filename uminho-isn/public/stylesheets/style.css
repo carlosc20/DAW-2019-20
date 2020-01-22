@@ -1,5 +1,5 @@
 body {
-  padding-top: 70px;
+  padding-top: 40px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
@@ -10,4 +10,70 @@ a {
 .post-container {
   margin: auto ;
   width: 40%;
+}
+
+/* Style the navigation bar */
+.navbar {
+  width: 100%;
+  background-color: #555;
+  padding: 0%;
+  overflow: hidden;
+}
+
+/* Navbar links */
+.navbar a {
+  float: left;
+  text-align: center;
+  padding: 12px;
+  color: white;
+  text-decoration: none;
+  font-size: 17px;
+  overflow: auto;
+}
+
+/* Navbar links on mouse-over */
+.navbar a:hover {
+  background-color: rgb(124, 124, 124);
+}
+
+.navbar-brand{
+  margin: 0;
+}
+
+.input-group-prepend{
+  position: relative;
+}
+
+.search{
+  margin: 0 !important;
+  border: 0 !important;
+}
+
+.search-icon{
+  border: 0 !important;
+}
+
+.post-info{
+  margin-top: 50px;
+  margin-bottom: 30px;
+}
+  
+.comment-wrapper .panel-body {
+    max-height:650px;
+    overflow:auto;
+}
+
+.comment-wrapper{
+  width: 100%;
+}
+
+.media-list .media img {
+    width:64px;
+    height:64px;
+    border:2px solid #e5e7e8;
+}
+
+.comment-wrapper .media-list .media {
+    border-bottom:1px dashed #efefef;
+    margin-bottom:25px;
 }

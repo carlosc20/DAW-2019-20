@@ -2,37 +2,20 @@ extends layout
 
 block content
 	nav(style="background-color: #CECECE;").navbar.navbar-expand-lg.navbar-light.fixed-top
-		a.navbar-brand(href='#')
+		a.navbar-brand(href="/")
+			i.fas.fa-home
+			|  Home
+		a.navbar-brand(href='/profile') 
 			i.fas.fa-user
-		a.navbar-brand(href='#') Navbar
-		button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation')
-			span.navbar-toggler-icon
-		#navbarSupportedContent.collapse.navbar-collapse
-			ul.navbar-nav.mr-auto
-				li.nav-item.active
-					a.nav-link(href='#')
-						| Home 
-						span.sr-only (current)
-				li.nav-item
-					a.nav-link(href='#') Link
-				li.nav-item.dropdown
-					a#navbarDropdown.nav-link.dropdown-toggle(href='#' role='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false')
-						| Dropdown
-					.dropdown-menu(aria-labelledby='navbarDropdown')
-						a.dropdown-item(href='#') Action
-						a.dropdown-item(href='#') Another action
-						.dropdown-divider
-						a.dropdown-item(href='#') Something else here
-				li.nav-item
-					a.nav-link.disabled(href='#') Disabled
-		ul.navbar-nav.ml-auto
-			li.nav-item
-				a.nav-link(href='/publish') Publicar
+			|  Perfil
+		a.navbar-brand(href='/publish') 
+			i.fas.fa-pencil-alt
+			|  Publicar
+		.navbar-nav.ml-auto
 			form.form-inline.my-2.my-lg-0
 				.input-group.form-group
 					.input-group-prepend
 						span.input-group-text
-							i.fas.fa-search
-					input.form-control.mr-sm-2(type='search' placeholder='Search' aria-label='Search')
-				button.btn.btn-outline-success.my-2.my-sm-0(type='submit') Search
+							i.fas.fa-search.search-icon
+						input.form-control.mr-sm-2.search(type='search' placeholder='Search' aria-label='Search')
 	block page
