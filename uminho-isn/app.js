@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var apiHost = require('./config/env').apiHost;
+var request = require('request');
 
 
 // Módulos de suporte à autenticação
@@ -83,17 +84,18 @@ app.use(express.urlencoded({ extended: false }));
 //Middleware que devolve os pedidos dos ficheiros
 app.use((req, res, next) =>{
   if(req.path.startsWith('/ficheiros')){
-    console.log(req.headers)
-    axios.get(apiHost + req.path, { responseType: 'arraybuffer' })
+    //console.log(req.headers)
+    request.get(apiHost + req.path).pipe(res);
+   /* axios.get(apiHost + req.path, { responseType: 'arraybuffer' })
       .then(dados => {
         let blob = new Blob(
           [dados.data], 
           { type: dados.headers['content-type'] }
         )
         let image = URL.createObjectURL(blob)
-        return image
+        res.send(image)
       })
-      .catch(erro => res.status(500).end())
+      .catch(erro => res.status(500).end())*/
   } else 
     next();
 })
