@@ -18,7 +18,19 @@ module.exports.getById = (id) => {
 }
 
 module.exports.getByTag = (tag) => {
-    return Post.find({hashTags: tag}, {})
+    return Post.find({tags: tag}, {})
+        .exec()
+}
+
+module.exports.getByPoster = (poster) => {
+    return Post.find({poster: poster}, {})
+        .exec()
+}
+
+module.exports.sortedList = () => {
+    return Post
+        .find()
+        .sort({date: -1})
         .exec()
 }
 
