@@ -8,22 +8,26 @@ block content
 					.card-header
 						h3 Sign In
 					.card-body
+<<<<<<< HEAD:uminho-isn/views/register.pug
 						form(action="/register" method="POST")
+=======
+						form(action="/regist" method="POST" data-toggle="validator")
+>>>>>>> fc1d00a91a8ff6449256b03fa2f690394938abae:uminho-isn/views/regist.pug
 							.input-group.form-group
 								.input-group-prepend
 									span.input-group-text
 										i.fas.fa-user
-								input.form-control(type='text' placeholder='email' name='email')
+								input.form-control(type='text' placeholder='email' name='email' pattern="[^A-Z]+@[a-z]+[.][a-z]+" data-error="Bruh, that email address is invalid")
 							.input-group.form-group
 								.input-group-prepend
 									span.input-group-text
 										i.fas.fa-key
-								input.form-control(type='password' placeholder='password' name='password')
+								input.form-control(type='password' placeholder='password' name='password' id='password')
 							.input-group.form-group
 								.input-group-prepend
 									span.input-group-text
 										i.fas.fa-key
-								input.form-control(type='password' placeholder='repeat password')
+								input.form-control(type='password' placeholder='repeat password' id='repeatedPassword' data-match="#password" data-match-error="Whoops, these don't match")
 							.form-group
 								input.btn.float-right.login_btn(type='submit' value='Regist')
 					.card-footer
