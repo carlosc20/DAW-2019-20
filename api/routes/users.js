@@ -9,10 +9,10 @@ var passport = require('passport');
 router.get('/', function(req, res) {
   Users.getAll()
     .then(data => {
-    //let regex = /\@[^\ ]+/;
-    //let str = '@MarcoDantas e por fim @CésarBorges';
-    //let mentions = [...str.matchAll(regex)];
-    //console.log(mentions)
+    let regex = /@[^\ ]+/g;
+    let str = '@MarcoDantas e por fim @CésarBorges';
+    let mentions = str.match(regex);
+    console.log(mentions)
       res.jsonp(data)})
     .catch(e => res.status(500).jsonp(e))
 });
