@@ -112,7 +112,9 @@ app.use((req, res, next) =>{
         res.send(image)
       })
       .catch(erro => res.status(500).end())*/
-  } else 
+  } else if(req.path.startsWith('/download')){
+    request.get(apiHost + '/api' + req.path).pipe(res)
+  }else 
     next();
 })
 app.use(express.static(path.join(__dirname, 'public')));

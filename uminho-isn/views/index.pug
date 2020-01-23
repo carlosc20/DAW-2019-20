@@ -17,7 +17,8 @@ block page
                 if post.tags 
                   h6.car-subtitle.mb-2.text-muted
                     each tag in post.tags
-                      | #{tag}  
+                      a(href="/?tag=" + tag)
+                       |  #{tag}  
                 p.card-text
                   | This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.
                 .d-flex.justify-content-between.align-items-center

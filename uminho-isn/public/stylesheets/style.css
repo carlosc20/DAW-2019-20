@@ -77,3 +77,16 @@ a {
     border-bottom:1px dashed #efefef;
     margin-bottom:25px;
 }
+
+#modal-img{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-height: 70%;
+}
+
+#modal-container{
+  display: auto;
+  margin-left: auto;
+  margin-right: auto;
+}

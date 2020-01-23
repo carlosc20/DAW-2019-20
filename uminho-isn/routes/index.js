@@ -12,10 +12,17 @@ var bcrypt = require('bcryptjs')
 
 /* GET home page. */
 router.get('/', checkAuth, function(req, res) {
-  console.log(apiHost + '/api/posts')
-  axios.get(apiHost + '/api/posts')
-    .then(dados => {console.log(dados.data); res.render('index', {lista: dados.data})})
-    .catch(e => res.render('error', {error: e}))
+  var tag = req.query.tag;
+  if(tag){
+    axios.get(apiHost + '/api/posts/tag/'+ tag)
+      .then(dados => {console.log(dados.data); res.render('index', {lista: dados.data})})
+      .catch(e => res.render('error', {error: e}))
+  }else{
+    axios.get(apiHost + '/api/posts')
+      .then(dados => {console.log(dados.data); res.render('index', {lista: dados.data})})
+      .catch(e => res.render('error', {error: e}))
+  }
+ 
 });
 
 
