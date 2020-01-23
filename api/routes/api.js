@@ -37,6 +37,10 @@ router.post('/post', upload.array('files'), function(req, res, next) {
     
     post.insert(newPost)
         .then(dados => {console.log("Adding post " + dados);
+                        let regex = /@[^\ ]+/g;
+                        let str = dados.description;
+                        let mentions = str.match(regex).map(substr(1));
+                        console.log(mentions)
                         res.jsonp(dados)
                     })
         .catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})
