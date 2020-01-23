@@ -5,7 +5,7 @@ var userSchema = new mongoose.Schema({
     email: String,
     password: String,
     subscriptions: [String],
-    references: [mongoose.Types.ObjectId]
+    mentions: [mongoose.Types.ObjectId]
 });
 
 module.exports = mongoose.model('user', userSchema);

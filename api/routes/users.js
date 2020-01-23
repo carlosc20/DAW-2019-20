@@ -3,9 +3,17 @@ var router = express.Router();
 var Posts = require('../controllers/posts');
 var Users = require('../controllers/users');
 
+var passport = require('passport');
+
+
 router.get('/', function(req, res) {
   Users.getAll()
-    .then(data => res.jsonp(data))
+    .then(data => {
+    //let regex = /\@[^\ ]+/;
+    //let str = '@MarcoDantas e por fim @CésarBorges';
+    //let mentions = [...str.matchAll(regex)];
+    //console.log(mentions)
+      res.jsonp(data)})
     .catch(e => res.status(500).jsonp(e))
 });
 
@@ -28,7 +36,7 @@ router.get('/:email/posts', function(req, res){
 })
 
 
-router.get('/:email', function(req, res) {
+router.get('/:email', passport.authenticate('jwt', {session: false}), function(req, res) {
   Users.get(req.params.email)
     .then(data => res.jsonp(data))
     .catch(e => res.status(500).jsonp(e))
