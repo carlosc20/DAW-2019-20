@@ -22,6 +22,7 @@ module.exports.getByTag = (tag) => {
         .exec()
 }
 
+
 module.exports.getByPoster = (poster) => {
     return Post.find({poster: poster}, {})
         .exec()

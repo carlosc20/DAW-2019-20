@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
 
+var passport = require('passport');
 
 mongoose.connect('mongodb://127.0.0.1:27017/uminho-isn', {useNewUrlParser: true, useUnifiedTopology: true})
   .then(() => console.log('Mongo: ready(' + mongoose.connection.readyState + ')'))
@@ -13,8 +14,38 @@ mongoose.connect('mongodb://127.0.0.1:27017/uminho-isn', {useNewUrlParser: true,
 var usersRouter = require('./routes/users');
 var apiRouter = require('./routes/api');
 
-var app = express();
+// auth
+var passport = require('passport');
+var JWTStrategy = require('passport-jwt').Strategy;
+var ExtractJWT = require('passport-jwt').ExtractJwt;
 
+var extractFromQS = function(req){
+  return (req.query && req.query.token) ? req.query.token : null;
+}
+
+var extractFromBody = function(req){
+  return (req.body && req.body.token) ? req.query.token : null;
+}
+
+passport.use(
+  new JWTStrategy(
+    {
+    secretOrKey: 'daw2019',
+    jwtFromRequest: ExtractJWT.fromExtractors([extractFromQS, extractFromBody])
+    }, 
+    async (payload, done) => {
+      try{
+        return done(null, payload)
+      }
+      catch(error){
+        return done(error)
+      }
+    }
+  )
+)
+
+var app = express();
+app.use(passport.initialize());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

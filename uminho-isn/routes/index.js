@@ -8,8 +8,7 @@ const apiHost = require('../config/env').apiHost;
 const FormData = require('form-data');
 const multer = require('multer')
 const upload = multer()
-
-///////////////////////////////////////////
+var bcrypt = require('bcryptjs')
 
 /* GET home page. */
 router.get('/', checkAuth, function(req, res) {
@@ -19,15 +18,10 @@ router.get('/', checkAuth, function(req, res) {
     .catch(e => res.render('error', {error: e}))
 });
 
+
+// login
 router.post('/', function(req, res){
   res.redirect('/login')
-})
-
-// O QUE É ISTO? (César)
-router.get('/eventos/:id', checkAuth, function(req, res) {
-  axios.get(apiHost + req.params.id)
-    .then(dados => res.render('evento', {evento: dados.data}))
-    .catch(e => res.render('error', {error: e}))
 });
 
 router.get('/login', function(req, res) {
@@ -42,17 +36,24 @@ router.post('/login', passport.authenticate('local', {
   })
 );
 
-router.get('/regist', function(req, res){
-  res.render('regist');
+
+// register
+router.get('/register', function(req, res){
+  res.render('register');
+});
+
+router.post('/register', function(req, res){
+  let hash = bcrypt.hashSync(req.body.password, 10);
+  axios.post(apiHost + '/users', {
+    email: req.body.email,
+    password: hash
+  })
+  .then(_ => res.redirect('/login') )
+  .catch(erro => res.status(500).render('error', {error: erro}) )
 })
 
-router.post('/regist', function(req, res){
-  var user = req.body;
-  axios.post(apiHost + '/users', user)
-    .then(dados => {res.redirect('/login') })
-    .catch(erro => res.status(500).render('error', {error: erro}))
-})
 
+// publish
 router.get('/publish', checkAuth, function(req, res){
   res.render('publish')
 })
