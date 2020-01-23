@@ -39,7 +39,10 @@ block page
                     img.img-circle(src='https://bootdey.com/img/Content/user_1.jpg', alt='')
                   .media-body
                     span.text-muted.pull-right
-                      small.text-muted 30 min ago
+                      if comment.date == 0
+                        small.text-muted now
+                      else
+                        small.text-muted #{comment.date} min ago
                     strong.text-success 
                       a(href='/profile/' + comment.owner) 
                       | @#{comment.owner}
