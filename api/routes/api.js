@@ -1,3 +1,5 @@
+"use strict";
+
 var express = require('express');
 var post = require('../controllers/post')
 var router = express.Router();
@@ -45,9 +47,20 @@ router.get('/post/:id', function(req, res, next) {
 
 /* GET all posts. */
 router.get('/posts', function(req, res, next) {
-    console.log('At api /posts')
     post.list()
-        .then(dados => { console.log(dados);res.jsonp(dados) })
+        .then(dados => {let result = dados.map(post => {
+                let newPost = JSON.parse(JSON.stringify(post))
+                let timeSwap = Math.floor(Math.abs(new Date() - new Date(post.date))/1000/60); 
+                if(timeSwap == 0) newPost.timeSwap = 'agora'
+                else if(timeSwap < 60) newPost.timeSwap = timeSwap + ' mins'
+                else if(timeSwap < 3600) newPost.timeSwap = Math.floor(timeSwap/60) + ' horas'
+                else if(timeSwap < 24*3600) newPost.timeSwap = Math.floor(timeSwap/(24*60)) + ' dias'
+                else if(timeSwap < 24*3600*30) newPost.timeSwap = Math.floor(timeSwap/(60*24*30)) + ' meses'
+                else newPost.timeSwap = Math.floor(timeSwap/(365*60*24*30)) + ' anos'
+                return newPost
+            })
+            res.jsonp(result) 
+        })
         .catch(erro => { res.status(500).jsonp(erro) })
 });
 
