@@ -27,9 +27,10 @@ block page
           .panel-heading
             | Comment panel
           .panel-body
-            textarea.form-control(placeholder='Escreva um comentário...', rows='3')
-            br
-            button.btn.btn-info.pull-right(type='button') Post
+            form(action='/publish' method='POST')
+              textarea.form-control(placeholder='Escreva um comentário...' name="text", rows='3')
+              br
+              button.btn.btn-info.pull-right(type='submit') Post
             .clearfix
             hr
             ul.media-list

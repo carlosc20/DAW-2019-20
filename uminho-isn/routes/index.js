@@ -28,6 +28,7 @@ router.get('/', checkAuth, function(req, res) {
 
 // login
 router.post('/', function(req, res){
+  console.log(req)
   res.redirect('/login')
 });
 

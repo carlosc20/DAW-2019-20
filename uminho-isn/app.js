@@ -100,18 +100,7 @@ app.use(cookieParser());
 //Middleware que devolve os pedidos dos ficheiros
 app.use((req, res, next) =>{
   if(req.path.startsWith('/ficheiros')){
-    //console.log(req.headers)
     request.get(apiHost + req.path).pipe(res);
-   /* axios.get(apiHost + req.path, { responseType: 'arraybuffer' })
-      .then(dados => {
-        let blob = new Blob(
-          [dados.data], 
-          { type: dados.headers['content-type'] }
-        )
-        let image = URL.createObjectURL(blob)
-        res.send(image)
-      })
-      .catch(erro => res.status(500).end())*/
   } else if(req.path.startsWith('/download')){
     request.get(apiHost + '/api' + req.path).pipe(res)
   }else 
