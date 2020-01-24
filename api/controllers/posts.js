@@ -9,8 +9,11 @@ module.exports.list = () => {
 
 module.exports.insert = (post)  => {
     var p = new Post(post)
-    console.dir(post)
     return p.save();
+}
+
+module.exports.delete = (id) => {
+    return Post.deleteOne({_id: Object(id)})
 }
 
 module.exports.getById = (id) => {

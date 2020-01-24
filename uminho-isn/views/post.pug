@@ -15,7 +15,7 @@ block page
       each file in post.files
         .col-sm-3
           .card.mb-4.box-shadow
-            img.card-img-top(style='height: 225px; width: 100%; display: block;' src='/ficheiros/'+file.name onclick='showFicheiro(' + JSON.stringify(file) + ')')
+            img.card-img-top(style='height: 225px; width: 100%; display: block;' src='/ficheiros/' + post._id + '/' + file.name onclick='showFicheiro(' + JSON.stringify(file) + ')')
             .card-body
               h5.card-title= file.name
               a.btn.btn-sm.btn-outline-secondary(href="/download/" + file.name)
