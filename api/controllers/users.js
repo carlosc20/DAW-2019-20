@@ -25,9 +25,18 @@ module.exports.insert = (user) => {
 module.exports.subscribe = (email, subscription) => {
     return User.findOneAndUpdate({email: email},
             {$push: {subscriptions: subscription}})
+            .exec()
 }
 
 module.exports.unsubscribe = (email, subscription) => {
     return User.findOneAndUpdate({email: email},
             {$pull: {subscriptions: subscription}})
+            .exec()
+}
+
+module.exports.insertMention = (name, postId) => {
+    console.log(name, postId)
+    return User.findOneAndUpdate({name: name},
+                {$push: {mentions: postId}})
+                .exec()
 }

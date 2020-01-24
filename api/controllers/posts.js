@@ -17,6 +17,12 @@ module.exports.getById = (id) => {
     return Post.findOne({_id: ObjectId(id)}, {})
 }
 
+module.exports.getByIdForMentions = id => {
+    return Post.findOne({_id: ObjectId(id)})
+                .select({title:1, poster:1, date:1})
+                .exec()
+}
+
 module.exports.getByTag = (tag) => {
     return Post.find({tags: tag}, {})
         .exec()

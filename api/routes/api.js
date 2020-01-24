@@ -1,7 +1,8 @@
 "use strict";
 
 var express = require('express');
-var post = require('../controllers/posts')
+var Posts = require('../controllers/posts')
+var Users = require('../controllers/users')
 var router = express.Router();
 const fs = require('fs')
 
@@ -37,12 +38,8 @@ router.post('/post', upload.array('files'), function(req, res, next) {
         newPost.files.push(novoFicheiro)
     }
     
-    post.insert(newPost)
+    Posts.insert(newPost)
         .then(dados => {console.log("Adding post " + dados);
-                        let regex = /@[^\ ]+/g;
-                        let str = dados.description;
-                        let mentions = str.match(regex).map(substr(1));
-                        console.log(mentions)
                         res.jsonp(dados)
                     })
         .catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})
@@ -50,14 +47,14 @@ router.post('/post', upload.array('files'), function(req, res, next) {
 
 /* GET a post by ID. */
 router.get('/post/:id', function(req, res, next) {
-    post.getById(req.params.id)
+    Posts.getById(req.params.id)
         .then(dados => { res.jsonp(dados) })
         .catch(erro => { res.status(500).jsonp(erro) })
   });
 
 /* GET all posts. */
 router.get('/posts', function(req, res, next) {
-    post.list()
+    Posts.list()
         .then(dados => {let result = dados.map(post => {
                 let newPost = JSON.parse(JSON.stringify(post))
                 let timeSwap = Math.floor(Math.abs(new Date() - new Date(post.date))/1000/60); 
@@ -76,21 +73,21 @@ router.get('/posts', function(req, res, next) {
 
 /* GET all posts by a tag */
 router.get('/posts/tag/:tag', function(req, res, next) {
-    post.getByTag(req.params.tag)
+    Posts.getByTag(req.params.tag)
         .then(dados => { console.log(dados);res.jsonp(dados) })
         .catch(erro => { res.status(500).jsonp(erro) })
 })
 
 /* GET all posts sorted by date */
 router.get('/posts/sorted', function(req,res){
-    post.sortedList()
+    Posts.sortedList()
         .then(dados => { console.log(dados);res.jsonp(dados) })
         .catch(erro => { res.status(500).jsonp(erro) })
 })
 
 /* GET all posts by its owner*/
 router.get('/posts/poster/:poster', function(req, res, next){
-    post.getByPoster(req.params.poster)
+    Posts.getByPoster(req.params.poster)
         .then(dados => { console.log(dados);res.jsonp(dados) })
         .catch(erro => { res.status(500).jsonp(erro) })	
 })
@@ -100,10 +97,17 @@ router.get('download/:fnome', function(req, res){
 })
 
 router.post('/comment/:idPost', function(req,res){
-    console.log(req.params.idPost)
-    console.dir(req.body)
-    post.addComment(req.params.idPost, req.body)
-        .then(dados => { console.log(dados);res.jsonp(dados) })
+    //console.log(req.params.idPost)
+    //console.dir(req.body)
+    req.body.date = new Date().toISOString()
+    let comment = req.body
+    let regex = /@[^\ ]+/g;
+    //let mentions = dados.comments.map(match(regex).map(substr(1)));
+    //mentions.map(Users.insertMention)
+    let mentions = (comment.text.match(regex))
+    mentions.forEach(m => Users.insertMention(m.substr(1), req.params.idPost))
+    Posts.addComment(req.params.idPost, req.body)
+        .then(dados => { res.jsonp(dados) })
         .catch(erro => { res.status(500).jsonp(erro) })
 })
 

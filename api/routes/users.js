@@ -8,12 +8,7 @@ var passport = require('passport');
 
 router.get('/', function(req, res) {
   Users.getAll()
-    .then(data => {
-    let regex = /@[^\ ]+/g;
-    let str = '@MarcoDantas e por fim @CésarBorges';
-    let mentions = str.match(regex);
-    console.log(mentions)
-      res.jsonp(data)})
+    .then(data => res.jsonp(data))
     .catch(e => res.status(500).jsonp(e))
 });
 
@@ -26,15 +21,23 @@ router.get('/:email/subscriptions', function(req, res) {
 /* Get all posts by user tags */
 router.get('/:email/posts', function(req, res){
   Users.getSubscriptions(req.params.email)
-  .then(obj => {
-    Promise.all(obj.subscriptions.map(Posts.getByTag))
-      .then(result => {
+  .then(user => {
+    Promise.all(user.subscriptions.map(Posts.getByTag))
+      .then(result => 
         res.jsonp([].concat(...result).sort(function(a,b){
           return new Date(b.date).getTime() - new Date(a.date).getTime()
-        }))})})
+        })))})
   .catch(e => res.status(500).jsonp(e))
 })
 
+router.get('/:email/mentions', function(req, res){
+  Users.get(req.params.email)
+    .then(user => {
+      Promise.all(user.mentions.map(Posts.getByIdForMentions))
+        .then(result => res.jsonp(result))
+    })
+    .catch(e => res.status(500).jsonp(e))
+})
 
 router.get('/:email', passport.authenticate('jwt', {session: false}), function(req, res) {
   Users.get(req.params.email)
