@@ -1,6 +1,7 @@
 extends mainLayout
 
 block page
+  .w3-card-4.modal(id='display')
   secction
     .container.text-center.post-info
       h1= post.title
@@ -14,11 +15,10 @@ block page
       each file in post.files
         .col-sm-3
           .card.mb-4.box-shadow
-            img.card-img-top(style='height: 225px; width: 100%; display: block;' src='/ficheiros/'+file.name)
+            img.card-img-top(style='height: 225px; width: 100%; display: block;' src='/ficheiros/'+file.name onclick='showFicheiro(' + JSON.stringify(file) + ')')
             .card-body
               h5.card-title= file.name
-            .d-flex.justify-content-between.align-items-center
-              a(href="download/" + file._id)
+              a.btn.btn-sm.btn-outline-secondary(href="/download/" + file.name)
                 i.fas.fa-file-download
     hr
     .row.bootstrap.snippets
@@ -27,9 +27,10 @@ block page
           .panel-heading
             | Comment panel
           .panel-body
-            textarea.form-control(placeholder='Escreva um comentário...', rows='3')
-            br
-            button.btn.btn-info.pull-right(type='button') Post
+            form(action='/publish' method='POST')
+              textarea.form-control(placeholder='Escreva um comentário...' name="text", rows='3')
+              br
+              button.btn.btn-info.pull-right(type='submit') Post
             .clearfix
             hr
             ul.media-list
