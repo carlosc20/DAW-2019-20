@@ -7,6 +7,8 @@ var apiHost = require('./config/env').apiHost;
 var request = require('request');
 
 
+var tokenGen = require('./utils/token')
+
 // Módulos de suporte à autenticação
 var uuid = require('uuid/v4')
 var session = require('express-session')
@@ -19,16 +21,14 @@ var flash = require('connect-flash')
 
 var bcrypt = require('bcryptjs')
 var jwt = require('jsonwebtoken')
+
 //-----------------------------------
+
 
 // Configuração da estratégia local
 passport.use(new LocalStrategy(
   {usernameField: 'email'}, (email, password, done) => {
-    var token = jwt.sign({}, "daw2019", 
-    {
-        expiresIn: 3000, 
-        issuer: "Servidor myAgenda"
-    })
+    let token = genToken()
     //token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiZW1haWwiOiJjZXNhckBhdGxldGEuY29tIiwiaWF0IjoxNTE2MjM5MDIyfQ.WMcEeBB5tSapvHMQWUxok87mK2arePQdLyzNi5gDg7w';
     axios.get(apiHost + '/users/' + email + '?token=' + token)
       .then(dados => {
@@ -53,11 +53,7 @@ passport.serializeUser((user,done) => {
 })
 
 passport.deserializeUser((email, done) => {
-  var token = jwt.sign({}, "daw2019", 
-  {
-      expiresIn: 3000, 
-      issuer: "Servidor myAgenda"
-  })
+  let token = tokenGen.genToken()
   console.log('Vou desserializar o utilizador: ' + email)
   axios.get(apiHost + '/users/' + email + '?token=' + token)
     .then(dados => done(null, dados.data))
