@@ -105,7 +105,7 @@ app.use((req, res, next) =>{
     request.get(apiHost + '/api' + req.path).pipe(res)
   }else 
     next();
-})
+})  
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);

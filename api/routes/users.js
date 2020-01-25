@@ -55,6 +55,7 @@ router.get('/:email', passport.authenticate('jwt', {session: false}), function(r
 
 
 router.post('/', function(req, res) {
+  console.log(req.body)
   Users.insert(req.body)
     .then(data => res.jsonp(data))
     .catch(e => res.status(500).jsonp(e))
