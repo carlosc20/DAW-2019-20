@@ -44,6 +44,11 @@ router.post('/login', passport.authenticate('local', {
   })
 );
 
+router.get('/profile/:name', checkAuth, function(req, res){
+  axios.get(apiHost + '/users/teste/' + req.params.name)
+    .then(user => res.render('user', {user: user.data}))
+    .catch(erro => res.status(500).render('error', {error: erro}) )
+})
 
 // register
 router.get('/register', function(req, res){

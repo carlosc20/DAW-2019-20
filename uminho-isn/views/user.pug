@@ -1,0 +1,29 @@
+extends mainLayout
+
+block page
+  .album.py-5.bg-light
+    .row
+      .col
+        .container(style="padding-top: 10px;").text-center.bg-white
+          img(src="http://placehold.it/200x200" alt="http://placehold.it/200x200")
+          .container
+            .container.user-text
+              p= user.email
+            .container(style='padding-top: 10px')
+              a(href='/edit' role="button").btn.btn-primary Editar
+      .col
+        .container(style="padding-top: 10px;").text-center.bg-white
+          h4 Subscrições atuais
+          form(action='/subscription' method='POST')
+              textarea.form-control(placeholder='Escreva o nome de uma tag...' name="text", rows='1')
+              br
+              button.btn.btn-primary(type='submit') Post
+          ul.list-group
+            each sub in user.subscriptions
+              li.list-group-item= sub
+    .row
+      .container(style="margin-top: 50px").text-center.bg-white
+        h4 Menções 
+        ul.list-group
+          each sub in user.subscriptions
+            li.list-group-item= sub

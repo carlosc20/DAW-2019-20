@@ -12,6 +12,13 @@ router.get('/', function(req, res) {
     .catch(e => res.status(500).jsonp(e))
 });
 
+//para sair
+router.get('/teste/:email',function(req, res) {
+  Users.get(req.params.email)
+    .then(data => res.jsonp(data))
+    .catch(e => res.status(500).jsonp(e))
+});
+
 router.get('/:email/subscriptions', function(req, res) {
   Users.getSubscriptions(req.params.email)
     .then(data => res.jsonp(data))
@@ -38,6 +45,7 @@ router.get('/:email/mentions', function(req, res){
     })
     .catch(e => res.status(500).jsonp(e))
 })
+
 
 router.get('/:email', passport.authenticate('jwt', {session: false}), function(req, res) {
   Users.get(req.params.email)

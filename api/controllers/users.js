@@ -16,6 +16,11 @@ module.exports.get = email => {
                 .exec()
 }
 
+module.exports.getByName = name => {
+    return  User.findOne({name: name})
+                .exec()
+}
+
 module.exports.insert = (user) => {
     console.dir(user)
     user = new User(user)
