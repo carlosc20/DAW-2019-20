@@ -4,8 +4,11 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
+var fs = require('fs');
 
 var passport = require('passport');
+
+var filePath = require('./utils/filePath')
 
 mongoose.connect('mongodb://127.0.0.1:27017/uminho-isn', {useNewUrlParser: true, useUnifiedTopology: true})
   .then(() => console.log('Mongo: ready(' + mongoose.connection.readyState + ')'))
@@ -54,6 +57,21 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(function(req,res,next){
+  let match = req.path.match(/\/ficheiros\/(.+)\/(.+)/)
+  console.log("macth: " + match);
+  if(match){
+    console.log(match[1], match[2])
+    console.log("Path :" + filePath.getFile(match[1], match[2]))
+    fs.readFile(filePath.getFile(match[1], match[2]), (err, data) =>{
+      if(!err)
+        res.send(data)
+      else next()
+    })
+  } else {
+    next()
+  }
+})
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/users', usersRouter);

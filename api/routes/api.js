@@ -5,31 +5,23 @@ var Posts = require('../controllers/posts')
 var Users = require('../controllers/users')
 var router = express.Router();
 const fs = require('fs')
-
+var mkdirp = require('mkdirp');
 
 var passport = require('passport');
-
 
 var multer = require('multer')
 var upload = multer({dest: 'uploads/'})
 
+var filePath = require('../utils/filePath')
+
 /* POST a post */
 router.post('/post', upload.array('files'), function(req, res, next) {
-    console.log('A introduzir um post')
     let newPost = req.body
     if(newPost.files == undefined)
         newPost.files = []
     newPost.date = new Date().toISOString()
 
-    for(var i = 0; i < req.files.length; i++){
-        let oldPath = __dirname + '/../' + req.files[i].path
-        let newPath = __dirname + '/../public/ficheiros/' + req.files[i].originalname
-        console.log("oldPath:" + oldPath + "\newPath: " + newPath)
-        fs.rename(oldPath, newPath, function (err){
-            if (err) {
-                throw err
-            }
-        })
+    for(let i = 0; i < req.files.length; i++){
         let novoFicheiro = {
             name: req.files[i].originalname,
             mimetype: req.files[i].mimetype,
@@ -37,13 +29,32 @@ router.post('/post', upload.array('files'), function(req, res, next) {
         }
         newPost.files.push(novoFicheiro)
     }
-    
     Posts.insert(newPost)
-        .then(dados => {console.log("Adding post " + dados);
-                        res.jsonp(dados)
-                    })
+        .then(dados => {
+            for(let i = 0; i < dados.files.length;  i++){
+                let oldPath = __dirname + '/../' + req.files[i].path
+                mkdirp(filePath.getFilePath(dados._id, dados.files[i].name), function(err) { 
+                    if(err){
+                        Posts.delete(dados._id)
+                        throw err
+                    } 
+                    else {
+                        fs.rename(oldPath, filePath.getFile(dados._id, dados.files[i].name), function (err){
+                            if (err) {
+                                Posts.delete(dados._id)
+                                throw err
+                            }
+                            console.log("file: " + dados.files[i].name, "; post id: " + dados._id)
+                            console.log("Saved file at: "+  filePath.getFile(dados._id, dados.files[i].name))
+                        })
+                    }
+                });
+            }
+            res.jsonp(dados)
+        })
         .catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})
 });
+
 
 /* GET a post by ID. */
 router.get('/post/:id', function(req, res, next) {
@@ -57,7 +68,6 @@ router.get('/posts', function(req, res, next) {
     Posts.list()
         .then(dados => {
             let result = addTimeSwapToPostList(dados)
-            console.log(result)
             res.jsonp(result)
         })
         .catch(erro => { res.status(500).jsonp(erro) })
@@ -66,14 +76,15 @@ router.get('/posts', function(req, res, next) {
 function addTimeSwapToPostList(lista){
     var nowDate = new Date()
     return lista.map(post => {
+        console.log(post)
         let newPost = JSON.parse(JSON.stringify(post))
         let timeSwap = Math.floor(Math.abs(nowDate - new Date(post.date))/1000/60); 
         console.log("timeSwap " + timeSwap)
         if(timeSwap == 0) newPost.timeSwap = 'agora'
         else if(timeSwap < 60) newPost.timeSwap = timeSwap + ' mins'
-        else if(timeSwap < 3600) newPost.timeSwap = Math.floor(timeSwap/60) + ' horas'
-        else if(timeSwap < 24*3600) newPost.timeSwap = Math.floor(timeSwap/(24*60)) + ' dias'
-        else if(timeSwap < 24*3600*30) newPost.timeSwap = Math.floor(timeSwap/(60*24*30)) + ' meses'
+        else if(timeSwap < 1440) newPost.timeSwap = Math.floor(timeSwap/60) + ' horas'
+        else if(timeSwap < 30*1440) newPost.timeSwap = Math.floor(timeSwap/(30*60)) + ' dias'
+        else if(timeSwap < 24*1440*30) newPost.timeSwap = Math.floor(timeSwap/(60*24*30)) + ' meses'
         else newPost.timeSwap = Math.floor(timeSwap/(365*60*24*30)) + ' anos'
         return newPost
     })
