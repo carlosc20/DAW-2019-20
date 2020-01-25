@@ -44,12 +44,6 @@ router.post('/login', passport.authenticate('local', {
   })
 );
 
-router.get('/profile/:name', checkAuth, function(req, res){
-  axios.get(apiHost + '/users/teste/' + req.params.name)
-    .then(user => res.render('user', {user: user.data}))
-    .catch(erro => res.status(500).render('error', {error: erro}) )
-})
-
 // register
 router.get('/register', function(req, res){
   res.render('register');
@@ -65,6 +59,34 @@ router.post('/register', function(req, res){
   .catch(erro => res.status(500).render('error', {error: erro}) )
 })
 
+//profile
+router.get('/profile/:name', checkAuth, function(req, res){
+  axios.get(apiHost + '/users/teste/' + req.params.name)
+    .then(user => res.render('user', {user: user.data}))
+    .catch(erro => res.status(500).render('error', {error: erro}) )
+})
+
+
+router.get('/subscription/:name/:tag'), checkAuth, function(req, res){
+  console.log(apiHost + '/api/posts/tag/'+ req.params.tag)
+  axios.get(apiHost + '/api/posts/tag/'+ req.params.tag)
+      .then(dados => {console.log(dados.data); res.jsonp(dados.data)})
+      .catch(e => res.render('error', {error: e}))
+}
+
+router.post('/subscription/:name', /*checkAuth,*/ function(req, res){
+  console.log(req.body.text)
+  axios.post(apiHost + '/users/' + req.params.name + '/subscription/' + req.body.text)
+    .then(user => res.redirect('/profile/'+ req.params.name))
+    .catch(erro => res.status(500).render('error', {error: erro}) )
+})
+
+
+router.delete('/subscription/:name/:sub', /*checkAuth,*/ function(req, res){
+  axios.delete(apiHost + '/users/' + req.params.name + '/subscription/' + req.params.sub)
+    .then(user => res.redirect('/profile/'+ req.params.name))
+    .catch(erro => res.status(500).render('error', {error: erro}) )
+})
 
 // publish
 router.get('/publish', checkAuth, function(req, res){
@@ -91,6 +113,7 @@ router.post('/publish', upload.array('files'), /* checkAuth,*/ function(req, res
     .then(dados => res.redirect('/'))
     .catch(erro => res.status(500).render('error', {error: erro}))
 })
+
 
 /*
 router.get("/ficheiros/:name", function(req,res) {
