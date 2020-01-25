@@ -18,12 +18,30 @@ block page
               textarea.form-control(placeholder='Escreva o nome de uma tag...' name="text", rows='1')
               br
               button.btn.btn-primary(type='submit') Post
-          ul.list-group
-            each sub in user.subscriptions
-              li.list-group-item= sub
+          table.table
+            thead
+              tr
+                th(scope="col") Nome
+                th(scope="col") Operação
+            tbody
+              each sub in user.subscriptions
+                tr 
+                  td= sub
+                  td butão de apagar
     .row
       .container(style="margin-top: 50px").text-center.bg-white
         h4 Menções 
-        ul.list-group
-          each sub in user.subscriptions
-            li.list-group-item= sub
+        table.table
+          thead
+            tr
+              th(scope="col") Id
+              th(scope="col") Titulo
+              th(scope="col") Autor
+              th(scope="col") Data
+          tbody
+            each mention in user.mentions
+              tr
+                td= mention._id
+                td= mention.title
+                td= mention.poster
+                td= mention.date
