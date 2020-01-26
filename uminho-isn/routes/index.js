@@ -70,20 +70,12 @@ router.post('/register', function(req, res){
   .catch(erro => res.status(500).render('error', {error: erro}) )
 })
 
-//profile
+
 router.get('/profile/:name', checkAuth, function(req, res){
   axios.get(apiHost + '/users/teste/' + req.params.name)
     .then(user => res.render('user', {user: user.data}))
     .catch(erro => res.status(500).render('error', {error: erro}) )
 })
-
-
-router.get('/subscription/:name/:tag'), /*checkAuth,*/ function(req, res){
-  console.log(apiHost + '/api/posts/tag/'+ req.params.tag)
-  axios.get(apiHost + '/api/posts/tag/'+ req.params.tag)
-      .then(dados => {console.log(dados.data); res.jsonp(dados.data)})
-      .catch(e => res.render('error', {error: e}))
-}
 
 router.post('/subscription/:name', /*checkAuth,*/ function(req, res){
   console.log(req.body.text)
@@ -93,9 +85,9 @@ router.post('/subscription/:name', /*checkAuth,*/ function(req, res){
 })
 
 
-router.delete('/subscription/:name/:sub', /*checkAuth,*/ function(req, res){
+router.delete('/subscription/:name/tag/:sub', /*checkAuth,*/ function(req, res){
   axios.delete(apiHost + '/users/' + req.params.name + '/subscription/' + req.params.sub)
-    .then(user => res.redirect('/profile/'+ req.params.name))
+    .then(user => res.jsonp(user.email))
     .catch(erro => res.status(500).render('error', {error: erro}) )
 })
 

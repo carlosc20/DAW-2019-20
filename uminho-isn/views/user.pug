@@ -4,39 +4,51 @@ block page
   .album.py-5.bg-light
     .row
       .col(style='margin-left: 20px')
-        .container(style="padding-top: 10px;").text-center.bg-white
+        .container(style="padding-top: 50px;").text-center.bg-white
           img(src="http://placehold.it/200x200" alt="http://placehold.it/200x200")
           .container
             .container.user-text
               p= user.email
-            .container(style='padding-top: 10px')
+            .container(style='padding-top: 10px; padding-bottom: 50px')
               a(href='/edit' role="button").btn.btn-primary Editar
       .col(style='margin-right: 20px')
         .container(style="padding-top: 10px;").text-center.bg-white
           h4 Subscrições atuais
           form(action=('/subscription/' + user.email) method='POST')
-              textarea.form-control(placeholder='Escreva o nome de uma tag...' name="text", rows='1')
+              textarea.form-control(placeholder='Escreva o nome de uma tag...' name="text", rows='1' required)
               br
               button.btn.btn-primary(type='submit') Subscrever
           hr
-          ul.list-group
-            each sub in user.subscriptions
-              li.list-group-item
-                a(href='/subscription/' + user.email + '/' + sub  role="button")= sub
+          table.table
+            thead
+              tr
+                th(scope="col" style="width: 80%") Id
+                th(scope="col") 
+            tbody
+              each sub in user.subscriptions
+                tr
+                  td
+                    a(href='/?tag=' + sub role="button")= sub
+                  td 
+                    button.btn.btn-sm.i.fas.fa-window-close(onclick="apagarSub('" + sub +"','" + user.email + "')")
+                
     .row
       .container(style="margin-top: 50px").text-center.bg-white
         h4 Menções 
-        table.table
-          thead
-            tr
-              th(scope="col") Id
-              th(scope="col") Titulo
-              th(scope="col") Autor
-              th(scope="col") Data
-          tbody
-            each mention in user.mentions
+        if(user.mentions.length > 0)
+          table.table
+            thead
               tr
-                td= mention._id
-                td= mention.title
-                td= mention.poster
-                td= mention.date
+                th(scope="col") Id
+                th(scope="col") Titulo
+                th(scope="col") Autor
+                th(scope="col") Data
+            tbody
+              each mention in user.mentions
+                tr
+                  td= mention._id
+                  td= mention.title
+                  td= mention.poster
+                  td= mention.date
+        else
+          h5 Ainda não foste mencionado
