@@ -47,7 +47,7 @@ router.post('/login', passport.authenticate('local', {
 
 router.get('/profile/:name', checkAuth, function(req, res){
   axios.get(urltoken.getUrlWithToken(apiHost + '/users/name/' + req.params.name))
-    .then(user => {console.log(user.data);res.render('user', {user: user.data})})
+    .then(user => {console.log("USER: " +req.user); console.log("Profile:" + user.data);res.render('user', {user: req.user, userProfile: user.data})})
     .catch(erro => res.status(500).render('error', {error: erro}) )
 })
 
@@ -153,8 +153,6 @@ function checkAuth(req,res,next) {
     res.redirect("/login");
   }
 }
-
-
 
 router.get('/logout', function(req,res){
   req.logout()
