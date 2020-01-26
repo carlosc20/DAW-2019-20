@@ -17,13 +17,18 @@ block content
 							.input-group.form-group
 								.input-group-prepend
 									span.input-group-text
-										i.fas.fa-key
-								input.form-control(type='password' placeholder='password' name='password' id='password')
+										i.fas.fa-user
+								input.form-control(type='text' placeholder='username' name='name' id='name' pattern=".+" data-error="Bruh, that email address is invalid" required)
 							.input-group.form-group
 								.input-group-prepend
 									span.input-group-text
 										i.fas.fa-key
-								input.form-control(type='password' placeholder='repeat password' id='repeatedPassword' data-match="#password" data-match-error="Whoops, these don't match")
+								input.form-control(type='password' placeholder='password' name='password' id='password' required)
+							.input-group.form-group
+								.input-group-prepend
+									span.input-group-text
+										i.fas.fa-key
+								input.form-control(type='password' placeholder='repeat password' id='repeatedPassword' data-match="#password" data-match-error="Whoops, these don't match" required)
 							.form-group
 								input.btn.float-right.login_btn(type='submit' value='Regist')
 					.card-footer

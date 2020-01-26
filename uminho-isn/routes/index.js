@@ -9,17 +9,20 @@ const FormData = require('form-data');
 const multer = require('multer')
 const upload = multer()
 var bcrypt = require('bcryptjs')
+var urltoken = require('../utils/token');
 
 /* GET home page. */
 router.get('/', checkAuth, function(req, res) {
-  var tag = req.query.tag;
+  let tag = req.query.tag
+  let user = req.user
+  console.dir(user)
   if(tag){
-    axios.get(apiHost + '/api/posts/tag/'+ tag)
-      .then(dados => {console.log(dados.data); res.render('index', {lista: dados.data})})
+    axios.get((apiHost + '/api/posts/tag/'+ tag))
+      .then(dados => {console.log(dados.data); res.render('index', {lista: dados.data, user: user})})
       .catch(e => res.render('error', {error: e}))
   }else{
     axios.get(apiHost + '/api/posts')
-      .then(dados => {console.log(dados.data); res.render('index', {lista: dados.data})})
+      .then(dados => {console.log(dados.data); res.render('index', {lista: dados.data, user: user})})
       .catch(e => res.render('error', {error: e}))
   }
  
@@ -44,6 +47,13 @@ router.post('/login', passport.authenticate('local', {
   })
 );
 
+router.get('/profile/:email', checkAuth, function(req, res){
+  console.log("I AM HERE")
+  axios.get(urltoken.getUrlWithToken(apiHost + '/users/' + req.params.email))
+    .then(user => {console.log(user.data);res.render('user', {user: user.data})})
+    .catch(erro => res.status(500).render('error', {error: erro}) )
+})
+
 // register
 router.get('/register', function(req, res){
   res.render('register');
@@ -53,20 +63,12 @@ router.post('/register', function(req, res){
   let hash = bcrypt.hashSync(req.body.password, 10);
   axios.post(apiHost + '/users', {
     email: req.body.email,
-    password: hash
+    password: hash,
+    name: req.body.name
   })
   .then(_ => res.redirect('/login') )
   .catch(erro => res.status(500).render('error', {error: erro}) )
 })
-
-
-//profile
-router.get('/profile/:name/tag/:tag'), checkAuth, function(req, res){
-  console.log(apiHost + '/api/posts/tag/'+ req.params.tag)
-  axios.get(apiHost + '/api/posts/tag/'+ req.params.tag)
-      .then(dados => {console.log(dados.data); res.jsonp(dados.data)})
-      .catch(e => res.render('error', {error: e}))
-}
 
 
 router.get('/profile/:name', checkAuth, function(req, res){
@@ -91,7 +93,8 @@ router.delete('/subscription/:name/tag/:sub', /*checkAuth,*/ function(req, res){
 
 // publish
 router.get('/publish', checkAuth, function(req, res){
-  res.render('publish')
+  let user = req.user
+  res.render('publish', {user: user})
 })
 
 router.post('/publish', upload.array('files'), /* checkAuth,*/ function(req, res){

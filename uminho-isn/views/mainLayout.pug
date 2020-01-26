@@ -7,9 +7,9 @@ block content
 		a.navbar-brand(href="/")
 			i.fas.fa-home
 			|  Home
-		a.navbar-brand(href='/profile') 
+		a.navbar-brand(href='/profile/' + user.email) 
 			i.fas.fa-user
-			|  Perfil
+			|  #{user.name}
 		a.navbar-brand(href='/publish') 
 			i.fas.fa-pencil-alt
 			|  Publicar
