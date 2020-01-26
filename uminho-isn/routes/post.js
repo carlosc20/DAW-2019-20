@@ -11,7 +11,7 @@ var upload = multer({dest: 'uploads/'})
 
 router.get('/:id', function(req, res){
     axios.get(apiHost + '/api/post/' + req.params.id)
-        .then(dados => {console.log(dados.data);res.render('post', {post: dados.data, user: req.user})})
+        .then(dados => {res.render('post', {post: dados.data, user: req.user})})
         .catch(erro => res.render('error',  {error: erro}))
 })
 

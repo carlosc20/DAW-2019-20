@@ -49,3 +49,15 @@ module.exports.addComment = (idPost, comment) => {
     console.dir(comment)
     return Post.updateOne({_id: ObjectId(idPost)}, {$push: { comments: comment }}).exec()
 }
+
+module.exports.upvoteComment = (idComment, email) => {
+    return Post
+            .updateOne({'comments._id': Object(idComment)}, {$pull: {'comments.$.downVotes' : email}, $push : {'comments.$.upVotes': email} })
+            .exec()
+}
+
+module.exports.downvoteComment = (idComment, email) => {
+    return Post
+            .updateOne({'comments._id': Object(idComment)}, {$pull: {'comments.$.upVotes' : email} ,$push : {'comments.$.downVotes': email} })
+            .exec()
+}

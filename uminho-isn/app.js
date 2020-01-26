@@ -6,7 +6,6 @@ var logger = require('morgan');
 var apiHost = require('./config/env').apiHost;
 var request = require('request');
 
-
 var tokenGen = require('./utils/token')
 
 // Módulos de suporte à autenticação
@@ -28,7 +27,7 @@ var jwt = require('jsonwebtoken')
 // Configuração da estratégia local
 passport.use(new LocalStrategy(
   {usernameField: 'email'}, (email, password, done) => {
-    let token = genToken()
+    let token = tokenGen.genToken()
     //token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiZW1haWwiOiJjZXNhckBhdGxldGEuY29tIiwiaWF0IjoxNTE2MjM5MDIyfQ.WMcEeBB5tSapvHMQWUxok87mK2arePQdLyzNi5gDg7w';
     axios.get(apiHost + '/users/' + email + '?token=' + token)
       .then(dados => {
@@ -94,12 +93,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 //Middleware que devolve os pedidos dos ficheiros
-app.use((req, res, next) =>{
+app.use((req, res, next) => {
   if(req.path.startsWith('/ficheiros')){
-    request.get(apiHost + req.path).pipe(res);
+    request.get(apiHost + req.path).pipe(res)
   } else if(req.path.startsWith('/download')){
     request.get(apiHost + '/api' + req.path).pipe(res)
-  }else 
+  } else 
     next();
 })  
 app.use(express.static(path.join(__dirname, 'public')));

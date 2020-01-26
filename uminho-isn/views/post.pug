@@ -15,19 +15,21 @@ block page
       each file in post.files
         .col-sm-3
           .card.mb-4.box-shadow
-            img.card-img-top(style='height: 225px; width: 100%; display: block;' src='/ficheiros/' + post._id + '/' + file.name onclick='showFicheiro(' + JSON.stringify(file) + ')')
+            img.card-img-top(style='height: 225px; width: 100%; display: block;' src='/ficheiros/' + post._id + '/' + file.name onclick='showFicheiro(' + JSON.stringify(file) + ', "' + post._id + '")')
             .card-body
               h5.card-title= file.name
-              a.btn.btn-sm.btn-outline-secondary(href="/download/" + file.name)
+              a.btn.btn-sm.btn-outline-secondary(href="/download/"+ post._id + '/' + file.name)
                 i.fas.fa-file-download
+
+    //a.btn.btn-sm.btn-outline-secondary.container(href="/download/"+ post._id)
+      | Download todos
+      i.fas.fa-file-download
     hr
     .row.bootstrap.snippets
       .comment-wrapper
         .panel.panel-info
-          .panel-heading
-            | Comment panel
           .panel-body
-            form(action='/publish' method='POST')
+            form(action='/comment/' + post._id + '/' + user.email method='POST')
               textarea.form-control(placeholder='Escreva um comentário...' name="text", rows='3')
               br
               button.btn.btn-info.pull-right(type='submit') Post
@@ -40,13 +42,19 @@ block page
                     img.img-circle(src='https://bootdey.com/img/Content/user_1.jpg', alt='')
                   .media-body
                     span.text-muted.pull-right
-                      if comment.date == 0
-                        small.text-muted now
-                      else
-                        small.text-muted #{comment.date} min ago
+                      small.text-muted #{comment.timeSwap}
                     strong.text-success 
                       a(href='/profile/' + comment.owner) 
                       | @#{comment.owner}
+                    span.thumbs
+                      if comment.upVotes.includes(user.email)
+                        i.btn.borderless.bg-success.fas.fa-thumbs-up
+                      else
+                        button.btn.borderless.bg-info.fas.fa-thumbs-up(onclick='upVoteComment("'+ post._id + '", "' + comment._id + '", "' + user.email + '")')
+                      if comment.downVotes.includes(user.email)
+                        i.btn.borderless.bg-warning.fas.fa-thumbs-down
+                      else
+                        button.btn.borderless.bg-info.fas.fa-thumbs-down(onclick='downVoteComment("'+ post._id + '", "' + comment._id + '", "' + user.email + '")')
                     p= comment.text
 
 
