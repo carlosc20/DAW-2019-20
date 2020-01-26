@@ -15,6 +15,8 @@ mongoose.connect('mongodb://127.0.0.1:27017/uminho-isn', {useNewUrlParser: true,
   .then(() => console.log('Mongo: ready(' + mongoose.connection.readyState + ')'))
   .catch(() => console.log('Mongo: connection error(' + mongoose.connection.readyState + ')'));
 
+mongoose.set('useFindAndModify', false)
+
 var usersRouter = require('./routes/users');
 var apiRouter = require('./routes/api');
 

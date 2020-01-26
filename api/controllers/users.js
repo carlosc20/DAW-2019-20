@@ -45,3 +45,11 @@ module.exports.insertMention = (name, postId) => {
                 {$push: {mentions: postId}})
                 .exec()
 }
+
+module.exports.insertImage = (name, newImage) => {
+    console.log(name, newImage)
+    return User.findOneAndUpdate({name: name},
+                {image : newImage})
+                .exec()
+}
+

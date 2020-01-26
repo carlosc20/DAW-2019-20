@@ -28,7 +28,7 @@ var jwt = require('jsonwebtoken')
 // Configuração da estratégia local
 passport.use(new LocalStrategy(
   {usernameField: 'email'}, (email, password, done) => {
-    let token = genToken()
+    let token = tokenGen.genToken()
     //token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiZW1haWwiOiJjZXNhckBhdGxldGEuY29tIiwiaWF0IjoxNTE2MjM5MDIyfQ.WMcEeBB5tSapvHMQWUxok87mK2arePQdLyzNi5gDg7w';
     axios.get(apiHost + '/users/' + email + '?token=' + token)
       .then(dados => {
@@ -95,7 +95,7 @@ app.use(cookieParser());
 
 //Middleware que devolve os pedidos dos ficheiros
 app.use((req, res, next) =>{
-  if(req.path.startsWith('/ficheiros')){
+  if(req.path.startsWith('/ficheiros') || req.path.startsWith('/usersImg')){
     request.get(apiHost + req.path).pipe(res);
   } else if(req.path.startsWith('/download')){
     request.get(apiHost + '/api' + req.path).pipe(res)

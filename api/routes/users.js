@@ -2,6 +2,11 @@ var express = require('express');
 var router = express.Router();
 var Posts = require('../controllers/posts');
 var Users = require('../controllers/users');
+const fs = require('fs')
+var mkdirp = require('mkdirp');
+
+var multer = require('multer')
+var upload = multer({dest: 'uploads/'})
 
 var passport = require('passport');
 
@@ -13,8 +18,8 @@ router.get('/', function(req, res) {
 });
 
 //para sair
-router.get('/teste/:email',function(req, res) {
-  Users.get(req.params.email)
+router.get('/teste/:name',function(req, res) {
+  Users.getByName(req.params.name)
     .then(data => res.jsonp(data))
     .catch(e => res.status(500).jsonp(e))
 });
@@ -47,6 +52,12 @@ router.get('/:email/mentions', function(req, res){
 })
 
 
+router.get('/name/:name', passport.authenticate('jwt', {session: false}), function(req, res) {
+  Users.getByName(req.params.name)
+    .then(data => res.jsonp(data))
+    .catch(e => res.status(500).jsonp(e))
+});
+
 router.get('/:email', passport.authenticate('jwt', {session: false}), function(req, res) {
   Users.get(req.params.email)
     .then(data => res.jsonp(data))
@@ -66,6 +77,43 @@ router.post('/:email/subscription/:sub', function(req, res){
     .then(data => res.json(data))
     .catch(e => res.status(500).json(e))
 });
+
+
+router.post('/userImg/:name', upload.single('img'), function(req,res){
+  console.log(req.file.path)
+  let userName = req.params.name 
+  let oldPath = __dirname + '/../' + req.file.path
+  let newDir = __dirname + '/../public/usersImg/' + userName
+  let newPath = newDir + '/' + req.file.originalname
+
+  let novaImg = {
+    name: req.file.originalname,
+    mimetype: req.file.mimetype,
+    size: req.file.size
+  }
+  
+  Users.insertImage(userName, novaImg)
+    .then(r => {
+      console.log(r)
+      mkdirp(newDir, function(err) {
+        if(err){
+          console.log("cant make dir")
+          throw err
+        }
+        else{
+          fs.rename(oldPath, newPath, function (err){
+            if (err){ 
+              console.log("cant rename")
+              throw err}
+            console.log("img: " + novaImg.name, "; user name: " + userName)
+            console.log("Saved img at: "+  newPath)
+          })
+        }
+    })
+    res.jsonp(r)
+  })
+    .catch(erro => {console.log(erro); res.status(500).jsonp(erro)})
+})
 
 router.delete('/:email/subscription/:sub', function(req, res){
   Users.unsubscribe(req.params.email, req.params.sub)
