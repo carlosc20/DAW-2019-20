@@ -6,6 +6,7 @@ var Users = require('../controllers/users')
 var router = express.Router();
 const fs = require('fs')
 var mkdirp = require('mkdirp');
+var zip = require('express-zip');
 
 var passport = require('passport');
 
@@ -59,7 +60,11 @@ router.post('/post', upload.array('files'), function(req, res, next) {
 /* GET a post by ID. */
 router.get('/post/:id', function(req, res, next) {
     Posts.getById(req.params.id)
-        .then(dados => { res.jsonp(dados) })
+        .then(dados => { 
+            let post = JSON.parse(JSON.stringify(dados));
+            console.log(post)
+            post.comments = addTimeSwapToList(post.comments)
+            res.jsonp(post) })
         .catch(erro => { res.status(500).jsonp(erro) })
   });
 
@@ -67,19 +72,19 @@ router.get('/post/:id', function(req, res, next) {
 router.get('/posts', function(req, res, next) {
     Posts.list()
         .then(dados => {
-            let result = addTimeSwapToPostList(dados)
+            let result = addTimeSwapToList(dados)
             res.jsonp(result)
         })
         .catch(erro => { res.status(500).jsonp(erro) })
 });
 
-function addTimeSwapToPostList(lista){
+function addTimeSwapToList(lista){
     var nowDate = new Date()
     return lista.map(post => {
         console.log(post)
         let newPost = JSON.parse(JSON.stringify(post))
+        console.log(newPost)
         let timeSwap = Math.floor(Math.abs(nowDate - new Date(post.date))/1000/60); 
-        console.log("timeSwap " + timeSwap)
         if(timeSwap == 0) newPost.timeSwap = 'agora'
         else if(timeSwap < 60) newPost.timeSwap = timeSwap + ' mins'
         else if(timeSwap < 1440) newPost.timeSwap = Math.floor(timeSwap/60) + ' horas'
@@ -94,7 +99,7 @@ function addTimeSwapToPostList(lista){
 router.get('/posts/tag/:tag', function(req, res, next) {
     Posts.getByTag(req.params.tag)
         .then(dados => { 
-            let result = addTimeSwapToPostList(dados)
+            let result = addTimeSwapToList(dados)
             res.jsonp(result)
         })
         .catch(erro => { res.status(500).jsonp(erro) })
@@ -104,7 +109,7 @@ router.get('/posts/tag/:tag', function(req, res, next) {
 router.get('/posts/sorted', function(req,res){
     Posts.sortedList()
         .then(dados => { 
-            let result = addTimeSwapToPostList(dados)
+            let result = addTimeSwapToList(dados)
             res.jsonp(result) })
         .catch(erro => { res.status(500).jsonp(erro) })
 })
@@ -113,14 +118,29 @@ router.get('/posts/sorted', function(req,res){
 router.get('/posts/poster/:poster', function(req, res, next){
     Posts.getByPoster(req.params.poster)
         .then(dados => { 
-            let result = addTimeSwapToPostList(dados)
+            let result = addTimeSwapToList(dados)
             res.jsonp(result) })
         .catch(erro => { res.status(500).jsonp(erro) })	
 })
 
-router.get('/download/:fnome', function(req, res){
-    console.log( __dirname + '/../public/ficheiros/' + req.params.fnome)
-    res.download( __dirname + '/../public/ficheiros/' + req.params.fnome)
+router.get('/download/:idPost/:fnome', function(req, res){
+    console.log(filePath.getFile(req.params.idPost, req.params.fnome))
+    res.download(filePath.getFile(req.params.idPost, req.params.fnome))
+})
+
+
+router.get('/download/:idPost', function(req, res){
+    let list = new Array
+    Posts.getById(req.params.idPost)
+        .then(post => {
+            for(let i = 0; i < post.files.length; i++){
+                console.log(post.files[i].name)
+                list.push({path: filePath.getFile(req.params.idPost, post.files[i].name), name:  post.files[i].name})
+            }
+            console.log("list " + list)
+            res.zip(list);
+        })
+        .catch(erro => { res.status(500).jsonp(erro) })	
 })
 
 router.post('/comment/:idPost', function(req,res){
@@ -128,14 +148,30 @@ router.post('/comment/:idPost', function(req,res){
     //console.dir(req.body)
     req.body.date = new Date().toISOString()
     let comment = req.body
+    comment.upVotes = []
+    comment.downVotes = []
+    console.log(req.body)
     let regex = /@[^\ ]+/g;
     //let mentions = dados.comments.map(match(regex).map(substr(1)));
     //mentions.map(Users.insertMention)
     let mentions = (comment.text.match(regex))
-    mentions.forEach(m => Users.insertMention(m.substr(1), req.params.idPost))
+    if(mentions) 
+        mentions.forEach(m => Users.insertMention(m.substr(1), req.params.idPost))
     Posts.addComment(req.params.idPost, req.body)
         .then(dados => { res.jsonp(dados) })
         .catch(erro => { res.status(500).jsonp(erro) })
+})
+
+router.post('/comment/upvote/:idComment/:email', function(req,res){
+    Posts.upvoteComment(req.params.idComment, req.params.email)
+        .then(dados => { res.jsonp({added: true}) })
+        .catch(erro => { console.log(erro);res.status(500).jsonp({added: false}) })
+})
+
+router.post('/comment/downvote/:idComment/:email', function(req,res){
+    Posts.downvoteComment(req.params.idComment, req.params.email)
+        .then(dados => { res.jsonp({added: true}) })
+        .catch(erro => { console.log(erro); res.status(500).jsonp({added: false}) })
 })
 
 module.exports = router;

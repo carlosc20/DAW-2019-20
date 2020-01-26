@@ -15,14 +15,14 @@ var urltoken = require('../utils/token');
 router.get('/', checkAuth, function(req, res) {
   let tag = req.query.tag
   let user = req.user
-  console.dir(user)
+  
   if(tag){
     axios.get((apiHost + '/api/posts/tag/'+ tag))
-      .then(dados => {console.log(dados.data); res.render('index', {lista: dados.data, user: user})})
+      .then(dados => { res.render('index', {lista: dados.data, user: user})})
       .catch(e => res.render('error', {error: e}))
   }else{
     axios.get(apiHost + '/api/posts')
-      .then(dados => {console.log(dados.data); res.render('index', {lista: dados.data, user: user})})
+      .then(dados => { res.render('index', {lista: dados.data, user: user})})
       .catch(e => res.render('error', {error: e}))
   }
 });
@@ -30,7 +30,6 @@ router.get('/', checkAuth, function(req, res) {
 
 // login
 router.post('/', function(req, res){
-  console.log(req)
   res.redirect('/login')
 });
 
@@ -47,7 +46,6 @@ router.post('/login', passport.authenticate('local', {
 );
 
 router.get('/profile/:name', checkAuth, function(req, res){
-  console.log("I AM HERE")
   axios.get(urltoken.getUrlWithToken(apiHost + '/users/name/' + req.params.name))
     .then(user => {console.log(user.data);res.render('user', {user: user.data})})
     .catch(erro => res.status(500).render('error', {error: erro}) )
@@ -108,16 +106,11 @@ router.get('/publish', checkAuth, function(req, res){
 
 router.post('/publish', upload.array('files'), /* checkAuth,*/ function(req, res){
   let form = new FormData()
-  console.log(req.files)
-  console.log(req.body.title)
-  console.log(req.body.description)
   form.append('title', req.body.title)
   form.append('description', req.body.description)
   req.files.forEach(file => {
     form.append('files' , file.buffer, file.originalname)
-    console.log(file.originalname)
   })
-  console.dir(form)
   axios.post(apiHost + '/api/post', form, {
     headers: {
       'Content-Type': 'multipart/form-data; boundary='+form._boundary
@@ -127,22 +120,41 @@ router.post('/publish', upload.array('files'), /* checkAuth,*/ function(req, res
     .catch(erro => res.status(500).render('error', {error: erro}))
 })
 
-
-/*
-router.get("/ficheiros/:name", function(req,res) {
-  axios.get(apiHost + "/ficheiros/" + req.params.name)
-    .then(dados => {console.dir(dados.data);res.send(dados.data)})
+router.post('/comment/:idPost/:email', function(req,res){
+  req.body.owner = req.params.email
+  axios.post(apiHost + '/api/comment/' + req.params.idPost, req.body)
+    .then(dados => res.redirect('/post/' + req.params.idPost))
     .catch(erro => res.status(500).render('error', {error: erro}))
 })
-*/
+
+/**
+ * Respondes to axios in client side
+ */
+router.post('/comment/upvote/:idComment/:email', function(req, res){
+  axios.post(apiHost + '/api/comment/upvote/' + req.params.idComment +'/' + req.params.email)
+    .then(dados => { res.jsonp(dados.data)})
+    .catch(erro => res.status(500).render('error', {error: erro}))
+})
+
+/**
+ * Respondes to axios in client side
+ */
+router.post('/comment/downvote/:idComment/:email', function(req, res){
+  axios.post(apiHost + '/api/comment/downvote/' + req.params.idComment +'/' + req.params.email)
+    .then(dados => { res.jsonp(dados.data)})
+    .catch(erro => res.status(500).render('error', {error: erro}))
+})
+
+
 function checkAuth(req,res,next) {
-  console.log("Autenticado:", req.isAuthenticated())
   if(req.isAuthenticated()){
     next();
   } else {
     res.redirect("/login");
   }
 }
+
+
 
 router.get('/logout', function(req,res){
   req.logout()

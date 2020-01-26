@@ -5,7 +5,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
 var fs = require('fs');
-var PDFImage = require("pdf-image");
+var PDFImage = require("pdf-image").PDFImage;
+const PDF2Pic = require("pdf2pic");
 
 var passport = require('passport');
 
@@ -62,15 +63,16 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(function(req,res,next){
   let match = req.path.match(/\/ficheiros\/(.+)\/(.+)/)
-  console.log("macth: " + match);
   if(match){
-    console.log(match[1], match[2])
-    console.log("Path :" + filePath.getFile(match[1], match[2]))
-    fs.readFile(filePath.getFile(match[1], match[2]), (err, data) =>{
-      if(!err)
-        res.send(data)
-      else next()
-    })
+    let mimeType = match[2].match(/(.*)[.](.*)/)
+    console.log(mimeType)
+    let file = filePath.getFile(match[1], match[2])
+      fs.readFile(file, (err, data) =>{
+        if(!err)
+          res.send(data)
+        else next()
+      })
+    
   } else {
     next()
   }

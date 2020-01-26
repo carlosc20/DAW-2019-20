@@ -10,8 +10,8 @@ var commentSchema = new mongoose.Schema({
     text : String,
     owner : String,
     date : String,
-    upVotes : Number,
-    downVotes : Number
+    upVotes : [String],
+    downVotes : [String]
 })
 
 var Post = new mongoose.Schema({

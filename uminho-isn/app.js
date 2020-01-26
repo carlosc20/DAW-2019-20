@@ -6,7 +6,6 @@ var logger = require('morgan');
 var apiHost = require('./config/env').apiHost;
 var request = require('request');
 
-
 var tokenGen = require('./utils/token')
 
 // Módulos de suporte à autenticação
@@ -99,7 +98,7 @@ app.use((req, res, next) =>{
     request.get(apiHost + req.path).pipe(res);
   } else if(req.path.startsWith('/download')){
     request.get(apiHost + '/api' + req.path).pipe(res)
-  }else 
+  } else 
     next();
 })  
 app.use(express.static(path.join(__dirname, 'public')));

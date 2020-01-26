@@ -1,7 +1,8 @@
-function showFicheiro(f){
+function showFicheiro(f, postId){
+    console.log("HELLO")
     var div = $('<div id="modal-container" class="w3-card-4"></div>')
     if(f.mimetype.match(/image\/.+/))
-        var ficheiro = $('<img src="/ficheiros/' + f.name + '" width= "40%" id="modal-img"/>')
+        var ficheiro = $('<img src="/ficheiros/' + postId + '/' + f.name + '" width= "40%" id="modal-img"/>')
     else 
         var ficheiro = $('<p>' + JSON.stringify(f) + '<p>')
     var download = $('<div><a href="/download/' + f.name + '">Download</a></div>')
