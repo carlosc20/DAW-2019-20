@@ -66,7 +66,7 @@ router.post('/register', function(req, res){
     name: req.body.name
   })
   .then(_ => res.redirect('/login') )
-  .catch(erro => res.status(500).render('error', {error: erro}) )
+  .catch(erro => {console.log(erro.response.data); res.status(500).render('error', {error: erro})})
 })
 
 router.post('/subscription/:name', /*checkAuth,*/ function(req, res){

@@ -64,12 +64,27 @@ router.get('/:email', passport.authenticate('jwt', {session: false}), function(r
     .catch(e => res.status(500).jsonp(e))
 });
 
-
 router.post('/', function(req, res) {
   console.log(req.body)
-  Users.insert(req.body)
-    .then(data => res.jsonp(data))
-    .catch(e => res.status(500).jsonp(e))
+  Users.get(req.body.email)
+    .then(user => {
+      console.log(user)
+      if(user != null)
+        res.status(400).jsonp({erro: "An user with that email already exists"})
+      else{
+        Users.getByName(req.body.name)
+        .then(user => {
+          console.log(user)
+          if(user != null)
+            res.status(400).jsonp({erro:"An user with that name already exists"})
+          else {
+            Users.insert(req.body)
+            .then(data => res.jsonp(data))
+            .catch(e => {console.log("1"); res.status(500).jsonp(e)})
+          }
+        }).catch(e => {console.log("2");res.status(500).jsonp(e)})
+      }
+    }).catch(e => {console.log("3"); res.status(500).jsonp(e)})
 });
 
 router.post('/:name/subscription/:sub', function(req, res){
