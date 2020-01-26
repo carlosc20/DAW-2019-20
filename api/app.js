@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
 var fs = require('fs');
+var PDFImage = require("pdf-image");
 
 var passport = require('passport');
 
