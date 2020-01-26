@@ -72,8 +72,8 @@ router.post('/', function(req, res) {
     .catch(e => res.status(500).jsonp(e))
 });
 
-router.post('/:email/subscription/:sub', function(req, res){
-  Users.subscribe(req.params.email, req.params.sub)
+router.post('/:name/subscription/:sub', function(req, res){
+  Users.subscribe(req.params.name, req.params.sub)
     .then(data => res.json(data))
     .catch(e => res.status(500).json(e))
 });
@@ -115,8 +115,8 @@ router.post('/userImg/:name', upload.single('img'), function(req,res){
     .catch(erro => {console.log(erro); res.status(500).jsonp(erro)})
 })
 
-router.delete('/:email/subscription/:sub', function(req, res){
-  Users.unsubscribe(req.params.email, req.params.sub)
+router.delete('/:name/subscription/:sub', function(req, res){
+  Users.unsubscribe(req.params.name, req.params.sub)
     .then(data => res.json(data))
     .catch(e => res.status(500).json(e))
 });

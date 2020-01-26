@@ -14,14 +14,13 @@ block page
               h6= user.name
               p= user.email
             .container(style='padding-top: 10px; padding-bottom: 50px')
-            if(user.image == undefined)
               form(action=('/profile/' + user.name + '/image') method='POST' enctype="multipart/form-data")
                 input.w3-input.w3-cell(type="file" name="img")
                 button.btn.btn-primary(type='submit') Publicar imagem
       .col(style='margin-right: 20px')
         .container(style="padding-top: 10px;").text-center.bg-white
           h4 Subscrições atuais
-          form(action=('/subscription/' + user.email) method='POST')
+          form(action=('/subscription/' + user.name) method='POST')
               textarea.form-control(placeholder='Escreva o nome de uma tag para adicionar...' name="text", rows='1' required)
               br
               button.btn.btn-primary(type='submit') Subscrever
@@ -38,7 +37,7 @@ block page
                     td
                       a(href='/?tag=' + sub role="button")= sub
                     td 
-                      button.btn.btn-sm.i.fas.fa-window-close(onclick="apagarSub('" + sub +"','" + user.email + "')")
+                      button.btn.btn-sm.i.fas.fa-window-close(onclick="apagarSub('" + sub +"','" + user.name + "')")
           else
             .container(style="padding-bottom: 10px; padding-top: 20px;" )
               h5 De momento não tens subscrições
