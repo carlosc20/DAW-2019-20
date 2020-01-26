@@ -6,6 +6,7 @@ var Users = require('../controllers/users')
 var router = express.Router();
 const fs = require('fs')
 var mkdirp = require('mkdirp');
+var zip = require('express-zip');
 
 var passport = require('passport');
 
@@ -127,16 +128,20 @@ router.get('/download/:idPost/:fnome', function(req, res){
     res.download(filePath.getFile(req.params.idPost, req.params.fnome))
 })
 
-/*
+
 router.get('/download/:idPost', function(req, res){
+    let list = new Array
     Posts.getById(req.params.idPost)
         .then(post => {
-            for(let i = 0; i < post.files; i++){
-                res.download(filePath.getFile(req.params.idPost, post.files[i].name))
+            for(let i = 0; i < post.files.length; i++){
+                console.log(post.files[i].name)
+                list.push({path: filePath.getFile(req.params.idPost, post.files[i].name), name:  post.files[i].name})
             }
+            console.log("list " + list)
+            res.zip(list);
         })
         .catch(erro => { res.status(500).jsonp(erro) })	
-})*/
+})
 
 router.post('/comment/:idPost', function(req,res){
     //console.log(req.params.idPost)
