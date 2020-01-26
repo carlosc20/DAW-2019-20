@@ -27,14 +27,14 @@ module.exports.insert = (user) => {
     return user.save()
 }
 
-module.exports.subscribe = (email, subscription) => {
-    return User.findOneAndUpdate({email: email},
+module.exports.subscribe = (name, subscription) => {
+    return User.findOneAndUpdate({name: name},
             {$push: {subscriptions: subscription}})
             .exec()
 }
 
-module.exports.unsubscribe = (email, subscription) => {
-    return User.findOneAndUpdate({email: email},
+module.exports.unsubscribe = (name, subscription) => {
+    return User.findOneAndUpdate({name: name},
             {$pull: {subscriptions: subscription}})
             .exec()
 }
@@ -45,3 +45,11 @@ module.exports.insertMention = (name, postId) => {
                 {$push: {mentions: postId}})
                 .exec()
 }
+
+module.exports.insertImage = (name, newImage) => {
+    console.log(name, newImage)
+    return User.findOneAndUpdate({name: name},
+                {image : newImage})
+                .exec()
+}
+

@@ -93,9 +93,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 //Middleware que devolve os pedidos dos ficheiros
-app.use((req, res, next) => {
-  if(req.path.startsWith('/ficheiros')){
-    request.get(apiHost + req.path).pipe(res)
+app.use((req, res, next) =>{
+  if(req.path.startsWith('/ficheiros') || req.path.startsWith('/usersImg')){
+    request.get(apiHost + req.path).pipe(res);
   } else if(req.path.startsWith('/download')){
     request.get(apiHost + '/api' + req.path).pipe(res)
   } else 

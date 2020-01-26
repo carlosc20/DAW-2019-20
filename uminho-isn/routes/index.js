@@ -13,7 +13,6 @@ var urltoken = require('../utils/token');
 
 /* GET home page. */
 router.get('/', checkAuth, function(req, res) {
-  console.log("Hello")
   let tag = req.query.tag
   let user = req.user
   
@@ -46,9 +45,9 @@ router.post('/login', passport.authenticate('local', {
   })
 );
 
-router.get('/profile/:email', checkAuth, function(req, res){
-  axios.get(urltoken.getUrlWithToken(apiHost + '/users/' + req.params.email))
-    .then(user => {res.render('user', {user: user.data})})
+router.get('/profile/:name', checkAuth, function(req, res){
+  axios.get(urltoken.getUrlWithToken(apiHost + '/users/name/' + req.params.name))
+    .then(user => {console.log(user.data);res.render('user', {user: user.data})})
     .catch(erro => res.status(500).render('error', {error: erro}) )
 })
 
@@ -68,19 +67,30 @@ router.post('/register', function(req, res){
   .catch(erro => res.status(500).render('error', {error: erro}) )
 })
 
-
-router.get('/profile/:name', checkAuth, function(req, res){
-  axios.get(apiHost + '/users/teste/' + req.params.name)
-    .then(user => res.render('user', {user: user.data}))
-    .catch(erro => res.status(500).render('error', {error: erro}) )
-})
-
 router.post('/subscription/:name', /*checkAuth,*/ function(req, res){
-  axios.post(apiHost + '/users/' + req.params.name + '/subscription/' + req.body.text)
-    .then(user => res.redirect('/profile/'+ req.params.name))
-    .catch(erro => res.status(500).render('error', {error: erro}) )
+  console.log(req.body.text)
+  let sub = req.body.text
+  if(req.user.subscriptions.includes(sub))
+    res.redirect('/profile/'+ req.params.name)
+  else{
+    axios.post(apiHost + '/users/' + req.params.name + '/subscription/' + sub)
+      .then(user => res.redirect('/profile/'+ req.params.name))
+      .catch(erro => res.status(500).render('error', {error: erro}))
+  }
 })
 
+router.post('/profile/:name/image', upload.single('img'), /*checkAuth,*/ function(req, res){
+  let form = new FormData()
+  let name = req.params.name
+  form.append('img', req.file.buffer, req.file.originalname)
+  axios.post(apiHost + '/users/userImg/' + name, form,{
+    headers: {
+      'Content-Type': 'multipart/form-data; boundary='+form._boundary
+    }
+  })
+    .then(user => res.redirect('/profile/'+ name))
+    .catch(erro => res.status(500).render('error', {error: erro}))
+})
 
 router.delete('/subscription/:name/tag/:sub', /*checkAuth,*/ function(req, res){
   axios.delete(apiHost + '/users/' + req.params.name + '/subscription/' + req.params.sub)
@@ -138,7 +148,7 @@ router.post('/comment/downvote/:idComment/:email', function(req, res){
 
 function checkAuth(req,res,next) {
   if(req.isAuthenticated()){
-    next(req, res);
+    next();
   } else {
     res.redirect("/login");
   }
