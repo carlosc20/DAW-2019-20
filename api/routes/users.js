@@ -1,7 +1,10 @@
+"use strict";
+
 var express = require('express');
 var router = express.Router();
 var Posts = require('../controllers/posts');
 var Users = require('../controllers/users');
+var Tags = require('../controllers/identifiers');
 const fs = require('fs')
 var mkdirp = require('mkdirp');
 
@@ -51,12 +54,8 @@ router.get('/:email/mentions', function(req, res){
     .catch(e => res.status(500).jsonp(e))
 })
 
-<<<<<<< HEAD
-router.get('/name/:name', passport.authenticate('jwt', {session: false}), function(req, res) {
-=======
 
 router.get('/name/:name', function(req, res) {
->>>>>>> aadb118baa8eafa6a28211e5ace4cdb1fdda8472
   Users.getByName(req.params.name)
     .then(data => res.jsonp(data))
     .catch(e => res.status(500).jsonp(e))
@@ -91,24 +90,35 @@ router.post('/', function(req, res) {
     }).catch(e => {console.log("3"); res.status(500).jsonp(e)})
 });
 
-
 router.post('/group/:name/tag/:tag', function(req, res) {
-  let group = {
-    name: req.params.tag,
-    owner: true
+  let name = req.params.name
+  let identifier = {
+    tag: req.params.tag,
+    public: false,
+    owner: name
   }
-  Users.createGroup(req.params.name, group)
-    .then(data => res.jsonp(data))
-    .catch(e => res.status(500).jsonp(e))
+  Tags.get(identifier.tag)
+    .then(r => {
+      if(r == null){
+        console.log("no group with that tag")
+        Tags.insert(identifier)
+          .then(r => {
+            Users.subscribe(name, identifier)
+              .then(data => res.jsonp(data))
+              .catch(e => {console.log("1");res.status(500).jsonp(e)})
+          }).catch(e => {console.log("2");res.status(500).jsonp(e)})
+        }
+      else
+        res.status(500).jsonp(e)
+    }).catch(e => {console.log("3");res.status(500).jsonp(e)})
 });
 
 router.post('/:name/subscription/private', function(req, res){
   let name = req.params.name
   let request = {
     requester: name,
-    group: req.body.identifier.tag
+    tag: req.body.identifier.tag
   }
-  
   Users.checkRequest(name)
     .then(data => {
       if(data == null){
@@ -121,11 +131,48 @@ router.post('/:name/subscription/private', function(req, res){
     }).catch(e => res.status(500).jsonp(e))
 })
 
+router.post('/:name/answer/:answer/:request', function(req, res){
+  let name = req.params.name
+  let id = req.params.request
+  if(req.params.answer == "true"){
+    Users.getRequest(name, id)
+      .then(request => {
+        let identifier = {
+          tag: request.tag,
+          public: false,
+          owner: name}
+          Users.subscribe(req.requester, identifier)
+            .then(res => {
+                Users.removeRequest(name, id)
+                  .then(r => res.jsonp(r))
+                  .catch(e => res.status(500).jsonp(e))
+            }).catch(e => {
+              Users.insertRequest(name, req)
+              res.status(500).jsonp(e)})
+      }).catch(e => res.status(500).jsonp(e))
+  }
+  else{
+    Users.removeRequest(name, id)
+      .then(r => res.jsonp(r))
+      .catch(e => res.status(500).jsonp(e))
+  }
+})
 
-
-
+//deixar adicionar se não existir?
 router.post('/:name/subscription/:sub', function(req, res){
-  Users.subscribe(req.params.name, req.params.sub)
+  let identifier = {
+    tag: req.params.sub,
+    public: true,
+    owner: "none"
+  }
+  Users.subscribe(req.params.name, identifier)
+    .then(data => res.json(data))
+    .catch(e => res.status(500).json(e))
+});
+
+
+router.delete('/:name/subscription/:sub', function(req, res){
+  Users.unsubscribe(req.params.name, req.params.sub)
     .then(data => res.json(data))
     .catch(e => res.status(500).json(e))
 });
@@ -167,9 +214,4 @@ router.post('/userImg/:name', upload.single('img'), function(req,res){
     .catch(erro => {console.log(erro); res.status(500).jsonp(erro)})
 })
 
-router.delete('/:name/subscription/:sub', function(req, res){
-  Users.unsubscribe(req.params.name, req.params.sub)
-    .then(data => res.json(data))
-    .catch(e => res.status(500).json(e))
-});
 module.exports = router;

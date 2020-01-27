@@ -18,6 +18,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/uminho-isn', {useNewUrlParser: true,
 
 var usersRouter = require('./routes/users');
 var apiRouter = require('./routes/api');
+var tagsRouter = require('./routes/tags')
 
 // auth
 var passport = require('passport');
@@ -71,6 +72,7 @@ app.use(function(req,res,next){
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(passport.authenticate('jwt', {session: false}));
+app.use('/tags', tagsRouter);
 app.use('/users', usersRouter);
 app.use('/api', apiRouter);
 

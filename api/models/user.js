@@ -6,25 +6,27 @@ var imageSchema = new mongoose.Schema({
     size: Number
 })
 
+
 var requestSchema = new mongoose.Schema({
     requester: String, 
-    group: String
+    tag: String
 })
 
 
-var groupSchema = new mongoose.Schema({
-    name: String,
-    owner: Boolean
+var identifierSchema = new mongoose.Schema({
+    tag: String,
+    public: Boolean,
+    owner: String
 })
 
 var userSchema = new mongoose.Schema({
     name: String,
     email: String,
     password: String,
+    type: String,
     image: imageSchema,
-    subscriptions: [String],
+    subscriptions: [identifierSchema],
     requestsRcv: [requestSchema], 
-    groups: [groupSchema],
     mentions: [mongoose.Types.ObjectId]
 });
 
