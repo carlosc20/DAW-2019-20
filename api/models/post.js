@@ -1,4 +1,5 @@
 var mongoose = require('mongoose')
+var mongoose_fuzzy_searching = require('mongoose-fuzzy-searching');
 
 var fileSchema = new mongoose.Schema({
     name: String,
@@ -21,8 +22,12 @@ var Post = new mongoose.Schema({
     date: String,
     tags: Array,
     files: [fileSchema],
-    comments: [commentSchema]
-    // likes/dislikes, updates/edits   
+    comments: [commentSchema],
+    upVotes: [String],
+    downVotes : [String]
+    // updates/edits   
 })
+
+Post.plugin(mongoose_fuzzy_searching, {fields: ['title']})
 
 module.exports = mongoose.model('post', Post);

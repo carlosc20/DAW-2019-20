@@ -15,4 +15,22 @@ router.get('/:id', function(req, res){
         .catch(erro => res.render('error',  {error: erro}))
 })
 
+/**
+ * A responder a um pedido feito pelo axios por parte do cliente
+ */
+router.post('/downvote/:idPost/:email', function(req, res){
+    axios.post(apiHost + '/api/post/downvote/' + req.params.idPost + '/' + req.params.email)
+        .then(dados => {res.jsonp(dados.data)})
+        .catch(erro => res.status(500).jsonp(erro))
+})
+
+/**
+ * A responder a um pedido feito pelo axios por parte do cliente
+ */
+router.post('/upvote/:idPost/:email', function(req, res){
+    axios.post(apiHost + '/api/post/upvote/' + req.params.idPost + '/' + req.params.email)
+        .then(dados => {res.jsonp(dados.data)})
+        .catch(erro => res.status(500).jsonp(erro))
+})
+
 module.exports = router;

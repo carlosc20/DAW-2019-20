@@ -8,6 +8,8 @@ block page
       p= post.description
       p 
         b tags: 
+        if post.tags.length == 0
+          | nenhuma
         each tag in post.tags
           | #{tag};  
   .container
@@ -19,10 +21,22 @@ block page
             .card-body
               h5.card-title= file.name
               a.btn.btn-sm.btn-outline-secondary(href="/download/"+ post._id + '/' + file.name)
-                i.fas.fa-file-download
+                i.fas.fa-file-download  
+                
+    if post.upVotes.includes(user.email)
+      i.btn.borderless.bg-success.fas.fa-thumbs-up(id="pthumbs-up-done")
+    else
+      button.btn.borderless.bg-info.fas.fa-thumbs-up(onclick='upVotePost("'+ post._id + '", "' + user.email + '")' id = "pthumbs-up-ok")
+    if post.downVotes.includes(user.email)
+      i.btn.borderless.bg-warning.fas.fa-thumbs-down(id="pthumbs-down-done")
+    else
+      button.btn.borderless.bg-info.fas.fa-thumbs-down(onclick='downVotePost("'+ post._id + '", "' + user.email + '")' id = "pthumbs-down-ok")
+
     a.btn.btn-sm.btn-outline-secondary.container(href="/download/"+ post._id)
       | Download todos
       i.fas.fa-file-download
+      .row
+
     hr
     .row.bootstrap.snippets
       .comment-wrapper
