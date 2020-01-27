@@ -8,7 +8,6 @@ const fs = require('fs')
 var mkdirp = require('mkdirp');
 var zip = require('express-zip');
 
-var passport = require('passport');
 
 var multer = require('multer')
 var upload = multer({dest: 'uploads/'})
@@ -152,7 +151,7 @@ router.post('/comment/:idPost', function(req,res){
     comment.downVotes = []
     console.log(req.body)
     let regex = /@[^\ ]+/g;
-    //let mentions = dados.comments.map(match(regex).map(substr(1)));
+    //let mentions = dados.comments.map(match(regex).map(subs   tr(1)));
     //mentions.map(Users.insertMention)
     let mentions = (comment.text.match(regex))
     if(mentions) 
@@ -172,6 +171,24 @@ router.post('/comment/downvote/:idComment/:email', function(req,res){
     Posts.downvoteComment(req.params.idComment, req.params.email)
         .then(dados => { res.jsonp({added: true}) })
         .catch(erro => { console.log(erro); res.status(500).jsonp({added: false}) })
+})
+
+router.post('/post/downvote/:idPost/:email', function(req,res){
+    Posts.downVotePost(req.params.idPost, req.params.email)
+        .then(dados => { res.jsonp({added: true}) })
+        .catch(erro => { console.log(erro); res.status(500).jsonp({added: false}) })
+})
+
+router.post('/post/upvote/:idPost/:email', function(req,res){
+    Posts.upVotePost(req.params.idPost, req.params.email)
+        .then(dados => { res.jsonp({added: true}) })
+        .catch(erro => { console.log(erro); res.status(500).jsonp({added: false}) })
+})
+
+router.get('/post/fuzzy/title/:title', function(req,res){
+    Posts.fuzzySearchByTitle(req.params.title)
+        .then(dados => { res.jsonp(dados) })
+        .catch(erro => { res.status(500).jsonp(dados) })
 })
 
 module.exports = router;

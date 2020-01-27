@@ -11,24 +11,33 @@ const strategyOptions = {
 
 const verifyCallback = async (accessToken, refreshToken, profile, done) => {
 
+  console.dir("Profile->" + profile)
   const verifiedEmail = profile.emails.find(email => email.verified) || profile.emails[0]
 
-  apiReq.get('/users/' + verifiedEmail)
+  apiReq.get('/users/' + verifiedEmail.value)
   .then(dados => {
     const user = dados.data
     console.dir(user)
     if(!user) {
-      user = {
-        name: profile.displayName,
+      console.log("Criar user")
+      user = {        
         email: verifiedEmail,
-        profile: profile,
+        name: profile.displayName,
         type: "google"
       }
+      console.dir(user)
       apiReq.post('/users', user)
       return done(null, user);
     }
-    console.log('Autentificação feita com sucesso')
-    return done(null, user);
+    if(user.type == "google"){
+      console.log('Autentificação feita com sucesso')
+      return done(null, user);
+    } else {
+      console.log('Já existe conta a utilizar esse email')
+      return done(null, false);
+    }
+
+
   })
   .catch(erro => done(erro))
 }

@@ -16,3 +16,17 @@ function downVoteComment(idPost, idComment, email){
         .then(dados =>  window.location.assign('/post/' + idPost))
         .catch(error => {console.log(error)})
 }
+
+function upVotePost(idPost, email){
+    axios.post('/post/upvote/' + idPost + '/' + email)
+        .then(dados => {
+            window.location.assign('/post/' + idPost)
+        })
+        .catch(error => {console.log(error)})
+}
+
+function downVotePost(idPost, email){
+    axios.post('/post/downvote/' + idPost + '/' + email)
+        .then(dados =>  window.location.assign('/post/' + idPost))
+        .catch(error => {console.log(error)})
+}

@@ -61,3 +61,20 @@ module.exports.downvoteComment = (idComment, email) => {
             .updateOne({'comments._id': Object(idComment)}, {$pull: {'comments.$.upVotes' : email} ,$push : {'comments.$.downVotes': email} })
             .exec()
 }
+
+module.exports.downVotePost = (idPost, email) => {
+    return Post
+            .updateOne({_id : ObjectId(idPost)}, {$pull : {upVotes: email}, $push : {downVotes : email}})
+            .exec()
+}
+
+module.exports.upVotePost = (idPost, email) => {
+    return Post
+            .updateOne({_id : ObjectId(idPost)}, {$pull : {downVotes: email}, $push : {upVotes : email}})
+            .exec()
+
+}
+
+module.exports.fuzzySearchByTitle = (title) => {
+    return Post.fuzzySearch(title)
+}

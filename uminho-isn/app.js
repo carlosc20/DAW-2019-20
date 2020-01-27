@@ -7,6 +7,7 @@ var apiHost = require('./config/env').apiHost;
 var request = require('request');
 
 var apiReq = require('./utils/api');
+var tokenGen = require('./utils/token')
 
 
 // Módulos de suporte à autenticação
@@ -67,10 +68,25 @@ app.use(cookieParser());
 
 //Middleware que devolve os pedidos dos ficheiros
 app.use((req, res, next) =>{
+  console.log(`Bearer ${tokenGen.genToken()}`)
   if(req.path.startsWith('/ficheiros') || req.path.startsWith('/usersImg')){
-    request.get(req.path).pipe(res);
-  } else if(req.path.startsWith('/download')){
-    request.get(apiHost + '/api' + req.path).pipe(res)
+    let options = {
+      url: apiHost + req.path,
+      headers: {
+        'User-Agent': 'request',
+        'Authorization' : `Bearer ${tokenGen.genToken()}` 
+      }
+    };
+    request.get(options).pipe(res);
+  } else if(req.path.startsWith('/download')){  
+    let options = {
+      url: apiHost + '/api' + req.path,
+      headers: {
+        'User-Agent': 'request',
+        'Authorization' : `Bearer ${tokenGen.genToken()}` 
+      }
+    };
+    request.get(options).pipe(res)
   } else 
     next();
 })  

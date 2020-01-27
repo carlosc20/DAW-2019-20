@@ -57,8 +57,22 @@ router.get('/login', function(req, res) {
 router.get('/', checkAuth, function(req, res) {
   let tag = req.query.tag
   let user = req.user
-  
-  if(tag){
+  let search = req.query.search
+
+  if(search && search != null && search != ''){
+      let match = search.match(/(.+):(.+)/)
+      console.log(search)
+      console.log("match " + match)
+      if(match){
+          apiReq.get('/api/post/fuzzy/' + match[1] + '/' + match[2])
+              .then(dados => {console.log(dados.data); res.render('index', {lista: dados.data, user: user})})
+              .catch(erro => res.render('error', {error: e}))
+      }else{
+          apiReq.get('/api/post/fuzzy/title/' + search)
+              .then(dados => {console.log(dados.data); res.render('index', {lista: dados.data, user: user})})
+              .catch(erro => res.render('error', {error: e}))
+      }
+  } else if(tag){
     apiReq.get('/api/posts/tag/'+ tag)
       .then(dados => { res.render('index', {lista: dados.data, user: user})})
       .catch(e => res.render('error', {error: e}))
@@ -91,7 +105,8 @@ router.post('/register', function(req, res){
   apiReq.post('/users', {
     email: req.body.email,
     password: hash,
-    name: req.body.name
+    name: req.body.name,
+    type: "local"
   })
   .then(_ => res.redirect('/login') )
   .catch(erro => {console.log(erro.response.data); res.status(500).render('error', {error: erro})})
