@@ -1,4 +1,5 @@
 var mongoose = require('mongoose')
+var identifier = require('../models/identifier');
 
 var fileSchema = new mongoose.Schema({
     name: String,
@@ -19,7 +20,7 @@ var Post = new mongoose.Schema({
     poster: String,
     description: String,
     date: String,
-    tags: Array,
+    tags: [identifier],
     files: [fileSchema],
     comments: [commentSchema]
     // likes/dislikes, updates/edits   

@@ -64,7 +64,12 @@ router.post('/register', function(req, res){
     name: req.body.name
   })
   .then(_ => res.redirect('/login') )
-  .catch(erro => {console.log(erro.response.data); res.status(500).render('error', {error: erro})})
+  .catch(erro => {
+    console.log(erro.response.data); 
+    if(erro.response.data.erro == 'email' || erro.response.data.erro == 'name')
+      res.render('register', {erro: erro.response.data.erro})
+    else
+      res.status(500).render('error', {error: erro})})
 })
 
 router.post('/subscription/:name', /*checkAuth,*/ function(req, res){

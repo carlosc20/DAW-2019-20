@@ -53,3 +53,19 @@ module.exports.insertImage = (name, newImage) => {
                 .exec()
 }
 
+module.exports.createGroup = (name, group) => {
+    return User.findOneAndUpdate({name: name},
+                {$push: {groups: group}})
+                .exec()
+} 
+
+module.exports.checkRequest = name => {
+    return User.find({"requestsRcv.requester": name})
+                .exec()
+}
+
+module.exports.insertRequest = (owner, request) => { 
+    return User.findOneAndUpdate({name:  owner},
+                    {$push: {requestsRcv: request}})
+                    .exec()
+}

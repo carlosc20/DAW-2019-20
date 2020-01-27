@@ -51,7 +51,6 @@ router.get('/:email/mentions', function(req, res){
     .catch(e => res.status(500).jsonp(e))
 })
 
-
 router.get('/name/:name', passport.authenticate('jwt', {session: false}), function(req, res) {
   Users.getByName(req.params.name)
     .then(data => res.jsonp(data))
@@ -70,13 +69,13 @@ router.post('/', function(req, res) {
     .then(user => {
       console.log(user)
       if(user != null)
-        res.status(400).jsonp({erro: "An user with that email already exists"})
+        res.status(400).jsonp({erro: "email"})
       else{
         Users.getByName(req.body.name)
         .then(user => {
           console.log(user)
           if(user != null)
-            res.status(400).jsonp({erro:"An user with that name already exists"})
+            res.status(400).jsonp({erro:"nome"})
           else {
             Users.insert(req.body)
             .then(data => res.jsonp(data))
@@ -86,6 +85,39 @@ router.post('/', function(req, res) {
       }
     }).catch(e => {console.log("3"); res.status(500).jsonp(e)})
 });
+
+
+router.post('/group/:name/tag/:tag', function(req, res) {
+  let group = {
+    name: req.params.tag,
+    owner: true
+  }
+  Users.createGroup(req.params.name, group)
+    .then(data => res.jsonp(data))
+    .catch(e => res.status(500).jsonp(e))
+});
+
+router.post('/:name/subscription/private', function(req, res){
+  let name = req.params.name
+  let request = {
+    requester: name,
+    group: req.body.identifier.tag
+  }
+  
+  Users.checkRequest(name)
+    .then(data => {
+      if(data == null){
+        Users.insertRequest(req.body.identifier.owner, request)
+          .then(data => res.jsonp(data))
+          .catch(e => res.status(500).jsonp(e))
+      }
+      else
+        res.status(400).jsonp(e)  
+    }).catch(e => res.status(500).jsonp(e))
+})
+
+
+
 
 router.post('/:name/subscription/:sub', function(req, res){
   Users.subscribe(req.params.name, req.params.sub)
