@@ -26,8 +26,12 @@ module.exports.getByIdForMentions = id => {
                 .exec()
 }
 
-module.exports.getByTag = (tag) => {
+module.exports.getByTag = (tag, page) => {
+    page = page || 0
     return Post.find({tags: tag}, {})
+        .sort({date: -1})
+        .skip((page)*15)
+        .limit(15)
         .exec()
 }
 
@@ -37,10 +41,13 @@ module.exports.getByPoster = (poster) => {
         .exec()
 }
 
-module.exports.sortedList = () => {
+module.exports.sortedList = (page) => {
+    if(!page || page < 0) page=0
     return Post
         .find()
         .sort({date: -1})
+        .skip((page)*15)
+        .limit(15)
         .exec()
 }
 

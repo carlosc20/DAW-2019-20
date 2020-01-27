@@ -70,7 +70,9 @@ router.get('/post/:id', function(req, res, next) {
 
 /* GET all posts. */
 router.get('/posts', function(req, res, next) {
-    Posts.list()
+    let page = 0
+    if(req.query.page) page = req.query.page
+    Posts.sortedList(page)
         .then(dados => {
             let result = addTimeSwapToList(dados)
             res.jsonp(result)
@@ -97,7 +99,8 @@ function addTimeSwapToList(lista){
 
 /* GET all posts by a tag */
 router.get('/posts/tag/:tag', function(req, res, next) {
-    Posts.getByTag(req.params.tag)
+    let page = req.params.page || 0
+    Posts.getByTag(req.params.tag, page)
         .then(dados => { 
             let result = addTimeSwapToList(dados)
             res.jsonp(result)

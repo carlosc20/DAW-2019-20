@@ -52,7 +52,7 @@ block page
               each comment in post.comments
                 li.media
                   a.pull-left(href='/profile/' + comment.owner)
-                    img.img-circle(src='/profile/' + comment.owner + '/image', alt='')
+                    img.userImg.img-circle(src='/profile/'+ comment.owner +'/image'  , alt='')
                   .media-body
                     span.text-muted.pull-right
                       small.text-muted #{comment.timeSwap}

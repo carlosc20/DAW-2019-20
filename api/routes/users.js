@@ -135,4 +135,23 @@ router.delete('/:name/subscription/:sub', function(req, res){
     .then(data => res.json(data))
     .catch(e => res.status(500).json(e))
 });
+
+router.get('/:name/image', function(req,res){
+  console.log("I AM HERE")
+  Users.getByName(req.params.name)
+    .then(user => {
+      fs.readFile('public/usersImg/' + user.name + '/' + user.image.name, (err, data) =>{
+        console.log('public/usersImg/' + user.name + '/' + user.image.name)
+        if(!err)
+          res.end(data)
+        else {
+          console.log(err)
+          res.status(500).end()
+        }
+      })
+    })
+    .catch(e => res.status(500).json(e))
+})
+
+
 module.exports = router;
