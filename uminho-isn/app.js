@@ -29,8 +29,9 @@ passport.use(new LocalStrategy(
         expiresIn: 3000, 
         issuer: "Servidor myAgenda"
     })
-    //token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiZW1haWwiOiJjZXNhckBhdGxldGEuY29tIiwiaWF0IjoxNTE2MjM5MDIyfQ.WMcEeBB5tSapvHMQWUxok87mK2arePQdLyzNi5gDg7w';
-    axios.get(apiHost + '/users/' + email + '?token=' + token)
+    axios.get(apiHost + '/users/' + email, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
       .then(dados => {
         const user = dados.data
         console.dir(user)
@@ -59,9 +60,11 @@ passport.deserializeUser((email, done) => {
       issuer: "Servidor myAgenda"
   })
   console.log('Vou desserializar o utilizador: ' + email)
-  axios.get(apiHost + '/users/' + email + '?token=' + token)
-    .then(dados => done(null, dados.data))
-    .catch(erro => done(erro, false))
+  axios.get(apiHost + '/users/' + email, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  .then(dados => done(null, dados.data))
+  .catch(erro => done(erro, false))
 })
 
 

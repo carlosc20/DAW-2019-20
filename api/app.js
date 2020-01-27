@@ -16,21 +16,14 @@ var apiRouter = require('./routes/api');
 // auth
 var passport = require('passport');
 var JWTStrategy = require('passport-jwt').Strategy;
-var ExtractJWT = require('passport-jwt').ExtractJwt;
+var ExtractJwt = require('passport-jwt').ExtractJwt;
 
-var extractFromQS = function(req){
-  return (req.query && req.query.token) ? req.query.token : null;
-}
-
-var extractFromBody = function(req){
-  return (req.body && req.body.token) ? req.query.token : null;
-}
 
 passport.use(
   new JWTStrategy(
     {
     secretOrKey: 'daw2019',
-    jwtFromRequest: ExtractJWT.fromExtractors([extractFromQS, extractFromBody])
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
     }, 
     async (payload, done) => {
       try{
