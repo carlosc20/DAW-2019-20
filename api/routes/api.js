@@ -186,7 +186,7 @@ router.post('/post/upvote/:idPost/:email', function(req,res){
         .catch(erro => { console.log(erro); res.status(500).jsonp({added: false}) })
 })
 
-router.get('/post/fuzzy/:title', function(req,res){
+router.get('/post/fuzzy/title/:title', function(req,res){
     Posts.fuzzySearchByTitle(req.params.title)
 })
 

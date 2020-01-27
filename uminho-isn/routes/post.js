@@ -33,4 +33,15 @@ router.post('/upvote/:idPost/:email', function(req, res){
         .catch(erro => res.status(500).jsonp(erro))
 })
 
+
+router.post('/fuzzy/title/:postTitle', function(req, res){
+    let search = req.body.search;
+    let match = search.match(/(.+):(.+)/)
+    if(match){
+        
+    }else{
+        axios.post(apiHost + '/fuzzy/title' + search)
+    }
+})
+
 module.exports = router;
