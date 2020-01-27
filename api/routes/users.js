@@ -72,7 +72,16 @@ router.get('/:email', function(req, res) {
 
 router.post('/', function(req, res) {
   console.log(req.body)
-  Users.get(req.body.email)
+  let email = ""
+  // in case its a post from google api
+  if(req.body.email && req.body.email.value && req.body.email.verified){
+    email = req.body.email.value
+  } else if(req.body.email && req.body.email.value && !req.body.email.verified) {
+    res.status(400).jsonp({erro:"Google authentication failed"})
+  } else {
+    email = req.body.email
+  }
+  Users.get(email)
     .then(user => {
       console.log(user)
       if(user != null)
@@ -84,7 +93,9 @@ router.post('/', function(req, res) {
           if(user != null)
             res.status(400).jsonp({erro:"nome"})
           else {
-            Users.insert(req.body)
+            let user = JSON.parse(JSON.stringify(req.body))
+            user.email = email
+            Users.insert(user)
             .then(data => res.jsonp(data))
             .catch(e => {console.log("1"); res.status(500).jsonp(e)})
           }

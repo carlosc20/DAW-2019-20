@@ -24,7 +24,7 @@ module.exports.getByName = name => {
 }
 
 module.exports.insert = (user) => {
-    console.dir(user)
+    user.type = user.type || 'usn'
     user = new User(user)
     return user.save()
 }

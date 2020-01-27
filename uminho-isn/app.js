@@ -3,7 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var apiHost = require('./config/env').apiHost;
+var apiHost = require('./config/env').API_HOST;
 var request = require('request');
 
 var apiReq = require('./utils/api');
@@ -29,9 +29,12 @@ passport.serializeUser((user,done) => {
 })
 
 passport.deserializeUser((email, done) => {
-  apiReq.get('/users/' + email)
-  .then(dados => done(null, dados.data))
-  .catch(erro => done(erro, false))
+  // can receive variable email from google api
+  let userEmail = email.value && email.verified ? email.value : email
+  console.log("email: " + userEmail)
+  apiReq.get('/users/' + userEmail)
+    .then(dados => done(null, dados.data))
+    .catch(erro => done(erro, false))
 })
 
 // routers
