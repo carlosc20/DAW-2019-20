@@ -16,8 +16,8 @@ block content
 		.navbar-nav.ml-auto
 			form.form-inline.my-2.my-lg-0
 				.input-group.form-group
-					form(action='/fuzzy' + user.name method='POST')
-						input.form-control.border.border-right-0(type='text' placeholder='Search...')
+					form(action='/post/fuzzy' method='GET')
+						input.form-control.border.border-right-0(type='text' name='search' placeholder='Search...')
 						span.input-group-append
 							button.btn.btn-outline-light.border.border-left-0(type='submit')
 								i.fa.fa-search

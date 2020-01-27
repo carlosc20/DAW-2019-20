@@ -76,7 +76,5 @@ module.exports.upVotePost = (idPost, email) => {
 }
 
 module.exports.fuzzySearchByTitle = (title) => {
-    return Post.fuzzySearch(title, (err, posts) => {
-        console.log(posts)
-    })
+    return Post.fuzzySearch(title)
 }

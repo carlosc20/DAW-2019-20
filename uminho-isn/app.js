@@ -6,6 +6,7 @@ var logger = require('morgan');
 var apiHost = require('./config/env').apiHost;
 var request = require('request');
 
+var apiReq = require('./utils/api');
 var tokenGen = require('./utils/token')
 
 // Módulos de suporte à autenticação
@@ -15,11 +16,9 @@ var FileStore = require('session-file-store')(session)
 
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy
-var axios = require('axios')
 var flash = require('connect-flash')
 
 var bcrypt = require('bcryptjs')
-var jwt = require('jsonwebtoken')
 
 //-----------------------------------
 
@@ -27,9 +26,7 @@ var jwt = require('jsonwebtoken')
 // Configuração da estratégia local
 passport.use(new LocalStrategy(
   {usernameField: 'email'}, (email, password, done) => {
-    let token = tokenGen.genToken()
-    //token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiZW1haWwiOiJjZXNhckBhdGxldGEuY29tIiwiaWF0IjoxNTE2MjM5MDIyfQ.WMcEeBB5tSapvHMQWUxok87mK2arePQdLyzNi5gDg7w';
-    axios.get(apiHost + '/users/' + email + '?token=' + token)
+    apiReq.get('/users/' + email)
       .then(dados => {
         const user = dados.data
         console.dir(user)
@@ -52,11 +49,10 @@ passport.serializeUser((user,done) => {
 })
 
 passport.deserializeUser((email, done) => {
-  let token = tokenGen.genToken()
   console.log('Vou desserializar o utilizador: ' + email)
-  axios.get(apiHost + '/users/' + email + '?token=' + token)
-    .then(dados => done(null, dados.data))
-    .catch(erro => done(erro, false))
+  apiReq.get('/users/' + email)
+  .then(dados => done(null, dados.data))
+  .catch(erro => done(erro, false))
 })
 
 
@@ -94,10 +90,25 @@ app.use(cookieParser());
 
 //Middleware que devolve os pedidos dos ficheiros
 app.use((req, res, next) =>{
+  console.log(`Bearer ${tokenGen.genToken()}`)
   if(req.path.startsWith('/ficheiros') || req.path.startsWith('/usersImg')){
-    request.get(apiHost + req.path).pipe(res);
-  } else if(req.path.startsWith('/download')){
-    request.get(apiHost + '/api' + req.path).pipe(res)
+    let options = {
+      url: apiHost + req.path,
+      headers: {
+        'User-Agent': 'request',
+        'Authorization' : `Bearer ${tokenGen.genToken()}` 
+      }
+    };
+    request.get(options).pipe(res);
+  } else if(req.path.startsWith('/download')){  
+    let options = {
+      url: apiHost + '/api' + req.path,
+      headers: {
+        'User-Agent': 'request',
+        'Authorization' : `Bearer ${tokenGen.genToken()}` 
+      }
+    };
+    request.get(options).pipe(res)
   } else 
     next();
 })  
