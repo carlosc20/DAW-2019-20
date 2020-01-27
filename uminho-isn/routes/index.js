@@ -19,6 +19,39 @@ function checkAuth(req,res,next) {
   }
 }
 
+//-------------------------------------- google
+router.get('/auth/google', 
+  passport.authenticate('google', { 
+    scope: [
+      'https://www.googleapis.com/auth/userinfo.profile',
+      'https://www.googleapis.com/auth/userinfo.email'
+      ]
+  }
+));
+
+router.get('/auth/google/callback', 
+  passport.authenticate('google', {  
+    successRedirect: '/',
+    failureRedirect: '/login'
+  })
+);
+
+router.post('/login', passport.authenticate('local', {  
+    successRedirect: '/',
+    failureRedirect: '/login'
+  })
+);
+//--------------------------------------
+
+// login, ??
+router.post('/', function(req, res){
+  res.redirect('/login')
+});
+
+
+router.get('/login', function(req, res) {
+  res.render('login');
+});
 
 /* GET home page. */
 router.get('/', checkAuth, function(req, res) {
@@ -51,28 +84,16 @@ router.get('/', checkAuth, function(req, res) {
 });
 
 
-// login
-router.post('/', function(req, res){
-  res.redirect('/login')
-});
-
-router.get('/login', function(req, res) {
-  res.render('login');
-});
-
-router.post('/login', passport.authenticate('local', {  
-    successRedirect: '/',
-    successFlash: 'Utilizador autenticado com sucesso!',
-    failureRedirect: '/login',
-    failureFlash: 'Utilizador ou password inválido(s)...'
-  })
-);
-
 router.get('/profile/:name', checkAuth, function(req, res){
   apiReq.get('/users/name/' + req.params.name)
-    .then(user => {console.log("USER: " +req.user); console.log("Profile:" + user.data);res.render('user', {user: req.user, userProfile: user.data})})
+    .then(user => {
+      console.log("USER: " +req.user); 
+      console.log("Profile:" + user.data);
+      res.render('user', {user: req.user, userProfile: user.data})
+    })
     .catch(erro => res.status(500).render('error', {error: erro}) )
 })
+
 
 // register
 router.get('/register', function(req, res){
@@ -84,7 +105,8 @@ router.post('/register', function(req, res){
   apiReq.post('/users', {
     email: req.body.email,
     password: hash,
-    name: req.body.name
+    name: req.body.name,
+    type: "local"
   })
   .then(_ => res.redirect('/login') )
   .catch(erro => {
@@ -95,6 +117,8 @@ router.post('/register', function(req, res){
       res.status(500).render('error', {error: erro})})
 })
 
+
+// outros
 router.post('/subscription/:name', /*checkAuth,*/ function(req, res){
   console.log(req.body.text)
   let sub = req.body.text
@@ -159,9 +183,10 @@ router.post('/comment/:idPost/:email', function(req,res){
  * Respondes to axios in client side
  */
 router.post('/comment/upvote/:idComment/:email', function(req, res){
+  console.log("I AM HERE")
   apiReq.post('/api/comment/upvote/' + req.params.idComment +'/' + req.params.email)
     .then(dados => { res.jsonp(dados.data)})
-    .catch(erro => res.status(500).render('error', {error: erro}))
+    .catch(erro => {console.log(erro); res.status(500).render('error', {error: erro})})
 })
 
 /**
