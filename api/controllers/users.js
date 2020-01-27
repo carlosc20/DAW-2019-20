@@ -1,4 +1,6 @@
 var User = require('../models/user');
+var mongoose = require('mongoose')
+var ObjectId = mongoose.Types.ObjectId
 
 module.exports.getAll = () => {
     return User.find()
@@ -35,7 +37,7 @@ module.exports.subscribe = (name, subscription) => {
 
 module.exports.unsubscribe = (name, subscription) => {
     return User.findOneAndUpdate({name: name},
-            {$pull: {subscriptions: subscription}})
+            {$pull: {subscriptions: {tag: subscription}}})
             .exec()
 }
 
@@ -53,3 +55,19 @@ module.exports.insertImage = (name, newImage) => {
                 .exec()
 }
 
+module.exports.checkRequest = (owner,name) => {
+    return User.findOne({name: owner, "requestsRcv.requester": name})
+                .exec()
+}
+
+module.exports.insertRequest = (owner, request) => { 
+    return User.findOneAndUpdate({name:  owner},
+                    {$push: {requestsRcv: request}})
+                    .exec()
+}
+
+module.exports.removeRequest = (owner, name) => { 
+    return User.findOneAndUpdate({name:  owner},
+                    {$pull: {requestsRcv: {requester: name}}})
+                    .exec()
+}

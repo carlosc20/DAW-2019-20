@@ -1,4 +1,5 @@
 var mongoose = require('mongoose')
+var identifier = require('../models/identifier');
 var mongoose_fuzzy_searching = require('mongoose-fuzzy-searching');
 
 var fileSchema = new mongoose.Schema({
@@ -15,12 +16,18 @@ var commentSchema = new mongoose.Schema({
     downVotes : [String]
 })
 
+var identifierSchema = new mongoose.Schema({
+    tag: String,
+    public: Boolean,
+    owner: String
+})
+
 var Post = new mongoose.Schema({
     title: String,
     poster: String,
     description: String,
     date: String,
-    tags: Array,
+    tags: [identifierSchema],
     files: [fileSchema],
     comments: [commentSchema],
     upVotes: [String],

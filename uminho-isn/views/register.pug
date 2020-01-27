@@ -31,6 +31,9 @@ block content
 								input.form-control(type='password' placeholder='repeat password' id='repeatedPassword' data-match="#password" data-match-error="Whoops, these don't match" required)
 							.form-group
 								input.btn.float-right.login_btn(type='submit' value='Regist')
+						if(erro != undefined)
+							.container(style="color: rgba(240, 43, 43, 0.945);") 
+									h5= 'Esse ' + erro + ' já está em uso'
 					.card-footer
 						.d-flex.justify-content-center.links
 							| Já uma conta?
