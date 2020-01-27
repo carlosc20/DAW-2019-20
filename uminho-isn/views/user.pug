@@ -6,7 +6,7 @@ block page
       .col(style='margin-left: 20px')
         .container(style="padding-top: 50px;").text-center.bg-white
           if(userProfile.image != undefined)
-            img(src='/usersImg/' + userProfile.name + '/' + userProfile.image.name alt="http://placehold.it/200x200")
+            img(style="height:300px;max-width:200px;width: expression(this.width > 200 ? 200: true);" src='/usersImg/' + userProfile.name + '/' + userProfile.image.name alt="http://placehold.it/200x200")
           else
             img(src="http://placehold.it/200x200" alt="http://placehold.it/200x200")
           .container

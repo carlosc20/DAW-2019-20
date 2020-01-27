@@ -119,8 +119,8 @@ a {
 }
 
 .btn-selected {
-  background-color: #4A2B2B;
-  color: white;
+  color : white;
+  background-color:  rgb(190, 69, 69)
 }
 
 .btn i {
@@ -133,9 +133,14 @@ a {
 }
 
 .btn-not-selected {
-  background-color: #D34F4E;
+  background-color: rgb(156, 156, 156);
+  color:  white;
 }
 
 .btn-not-selected :hover {
   background-color: rgb(190, 69, 69);
+}
+
+.userImg{
+  background-size: 200px 200px;
 }
