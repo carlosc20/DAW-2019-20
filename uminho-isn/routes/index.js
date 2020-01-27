@@ -1,8 +1,11 @@
 var express = require('express');
 var router = express.Router();
 var passport = require('passport');
+var request = require('request')
 
 var apiReq = require('../utils/api');
+var tokenGen = require('../utils/token');
+var apiHost =  require('../config/env').apiHost
 
 /* To handle multipat/form-data requests */
 const FormData = require('form-data');
@@ -58,27 +61,28 @@ router.get('/', checkAuth, function(req, res) {
   let tag = req.query.tag
   let user = req.user
   let search = req.query.search
+  let page = parseInt(req.query.page) || 0
 
   if(search && search != null && search != ''){
       let match = search.match(/(.+):(.+)/)
       console.log(search)
       console.log("match " + match)
       if(match){
-          apiReq.get('/api/post/fuzzy/' + match[1] + '/' + match[2])
-              .then(dados => {console.log(dados.data); res.render('index', {lista: dados.data, user: user})})
+          apiReq.get('/api/post/fuzzy/' + match[1] + '/' + match[2] + '?page=' + page)
+              .then(dados => {console.log(dados.data); res.render('index', {lista: dados.data, user: user, page: page, search: search})})
               .catch(erro => res.render('error', {error: e}))
       }else{
-          apiReq.get('/api/post/fuzzy/title/' + search)
-              .then(dados => {console.log(dados.data); res.render('index', {lista: dados.data, user: user})})
+          apiReq.get('/api/post/fuzzy/title/' + search + '?page=' + page)
+              .then(dados => {console.log(dados.data); res.render('index', {lista: dados.data, user: user, page: page, search: search})})
               .catch(erro => res.render('error', {error: e}))
       }
   } else if(tag){
-    apiReq.get('/api/posts/tag/'+ tag)
-      .then(dados => { res.render('index', {lista: dados.data, user: user})})
+    apiReq.get('/api/posts/tag/'+ tag + '?page=' + page)
+      .then(dados => { res.render('index', {lista: dados.data, user: user, page: page})})
       .catch(e => res.render('error', {error: e}))
   } else {
-    apiReq.get('/api/posts')
-      .then(dados => { res.render('index', {lista: dados.data, user: user})})
+    apiReq.get('/api/posts' + '?page=' + page)
+      .then(dados => { res.render('index', {lista: dados.data, user: user, page: page})})
       .catch(e => res.render('error', {error: e}))
   }
 });
@@ -144,6 +148,19 @@ router.post('/profile/:name/image', upload.single('img'), /*checkAuth,*/ functio
   .catch(erro => res.status(500).render('error', {error: erro}))
 })
 
+
+router.get('/profile/:name/image', function(req, res){
+  console.log(apiHost + '/users/' + req.params.name + '/image')
+  let options = {
+    url: apiHost + '/users/' + req.params.name + '/image',
+    headers: {
+      'User-Agent': 'request',
+      'Authorization' : `Bearer ${tokenGen.genToken()}` 
+    }
+  };
+  request.get(options).pipe(res)
+})
+
 router.delete('/subscription/:name/tag/:sub', /*checkAuth,*/ function(req, res){
   apiReq.delete('/users/' + req.params.name + '/subscription/' + req.params.sub)
     .then(user => res.jsonp(user.email))
@@ -160,9 +177,10 @@ router.post('/publish', upload.array('files'), /* checkAuth,*/ function(req, res
   let form = new FormData()
   form.append('title', req.body.title)
   form.append('description', req.body.description)
-  req.files.forEach(file => {
-    form.append('files' , file.buffer, file.originalname)
-  })
+  if(req.files)
+    req.files.forEach(file => {
+      form.append('files' , file.buffer, file.originalname)
+    })
   apiReq.post('/api/post', form, {
     headers: {
       'Content-Type': 'multipart/form-data; boundary='+form._boundary
@@ -202,5 +220,6 @@ router.get('/logout', function(req,res){
   req.logout()
   res.redirect('/')
 })
+
 
 module.exports = router;

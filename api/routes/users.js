@@ -212,4 +212,22 @@ router.post('/userImg/:name', upload.single('img'), function(req,res){
     .catch(erro => {console.log(erro); res.status(500).jsonp(erro)})
 })
 
+router.get('/:name/image', function(req,res){
+  console.log("I AM HERE")
+  Users.getByName(req.params.name)
+    .then(user => {
+      fs.readFile('public/usersImg/' + user.name + '/' + user.image.name, (err, data) =>{
+        console.log('public/usersImg/' + user.name + '/' + user.image.name)
+        if(!err)
+          res.end(data)
+        else {
+          console.log(err)
+          res.status(500).end()
+        }
+      })
+    })
+    .catch(e => res.status(500).json(e))
+})
+
+
 module.exports = router;

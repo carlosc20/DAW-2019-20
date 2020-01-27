@@ -142,5 +142,16 @@ a {
 }
 
 .userImg{
-  background-size: 200px 200px;
+  background-size: cover;
+}
+
+.pagination {
+  color : black;
+  font-weight: bold;
+  padding: 0;
+}
+
+.pagination a{
+  margin: 0;
+  border-radius : 0;
 }
