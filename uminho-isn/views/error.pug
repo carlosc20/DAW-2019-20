@@ -1,6 +1,11 @@
-extends mainLayout
+extends layout
 
-block content
-  h1= message
-  h2= error.status
-  pre #{error.stack}
+block content 
+    .container
+        .w3-card-4
+            header.w3-container
+            h3 Erro
+        .container
+            p= error
+        footer.container
+            address Gerado por uminho-isn

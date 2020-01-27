@@ -4,7 +4,13 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
+var fs = require('fs');
+var PDFImage = require("pdf-image").PDFImage;
+const PDF2Pic = require("pdf2pic");
 
+var passport = require('passport');
+
+var filePath = require('./utils/filePath')
 
 mongoose.connect('mongodb://127.0.0.1:27017/uminho-isn', {useNewUrlParser: true, useUnifiedTopology: true})
   .then(() => console.log('Mongo: ready(' + mongoose.connection.readyState + ')'))
@@ -37,17 +43,38 @@ passport.use(
 )
 
 var app = express();
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
+
+
 app.use(passport.initialize());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(function(req,res,next){
+  let match = req.path.match(/\/ficheiros\/(.+)\/(.+)/)
+  if(match){
+    let mimeType = match[2].match(/(.*)[.](.*)/)
+    console.log(mimeType)
+    let file = filePath.getFile(match[1], match[2])
+      fs.readFile(file, (err, data) =>{
+        if(!err)
+          res.send(data)
+        else next()
+      })
+    
+  } else {
+    next()
+  }
+})
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(passport.authenticate('jwt', {session: false}));
 app.use('/users', usersRouter);
 app.use('/api', apiRouter);
 
-// catch 404 and forward to error handler
+// catch 404 and forward to error handler 
 app.use(function(req, res, next) {
   next(createError(404));
 });

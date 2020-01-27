@@ -6,6 +6,7 @@ var logger = require('morgan');
 var apiHost = require('./config/env').apiHost;
 var request = require('request');
 
+var apiReq = require('./utils/api');
 
 // Módulos de suporte à autenticação
 var uuid = require('uuid/v4')
@@ -14,24 +15,17 @@ var FileStore = require('session-file-store')(session)
 
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy
-var axios = require('axios')
 var flash = require('connect-flash')
 
 var bcrypt = require('bcryptjs')
-var jwt = require('jsonwebtoken')
+
 //-----------------------------------
+
 
 // Configuração da estratégia local
 passport.use(new LocalStrategy(
   {usernameField: 'email'}, (email, password, done) => {
-    var token = jwt.sign({}, "daw2019", 
-    {
-        expiresIn: 3000, 
-        issuer: "Servidor myAgenda"
-    })
-    axios.get(apiHost + '/users/' + email, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+    apiReq.get('/users/' + email)
       .then(dados => {
         const user = dados.data
         console.dir(user)
@@ -54,15 +48,8 @@ passport.serializeUser((user,done) => {
 })
 
 passport.deserializeUser((email, done) => {
-  var token = jwt.sign({}, "daw2019", 
-  {
-      expiresIn: 3000, 
-      issuer: "Servidor myAgenda"
-  })
   console.log('Vou desserializar o utilizador: ' + email)
-  axios.get(apiHost + '/users/' + email, {
-    headers: { Authorization: `Bearer ${token}` }
-  })
+  apiReq.get('/users/' + email)
   .then(dados => done(null, dados.data))
   .catch(erro => done(erro, false))
 })
@@ -102,22 +89,13 @@ app.use(cookieParser());
 
 //Middleware que devolve os pedidos dos ficheiros
 app.use((req, res, next) =>{
-  if(req.path.startsWith('/ficheiros')){
-    //console.log(req.headers)
+  if(req.path.startsWith('/ficheiros') || req.path.startsWith('/usersImg')){
     request.get(apiHost + req.path).pipe(res);
-   /* axios.get(apiHost + req.path, { responseType: 'arraybuffer' })
-      .then(dados => {
-        let blob = new Blob(
-          [dados.data], 
-          { type: dados.headers['content-type'] }
-        )
-        let image = URL.createObjectURL(blob)
-        res.send(image)
-      })
-      .catch(erro => res.status(500).end())*/
+  } else if(req.path.startsWith('/download')){
+    request.get(apiHost + '/api' + req.path).pipe(res)
   } else 
     next();
-})
+})  
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);

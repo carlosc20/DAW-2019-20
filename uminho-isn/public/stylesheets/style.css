@@ -7,6 +7,16 @@ a {
   color: #00B7FF;
 }
 
+.user-text {
+  padding-top: 10px
+}
+
+.user-mentions {
+  margin-top: 70px;
+  margin-bottom: 30px;
+  color: #999;
+}
+
 .post-container {
   margin: auto ;
   width: 40%;
@@ -76,4 +86,24 @@ a {
 .comment-wrapper .media-list .media {
     border-bottom:1px dashed #efefef;
     margin-bottom:25px;
+}
+
+#modal-img{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-height: 70%;
+}
+
+.modal-container{
+  display: auto;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+  text-align: center;
+}
+
+.borderless {
+  border: 0px;
+  margin: 2px;
 }
