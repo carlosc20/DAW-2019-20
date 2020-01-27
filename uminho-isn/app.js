@@ -76,6 +76,7 @@ app.use((req, res, next) =>{
       }
     };
     request.get(options).pipe(res);
+    return
   } else if(req.path.startsWith('/download')){  
     let options = {
       url: apiHost + '/api' + req.path,
@@ -85,9 +86,12 @@ app.use((req, res, next) =>{
       }
     };
     request.get(options).pipe(res)
-  } else 
-    next();
+    return
+  } else {
+    next()
+  }
 })  
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);

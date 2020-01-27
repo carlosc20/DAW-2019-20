@@ -27,6 +27,10 @@ a {
   width: 40%;
 }
 
+.modal-container a {
+  border-radius: 0;
+}
+
 /* Style the navigation bar */
 .navbar {
   width: 100%;
