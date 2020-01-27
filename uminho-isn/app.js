@@ -36,7 +36,6 @@ passport.use(new LocalStrategy(
         if(!bcrypt.compareSync(password, user.password)) {
           return done(null, false, {message: 'Password inválida!\n'})
         }
-        console.log('Autentificação feita com sucesso')
         return done(null, user)
       })
       .catch(erro => done(erro))
@@ -44,12 +43,10 @@ passport.use(new LocalStrategy(
 
 
 passport.serializeUser((user,done) => {
-  console.log('Vou serializar o user: ' + JSON.stringify(user))
   done(null, user.email)
 })
 
 passport.deserializeUser((email, done) => {
-  console.log('Vou desserializar o utilizador: ' + email)
   apiReq.get('/users/' + email)
   .then(dados => done(null, dados.data))
   .catch(erro => done(erro, false))
@@ -68,8 +65,6 @@ app.set('view engine', 'pug');
 
 app.use(session({
   genid: req => {
-    console.log('Dentro do middleware da sessão...')
-    console.log(req.sessionID)
     return uuid()
   },
   store: new FileStore(),
@@ -90,7 +85,6 @@ app.use(cookieParser());
 
 //Middleware que devolve os pedidos dos ficheiros
 app.use((req, res, next) =>{
-  console.log(`Bearer ${tokenGen.genToken()}`)
   if(req.path.startsWith('/ficheiros') || req.path.startsWith('/usersImg')){
     let options = {
       url: apiHost + req.path,

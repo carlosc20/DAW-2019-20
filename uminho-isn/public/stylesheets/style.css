@@ -120,10 +120,16 @@ a {
 
 .btn-selected {
   background-color: #4A2B2B;
+  color: white;
+}
+
+.btn i {
+  margin: 5px;
 }
 
 .btn-selected :hover {
   background-color: rgb(58, 33, 33);
+  color: whitesmoke !important;
 }
 
 .btn-not-selected {
@@ -133,12 +139,3 @@ a {
 .btn-not-selected :hover {
   background-color: rgb(190, 69, 69);
 }
-
-.tmpl-red {
-  background-color: #FF1100;
-}
-
-.tmpl-red :hover{
-  background-color: rgb(187, 12, 0)
-}
-

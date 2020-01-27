@@ -32,7 +32,7 @@ block page
     else
       button.btn.borderless.btn-not-selected.fas.fa-thumbs-down(onclick='downVotePost("'+ post._id + '", "' + user.email + '")' id = "pthumbs-down-ok")
 
-    a.btn.tmpl-red.container(href="/download/"+ post._id)
+    a.btn.btn-selected.container(href="/download/"+ post._id)
       | Download todos
       i.fas.fa-file-download
       .row

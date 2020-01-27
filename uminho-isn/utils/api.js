@@ -7,13 +7,12 @@ module.exports = {
     get: function(path){
         return axios.get(apiHost + path, tokenGen.getTokenConfig());
     },
-    
-    post: function(path, body){
-        return axios.post(apiHost + path, body, tokenGen.getTokenConfig());
-    },
 
     post: function(path, body, headers){
-        headers["Authorization"] = `Bearer ${this.genToken()}`;
+        if(!headers) headers = {'headers': {}}
+        if(!body) body = {}
+        headers.headers['Authorization'] = `Bearer ${tokenGen.genToken()}`;
+        console.log(headers)
         return axios.post(apiHost + path, body, headers);
     },
 
