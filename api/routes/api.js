@@ -8,7 +8,6 @@ const fs = require('fs')
 var mkdirp = require('mkdirp');
 var zip = require('express-zip');
 
-var passport = require('passport');
 
 var multer = require('multer')
 var upload = multer({dest: 'uploads/'})
