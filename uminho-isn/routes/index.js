@@ -15,6 +15,8 @@ var bcrypt = require('bcryptjs');
 
 
 function checkAuth(req,res,next) {
+  console.log("AUTH: ")
+  console.dir(req.user)
   if(req.isAuthenticated()){
     next();
   } else {
@@ -32,7 +34,7 @@ router.get('/auth/google',
   }
 ));
 
-router.get('/auth/google/callback', 
+router.get('/auth/google/callback',
   passport.authenticate('google', {  
     successRedirect: '/',
     failureRedirect: '/login'
@@ -65,15 +67,13 @@ router.get('/', checkAuth, function(req, res) {
 
   if(search && search != null && search != ''){
       let match = search.match(/(.+):(.+)/)
-      console.log(search)
-      console.log("match " + match)
       if(match){
           apiReq.get('/api/post/fuzzy/' + match[1] + '/' + match[2] + '?page=' + page)
-              .then(dados => {console.log(dados.data); res.render('index', {lista: dados.data, user: user, page: page, search: search})})
+              .then(dados => {res.render('index', {lista: dados.data, user: user, page: page, search: search})})
               .catch(erro => res.render('error', {error: e}))
       }else{
           apiReq.get('/api/post/fuzzy/title/' + search + '?page=' + page)
-              .then(dados => {console.log(dados.data); res.render('index', {lista: dados.data, user: user, page: page, search: search})})
+              .then(dados => {res.render('index', {lista: dados.data, user: user, page: page, search: search})})
               .catch(erro => res.render('error', {error: e}))
       }
   } else if(tag){
@@ -106,20 +106,27 @@ router.get('/register', function(req, res){
 
 router.post('/register', function(req, res){
   let hash = bcrypt.hashSync(req.body.password, 10);
+  console.log(req.body)
   apiReq.post('/users', {
     email: req.body.email,
     password: hash,
     name: req.body.name,
     type: "local"
   })
-  .then(_ => res.redirect('/login') )
-  .catch(erro => {console.log(erro.response.data); res.status(500).render('error', {error: erro})})
+  .then(dados => {
+    console.log("type: " + dados.data.type); 
+
+    if(dados.data.type != 'usn')
+      res.redirect('/login')
+    else 
+      res.redirect('/')
+    })
+  .catch(erro => {res.status(500).render('error', {error: erro})})
 })
 
 
 // outros
 router.post('/subscription/:name', /*checkAuth,*/ function(req, res){
-  console.log(req.body.text)
   let sub = req.body.text
   if(req.user.subscriptions.includes(sub))
     res.redirect('/profile/'+ req.params.name)
@@ -145,7 +152,6 @@ router.post('/profile/:name/image', upload.single('img'), /*checkAuth,*/ functio
 
 
 router.get('/profile/:name/image', function(req, res){
-  console.log(apiHost + '/users/' + req.params.name + '/image')
   let options = {
     url: apiHost + '/users/' + req.params.name + '/image',
     headers: {
@@ -196,10 +202,9 @@ router.post('/comment/:idPost/:email', function(req,res){
  * Respondes to axios in client side
  */
 router.post('/comment/upvote/:idComment/:email', function(req, res){
-  console.log("I AM HERE")
   apiReq.post('/api/comment/upvote/' + req.params.idComment +'/' + req.params.email)
     .then(dados => { res.jsonp(dados.data)})
-    .catch(erro => {console.log(erro); res.status(500).render('error', {error: erro})})
+    .catch(erro => { res.status(500).render('error', {error: erro})})
 })
 
 /**
