@@ -1,7 +1,6 @@
 var tokenGen = require('./token');
 var axios = require('axios');
-const apiHost = require('../config/env').apiHost;
-
+const apiHost = require('../config/env').API_HOST;
 
 module.exports = {
     get: function(path){

@@ -1,11 +1,12 @@
-var jwt = require('jsonwebtoken')
+var jwt = require('jsonwebtoken');
+const JWT_SECRET = require('../config/env').JWT_SECRET;
 
 module.exports = {
     genToken: function(){
-        return jwt.sign({}, "daw2019", 
+        return jwt.sign({}, JWT_SECRET, 
           {
               expiresIn: 3000, 
-              issuer: "uminho-isn"
+              issuer: "usn"
           })
       },
 
