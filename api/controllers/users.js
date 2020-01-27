@@ -55,8 +55,8 @@ module.exports.insertImage = (name, newImage) => {
                 .exec()
 }
 
-module.exports.checkRequest = name => {
-    return User.find({"requestsRcv.requester": name})
+module.exports.checkRequest = (owner,name) => {
+    return User.findOne({name: owner, "requestsRcv.requester": name})
                 .exec()
 }
 
@@ -66,8 +66,8 @@ module.exports.insertRequest = (owner, request) => {
                     .exec()
 }
 
-
-module.exports.getRequest = (name, id) => {
-    return  User.findOne({name: name, "requestsRcv._id": ObjectId(id)})
-                .exec()
+module.exports.removeRequest = (owner, name) => { 
+    return User.findOneAndUpdate({name:  owner},
+                    {$pull: {requestsRcv: {requester: name}}})
+                    .exec()
 }
