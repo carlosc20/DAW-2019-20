@@ -1,7 +1,7 @@
 extends mainLayout
 
 block page
-  .w3-card-4.modal.modal-container(id='display')
+  .w3-card-4.modal.modal-container.background(id='display')
   secction
     .container.text-center.post-info
       h1= post.title
@@ -24,15 +24,15 @@ block page
                 i.fas.fa-file-download  
                 
     if post.upVotes.includes(user.email)
-      i.btn.borderless.bg-success.fas.fa-thumbs-up(id="pthumbs-up-done")
+      i.btn.borderless.btn-selected.fas.fa-thumbs-up(id="pthumbs-up-done")
     else
-      button.btn.borderless.bg-info.fas.fa-thumbs-up(onclick='upVotePost("'+ post._id + '", "' + user.email + '")' id = "pthumbs-up-ok")
+      button.btn.borderless.btn-not-selected.fas.fa-thumbs-up(onclick='upVotePost("'+ post._id + '", "' + user.email + '")' id = "pthumbs-up-ok")
     if post.downVotes.includes(user.email)
-      i.btn.borderless.bg-warning.fas.fa-thumbs-down(id="pthumbs-down-done")
+      i.btn.borderless.btn-selected.fas.fa-thumbs-down(id="pthumbs-down-done")
     else
-      button.btn.borderless.bg-info.fas.fa-thumbs-down(onclick='downVotePost("'+ post._id + '", "' + user.email + '")' id = "pthumbs-down-ok")
+      button.btn.borderless.btn-not-selected.fas.fa-thumbs-down(onclick='downVotePost("'+ post._id + '", "' + user.email + '")' id = "pthumbs-down-ok")
 
-    a.btn.btn-sm.btn-outline-secondary.container(href="/download/"+ post._id)
+    a.btn.btn-selected.container(href="/download/"+ post._id)
       | Download todos
       i.fas.fa-file-download
       .row
@@ -45,7 +45,7 @@ block page
             form(action='/comment/' + post._id + '/' + user.name method='POST')
               textarea.form-control(placeholder='Escreva um comentário...' name="text", rows='3')
               br
-              button.btn.btn-info.pull-right(type='submit') Post
+              button.btn.btn-not-selected.pull-right(type='submit') Post
             .clearfix
             hr
             ul.media-list
@@ -61,13 +61,13 @@ block page
                       | @#{comment.owner}
                     span.thumbs
                       if comment.upVotes.includes(user.email)
-                        i.btn.borderless.bg-success.fas.fa-thumbs-up
+                        i.btn.btn-selected.borderless.fas.fa-thumbs-up
                       else
-                        button.btn.borderless.bg-info.fas.fa-thumbs-up(onclick='upVoteComment("'+ post._id + '", "' + comment._id + '", "' + user.email + '")')
+                        button.btn.btn-not-selected.borderless.fas.fa-thumbs-up(onclick='upVoteComment("'+ post._id + '", "' + comment._id + '", "' + user.email + '")')
                       if comment.downVotes.includes(user.email)
-                        i.btn.borderless.bg-warning.fas.fa-thumbs-down
+                        i.btn.btn-selected.borderless.fas.fa-thumbs-down
                       else
-                        button.btn.borderless.bg-info.fas.fa-thumbs-down(onclick='downVoteComment("'+ post._id + '", "' + comment._id + '", "' + user.email + '")')
+                        button.btn.btn-not-selected.borderless.fas.fa-thumbs-down(onclick='downVoteComment("'+ post._id + '", "' + comment._id + '", "' + user.email + '")')
                     p= comment.text
 
 

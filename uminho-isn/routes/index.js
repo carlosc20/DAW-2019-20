@@ -178,9 +178,10 @@ router.post('/comment/:idPost/:email', function(req,res){
  * Respondes to axios in client side
  */
 router.post('/comment/upvote/:idComment/:email', function(req, res){
+  console.log("I AM HERE")
   apiReq.post('/api/comment/upvote/' + req.params.idComment +'/' + req.params.email)
     .then(dados => { res.jsonp(dados.data)})
-    .catch(erro => res.status(500).render('error', {error: erro}))
+    .catch(erro => {console.log(erro); res.status(500).render('error', {error: erro})})
 })
 
 /**
