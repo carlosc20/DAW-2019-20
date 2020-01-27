@@ -1,11 +1,11 @@
 var jwt = require('jsonwebtoken')
 
 module.exports = {
-    genToken : function(){
+    genToken: function(){
         return jwt.sign({}, "daw2019", 
           {
               expiresIn: 3000, 
-              issuer: "Servidor myAgenda"
+              issuer: "uminho-isn"
           })
       },
 
@@ -15,6 +15,9 @@ module.exports = {
         }else{
             return url + '?token=' + this.genToken()
         }
-    }
+    },
       
+    getTokenConfig: function(){ 
+        return {headers: { Authorization: `Bearer ${this.genToken()}` }};
+    }
 }

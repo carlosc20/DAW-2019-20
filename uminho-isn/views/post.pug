@@ -1,13 +1,15 @@
 extends mainLayout
 
 block page
-  .w3-card-4.modal(id='display')
+  .w3-card-4.modal.modal-container(id='display')
   secction
     .container.text-center.post-info
       h1= post.title
       p= post.description
       p 
         b tags: 
+        if post.tags.length == 0
+          | nenhuma
         each tag in post.tags
           | #{tag};  
   .container
@@ -19,17 +21,28 @@ block page
             .card-body
               h5.card-title= file.name
               a.btn.btn-sm.btn-outline-secondary(href="/download/"+ post._id + '/' + file.name)
-                i.fas.fa-file-download
+                i.fas.fa-file-download  
+                
+    if post.upVotes.includes(user.email)
+      i.btn.borderless.bg-success.fas.fa-thumbs-up(id="pthumbs-up-done")
+    else
+      button.btn.borderless.bg-info.fas.fa-thumbs-up(onclick='upVotePost("'+ post._id + '", "' + user.email + '")' id = "pthumbs-up-ok")
+    if post.downVotes.includes(user.email)
+      i.btn.borderless.bg-warning.fas.fa-thumbs-down(id="pthumbs-down-done")
+    else
+      button.btn.borderless.bg-info.fas.fa-thumbs-down(onclick='downVotePost("'+ post._id + '", "' + user.email + '")' id = "pthumbs-down-ok")
 
     a.btn.btn-sm.btn-outline-secondary.container(href="/download/"+ post._id)
       | Download todos
       i.fas.fa-file-download
+      .row
+
     hr
     .row.bootstrap.snippets
       .comment-wrapper
         .panel.panel-info
           .panel-body
-            form(action='/comment/' + post._id + '/' + user.email method='POST')
+            form(action='/comment/' + post._id + '/' + user.name method='POST')
               textarea.form-control(placeholder='Escreva um comentário...' name="text", rows='3')
               br
               button.btn.btn-info.pull-right(type='submit') Post
@@ -39,7 +52,7 @@ block page
               each comment in post.comments
                 li.media
                   a.pull-left(href='/profile/' + comment.owner)
-                    img.img-circle(src='https://bootdey.com/img/Content/user_1.jpg', alt='')
+                    img.img-circle(src='/profile/' + comment.owner + '/image', alt='')
                   .media-body
                     span.text-muted.pull-right
                       small.text-muted #{comment.timeSwap}

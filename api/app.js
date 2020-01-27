@@ -16,29 +16,20 @@ mongoose.connect('mongodb://127.0.0.1:27017/uminho-isn', {useNewUrlParser: true,
   .then(() => console.log('Mongo: ready(' + mongoose.connection.readyState + ')'))
   .catch(() => console.log('Mongo: connection error(' + mongoose.connection.readyState + ')'));
 
-mongoose.set('useFindAndModify', false)
-
 var usersRouter = require('./routes/users');
 var apiRouter = require('./routes/api');
 
 // auth
 var passport = require('passport');
 var JWTStrategy = require('passport-jwt').Strategy;
-var ExtractJWT = require('passport-jwt').ExtractJwt;
+var ExtractJwt = require('passport-jwt').ExtractJwt;
 
-var extractFromQS = function(req){
-  return (req.query && req.query.token) ? req.query.token : null;
-}
-
-var extractFromBody = function(req){
-  return (req.body && req.body.token) ? req.query.token : null;
-}
 
 passport.use(
   new JWTStrategy(
     {
     secretOrKey: 'daw2019',
-    jwtFromRequest: ExtractJWT.fromExtractors([extractFromQS, extractFromBody])
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
     }, 
     async (payload, done) => {
       try{
@@ -79,10 +70,11 @@ app.use(function(req,res,next){
 })
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(passport.authenticate('jwt', {session: false}));
 app.use('/users', usersRouter);
 app.use('/api', apiRouter);
 
-// catch 404 and forward to error handler
+// catch 404 and forward to error handler 
 app.use(function(req, res, next) {
   next(createError(404));
 });
@@ -95,7 +87,8 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  //res.render('error');
+  console.log(err)
 });
 
 module.exports = app;

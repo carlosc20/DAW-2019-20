@@ -1,15 +1,15 @@
 function showFicheiro(f, postId){
     console.log("HELLO")
-    var div = $('<div id="modal-container" class="w3-card-4"></div>')
     if(f.mimetype.match(/image\/.+/))
         var ficheiro = $('<img src="/ficheiros/' + postId + '/' + f.name + '" width= "40%" id="modal-img"/>')
     else 
         var ficheiro = $('<p>' + JSON.stringify(f) + '<p>')
-    var download = $('<div><a href="/download/' + f.name + '">Download</a></div>')
-    div.append(ficheiro, download)
+    var download = $('<a class="btn btn-dark" href="/download/' + postId + '/' + f.name + '">Download</a>')
     $("#display").empty()
-    $('#display').append(div) 
+    $('#display').append(ficheiro, download) 
     $('#display').modal()
+    $('.close-modal').addClass("btn")
+    $('.close-modal').addClass("btn-dark")
 }
 
 $(function(){

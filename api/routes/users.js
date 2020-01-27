@@ -51,13 +51,18 @@ router.get('/:email/mentions', function(req, res){
     .catch(e => res.status(500).jsonp(e))
 })
 
+<<<<<<< HEAD
 router.get('/name/:name', passport.authenticate('jwt', {session: false}), function(req, res) {
+=======
+
+router.get('/name/:name', function(req, res) {
+>>>>>>> aadb118baa8eafa6a28211e5ace4cdb1fdda8472
   Users.getByName(req.params.name)
     .then(data => res.jsonp(data))
     .catch(e => res.status(500).jsonp(e))
 });
 
-router.get('/:email', passport.authenticate('jwt', {session: false}), function(req, res) {
+router.get('/:email', function(req, res) {
   Users.get(req.params.email)
     .then(data => res.jsonp(data))
     .catch(e => res.status(500).jsonp(e))

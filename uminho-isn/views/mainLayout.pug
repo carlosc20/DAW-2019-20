@@ -16,8 +16,9 @@ block content
 		.navbar-nav.ml-auto
 			form.form-inline.my-2.my-lg-0
 				.input-group.form-group
-					.input-group-prepend
-						span.input-group-text
-							i.fas.fa-search.search-icon
-						input.form-control.mr-sm-2.search(type='search' placeholder='Search' aria-label='Search')
+					form(action='/post/fuzzy' method='GET')
+						input.form-control.border.border-right-0(type='text' name='search' placeholder='Search...')
+						span.input-group-append
+							button.btn.btn-outline-light.border.border-left-0(type='submit')
+								i.fa.fa-search
 	block page
