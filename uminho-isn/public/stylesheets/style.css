@@ -1,6 +1,11 @@
 body {
   padding-top: 40px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-color: #F8DCB4 !important;
+}
+
+.background{
+  background-color: #F8DCB4 !important;
 }
 
 a {
@@ -25,7 +30,7 @@ a {
 /* Style the navigation bar */
 .navbar {
   width: 100%;
-  background-color: #555;
+  background-color: #D34F4E;
   padding: 0%;
   overflow: hidden;
 }
@@ -35,19 +40,24 @@ a {
   float: left;
   text-align: center;
   padding: 12px;
-  color: white;
+  color: #F8DCB4 !important;
   text-decoration: none;
   font-size: 17px;
   overflow: auto;
 }
 
+.navbar-brand {
+  color: #F8DCB4;
+}
+
 /* Navbar links on mouse-over */
 .navbar a:hover {
-  background-color: rgb(124, 124, 124);
+  background-color: #4A2B2B;
 }
 
 .navbar-brand{
   margin: 0;
+  color: #F8DCB4;
 }
 
 .input-group-prepend{
@@ -107,3 +117,28 @@ a {
   border: 0px;
   margin: 2px;
 }
+
+.btn-selected {
+  background-color: #4A2B2B;
+}
+
+.btn-selected :hover {
+  background-color: rgb(58, 33, 33);
+}
+
+.btn-not-selected {
+  background-color: #D34F4E;
+}
+
+.btn-not-selected :hover {
+  background-color: rgb(190, 69, 69);
+}
+
+.tmpl-red {
+  background-color: #FF1100;
+}
+
+.tmpl-red :hover{
+  background-color: rgb(187, 12, 0)
+}
+
