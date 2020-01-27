@@ -126,9 +126,15 @@ router.post('/register', function(req, res){
 router.post('/subscription/:name', /*checkAuth,*/ function(req, res){
   console.log(req.body.text)
   let sub = req.body.text
-  if(req.user.subscriptions.includes(sub))
-    res.redirect('/profile/'+ req.params.name)
-  else{
+  let array = req.user.subscriptions
+  let b = true
+  for(var i = 0; i<array.length; i++){
+    if(array[i].tag == sub){
+      b = false
+      res.redirect('/profile/'+ req.params.name)
+    }
+  }
+  if(b){
     apiReq.post('/users/' + req.params.name + '/subscription/' + sub)
       .then(user => res.redirect('/profile/'+ req.params.name))
       .catch(erro => res.status(500).render('error', {error: erro}))
