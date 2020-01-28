@@ -3,6 +3,23 @@ extends mainLayout
 block page
     .album.py-5.bg-light.background
         .container(style="padding-top: 10px;").text-center.bg-white
+            if(user.requestsRcv.length > 0)
+                table.table
+                    thead
+                        tr
+                            th(scope="col" style="width: 30%") Tag
+                            th(scope="col" style="width: 30%") Requester
+                            th(scope="col" style="width: 20%") 
+                            th(scope="col" style="width: 20%") 
+                    tbody
+                        each r in user.requestsRcv
+                            tr
+                                td=r.tag
+                                td=r.requester
+                                td
+                                    button.btn.btn-sm.i.fas.fa-check(onclick="answerRequest('" + r.tag + "','" + r.requester + "', true)") 
+                                td 
+                                    button.btn.btn-sm.i.fas.fa-times(onclick="answerRequest('" + r.tag + "','" + r.requester + "', false)")  
             h4 Criação de um grupo
             form(action=('/subscription/group') method='POST')
                 .input-group.form-group

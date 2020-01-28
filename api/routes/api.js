@@ -18,42 +18,61 @@ var filePath = require('../utils/filePath')
 router.post('/post', upload.array('files'), function(req, res, next) {
     console.dir(req.body)
     let newPost = req.body
-    if(newPost.files == undefined)
-        newPost.files = []
-    newPost.date = new Date().toISOString()
-
-    for(let i = 0; i < req.files.length; i++){
-        let novoFicheiro = {
-            name: req.files[i].originalname,
-            mimetype: req.files[i].mimetype,
-            size: req.files[i].size
-        }
-        newPost.files.push(novoFicheiro)
-    }
-    Posts.insert(newPost)
-        .then(dados => {
-            for(let i = 0; i < dados.files.length;  i++){
-                let oldPath = __dirname + '/../' + req.files[i].path
-                mkdirp(filePath.getFilePath(dados._id, dados.files[i].name), function(err) { 
-                    if(err){
-                        Posts.delete(dados._id)
-                        throw err
-                    } 
-                    else {
-                        fs.rename(oldPath, filePath.getFile(dados._id, dados.files[i].name), function (err){
-                            if (err) {
-                                Posts.delete(dados._id)
-                                throw err
-                            }
-                            console.log("file: " + dados.files[i].name, "; post id: " + dados._id)
-                            console.log("Saved file at: "+  filePath.getFile(dados._id, dados.files[i].name))
-                        })
+    let postTags = newPost.tags
+    Users.getByName(req.body.poster)
+        .then(user => {
+            let c = 0
+            let found = 0
+            for(var i = 0; postTags.length; i++){
+                if(!postTags[i].public){
+                    c++
+                    for(var j = 0; user.subscriptions.length; j++){
+                        if(postTags[i].tag == user.subscriptions.tag)
+                            found++
                     }
-                });
+                }
             }
-            res.jsonp(dados)
+            console.log(c)
+            console.log(found)
+            if(c == found){
+                console.log("valid POST")
+                if(newPost.files == undefined)
+                    newPost.files = []
+                newPost.date = new Date().toISOString()
+
+                for(let i = 0; i < req.files.length; i++){
+                    let novoFicheiro = {
+                        name: req.files[i].originalname,
+                        mimetype: req.files[i].mimetype,
+                        size: req.files[i].size
+                    }
+                    newPost.files.push(novoFicheiro)
+                }
+                Posts.insert(newPost)
+                    .then(dados => {
+                        for(let i = 0; i < dados.files.length;  i++){
+                            let oldPath = __dirname + '/../' + req.files[i].path
+                            mkdirp(filePath.getFilePath(dados._id, dados.files[i].name), function(err) { 
+                                if(err){
+                                    Posts.delete(dados._id)
+                                    throw err
+                                } 
+                                else {
+                                    fs.rename(oldPath, filePath.getFile(dados._id, dados.files[i].name), function (err){
+                                        if (err) {
+                                            Posts.delete(dados._id)
+                                            throw err
+                                        }
+                                        console.log("file: " + dados.files[i].name, "; post id: " + dados._id)
+                                        console.log("Saved file at: "+  filePath.getFile(dados._id, dados.files[i].name))
+                                    })
+                                }
+                            });
+                        }
+                        res.jsonp(dados)
+                    }).catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})
+            }
         })
-        .catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})
 });
 
 
