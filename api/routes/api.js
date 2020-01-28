@@ -62,7 +62,6 @@ router.get('/post/:id', function(req, res, next) {
     Posts.getById(req.params.id)
         .then(dados => { 
             let post = JSON.parse(JSON.stringify(dados));
-            console.log(post)
             post.comments = addTimeSwapToList(post.comments)
             res.jsonp(post) })
         .catch(erro => { res.status(500).jsonp(erro) })
@@ -160,7 +159,7 @@ router.post('/comment/:idPost', function(req,res){
     let mentions = (comment.text.match(regex))
     if(mentions) 
         mentions.forEach(m => Users.insertMention(m.substr(1), req.params.idPost))
-    Posts.addComment(req.params.idPost, req.body)
+    Posts.addComment(req.params.idPost, comment)
         .then(dados => { res.jsonp(dados) })
         .catch(erro => { res.status(500).jsonp(erro) })
 })

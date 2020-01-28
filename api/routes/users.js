@@ -48,15 +48,19 @@ router.get('/:email/posts', function(req, res){
   .catch(e => res.status(500).jsonp(e))
 })
 
-router.get('/:email/mentions', function(req, res){
-  Users.get(req.params.email)
+router.get('/mentions/:name', function(req, res){
+  Users.getByName(req.params.name)
     .then(user => {
       Promise.all(user.mentions.map(Posts.getByIdForMentions))
-        .then(result => res.jsonp(result))
+        .then(result => {
+          let filtered = result.filter(function(value, index, arr){
+            return value != null
+          })
+          res.jsonp(filtered)})
+        .catch(e => res.status(500).jsonp(e))
     })
     .catch(e => res.status(500).jsonp(e))
 })
-
 
 router.get('/name/:name', function(req, res) {
   Users.getByName(req.params.name)
@@ -105,6 +109,7 @@ router.post('/', function(req, res) {~
       }
     }).catch(e => {console.log("3"); res.status(500).jsonp(e)})
 });
+
 
 router.post('/group/:name/tag/:tag', function(req, res) {
   let name = req.params.name
@@ -191,38 +196,42 @@ router.delete('/:name/subscription/:sub', function(req, res){
 
 router.post('/userImg/:name', upload.single('img'), function(req,res){
   console.log(req.file.path)
-  let userName = req.params.name 
-  let oldPath = __dirname + '/../' + req.file.path
-  let newDir = __dirname + '/../public/usersImg/' + userName
-  let newPath = newDir + '/' + req.file.originalname
+  if(/image\/.+/.test(req.file.mimetype)){
+    let userName = req.params.name 
+    let oldPath = __dirname + '/../' + req.file.path
+    let newDir = __dirname + '/../public/usersImg/' + userName
+    let newPath = newDir + '/' + req.file.originalname
 
-  let novaImg = {
-    name: req.file.originalname,
-    mimetype: req.file.mimetype,
-    size: req.file.size
-  }
-  
-  Users.insertImage(userName, novaImg)
-    .then(r => {
-      console.log(r)
-      mkdirp(newDir, function(err) {
-        if(err){
-          console.log("cant make dir")
-          throw err
-        }
-        else{
-          fs.rename(oldPath, newPath, function (err){
-            if (err){ 
-              console.log("cant rename")
-              throw err}
-            console.log("img: " + novaImg.name, "; user name: " + userName)
-            console.log("Saved img at: "+  newPath)
-          })
-        }
+    let novaImg = {
+      name: req.file.originalname,
+      mimetype: req.file.mimetype,
+      size: req.file.size
+    }
+    
+    Users.insertImage(userName, novaImg)
+      .then(r => {
+        console.log(r)
+        mkdirp(newDir, function(err) {
+          if(err){
+            console.log("cant make dir")
+            throw err
+          }
+          else{
+            fs.rename(oldPath, newPath, function (err){
+              if (err){ 
+                console.log("cant rename")
+                throw err}
+              console.log("img: " + novaImg.name, "; user name: " + userName)
+              console.log("Saved img at: "+  newPath)
+            })
+          }
+      })
+      res.jsonp(r)
     })
-    res.jsonp(r)
-  })
-    .catch(erro => {console.log(erro); res.status(500).jsonp(erro)})
+      .catch(erro => {console.log(erro); res.status(500).jsonp(erro)})
+  }
+  else
+    res.status(406).jsonp({erro: "wrong mimetype"})
 })
 
 router.get('/:name/image', function(req,res){

@@ -1,5 +1,8 @@
 const fs = require('fs')
 const apiReq = require('./utils/api') 
+const axios = require('axios')
+const FormData = require('form-data');
+
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -21,30 +24,61 @@ hasDirectories = source => {
     return getDirectories(source).length > 0
 }
 
-searchPost = (source, level)  =>{
+getRandomDescription = () => {
+    return axios.get('https://baconipsum.com/api/?type=all-meat&sentences=1')
+                .then(dados => {return dados.data[0]})
+                .catch(e => console.log(e))
+}
+
+var numPosts = 0
+searchPost = (source, level, tags)  =>{
+    if(numPosts > 1) return
     level = level || 0
+    tags = tags || new Array
     if(hasDirectories(source)){
-
-    }else {
-
+        getDirectories(source).forEach(elementDirectory => {
+            let tags2 = tags.slice()
+            tags2.push(elementDirectory)
+            searchPost(source + '/' + elementDirectory, level + 1, tags2)
+        })
     }
-    if(level > 3 && hasFile()){
+    if(level > 3 && hasFile(source)){
         let title = ''
         let match = source.match(/(.+)\//)
-        for(let i = match.length-1; i > 3; i++)
+        for(let i = match.length-1; i > 3; i-- )
             title += match[i] + ' '
         let form = new FormData()
-        form.append('title', req.body.title)
-        form.append('description', req.body.description)
-        if(req.files)
-            req.files.forEach(file => {
-            form.append('files' , file.buffer, file.originalname)
+        getRandomDescription().then(description => {
+            form.append('title', title)
+            form.append('description', description)
+            form.append('poster', 'test') // alterar
+            /*tags.forEach(elementTag => {
+                form.append('tags', elementTag)
+            })*/
+            getFiles(source).forEach(elementFile => {
+                fs.readFile(source + '/' + elementFile, (err, data) => {
+                    if(err) throw err
+                    else  form.append('files', data , elementFile)
+                })
             })
-        apiReq.post('/api/post', form, {
+            console.log(numPosts + '; src: ' +  source + ';tags: '  + tags)
+            numPosts++
+
+            apiReq.post('/api/post', form, {
+                headers: {
+                'Content-Type': 'multipart/form-data; boundary='+form._boundary
+                }
+            })
+            .catch(e => {console.log(e); process.exit()})
+        })
+        .catch(e => {console.log(e), process.exit()})
+        
+        /*apiReq.post('/api/post', form, {
             headers: {
             'Content-Type': 'multipart/form-data; boundary='+form._boundary
             }
         })
+        .catch(e => {console.log(e); process.exit()})*/
     }
 }
 
@@ -64,10 +98,12 @@ searchTags = (source, level) => {
 }
 
 
-main = () => {
-    let src = './'
-    searchTags(src)
-    console.log(getFiles(src + 'views'))
+main = () => { 
+    let src = 'C:/Users/CésarAugustodaCostaB/Dropbox/dropbox MIEI'
+    //searchTags(src)
+    //console.log(getFiles(src))
+    //console.log(getDirectories(src))
+    searchPost(src)
 }
 
 main();
