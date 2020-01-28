@@ -24,7 +24,7 @@ module.exports = {
     post: function(path, body, headers){
         if(!headers) headers = {'headers': {}}
         if(!body) body = {}
-        headers.headers['Authorization'] = `Bearer ${tokenGen.genToken()}`;
+        headers.headers['Authorization'] = `Bearer ${genToken()}`;
         headers['maxContentLength'] = Infinity
         headers['maxBodyLength'] = Infinity
         console.log(headers)

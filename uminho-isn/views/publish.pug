@@ -11,17 +11,18 @@ block page
 					label(for='description') Texto
 					textarea#title.form-control(type='text' name="description" placeholder='Introduzir descrição' rows='2' required)
 				.form-group
-					label.w3-cell Ficheiro:
-					input.w3-input.w3-cell(type="file" name="files" multiple)
-				table.form-group(id='taglist')
-					label.w3-cell Tags:
+					label Ficheiro:
+					input(type="file" name="files" multiple)
+				tb.form-group
+					label Tags:
 					.row
 						.col-3
-							select.selectpicker(data-live-search='true' name='tags' id='tagselector')
+							select.selectpicker(data-live-search='true' id='tagselector')
 								each tag in tags
 									option(data-tokens=tag.tag) #{tag.tag}
 						.col
 							button.btn.btn-primary.ml-3(id='tagbutton') Adicionar
+					table.table(id='taglist')
 
 
 				button.btn.btn-primary(type='submit') Publicar
