@@ -1,3 +1,5 @@
+var axios = require('axios');
+
 function showFicheiro(f, postId){
     if(f.mimetype.match(/image\/.+/))
         var ficheiro = $('<img src="/ficheiros/' + postId + '/' + f.name + '" width= "40%" id="modal-img"/>')
@@ -11,16 +13,20 @@ function showFicheiro(f, postId){
     $('.close-modal').addClass("btn-dark")
 }
 
-function showRequests(username){
-    //axios.get(....)
-    let tags = ["test", "test", "another test"]
-    let requesters = ["ola1", "ola2", "ola1"]
+function showRequests(user){
+    let requests = user.requestsRcv
 
     let table = $('<table class="table table-hover table-danger table-bordered"><tr class="table-header"><th>Tag</th><th>Requester</th> <th></th><th></th></tr></table>')
-    for(let i = 0; i < tags.length; i++){
-        let row = $('<tr><td>' + tags[i] + '</td><td>' + requesters[i] + '</td> <td><i class="fas fa-check-square"></i> </td> <td><i class="fas fa-times"></i></td></tr>')
+    for(let i = 0; i < requests.length; i++){
+        let args = {
+            user: user,
+            tag: requests[i].tag 
+        }
+        let row = $('<tr><td>' + requests[i].tag + '</td><td>' 
+        + requests[i].requester + '</td> <td><button class="fas fa-check-square" onclick=accept(' + args + ')></i> </td> <td><i class="fas fa-times onclick=decline(' + args +')"></i></td></tr>')
         table.append(row)
     }
+    
     $("#display").empty()
     $('#display').append(table) 
     $('#display').modal()

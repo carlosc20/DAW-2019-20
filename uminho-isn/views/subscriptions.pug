@@ -1,0 +1,36 @@
+extends mainLayout
+
+block page
+    .album.py-5.bg-light.background
+        .container(style="padding-top: 10px;").text-center.bg-white
+            h4 Criação de um grupo
+            form(action=('/subscription/group') method='POST')
+                .input-group.form-group
+                    .input-group-prepend
+                    input.form-control(placeholder='Escreva o nome de uma tag para criar um grupo...' name="text", rows='1' required)
+                    button.btn.btn-primary(type='submit') Criar
+            h4 Tags existentes
+            table.table
+                thead
+                    tr
+                        th(scope="col" style="width: 40%") Tag
+                        th(scope="col" style="width: 20%") Domain
+                        th(scope="col" style="width: 20%") Owner
+                        th(scope="col" style="width: 20%") 
+                tbody
+                    each t in tags
+                        tr
+                            td
+                                a(href='/?tag=' + t.tag role="button")= t.tag
+                            if !t.public
+                                td private
+                                td= t.owner
+                                td
+                                    button.btn.btn-sm.i.fas.fa-check(onclick="subscribeRequest('" + t.tag +"')")  
+                            else
+                                td public
+                                td -
+                                td
+                                    button.btn.btn-sm.i.fas.fa-check(onclick="subscribe('" + t.tag +"')") 
+                            
+                            

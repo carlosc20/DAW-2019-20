@@ -11,6 +11,8 @@ module.exports = {
         if(!headers) headers = {'headers': {}}
         if(!body) body = {}
         headers.headers['Authorization'] = `Bearer ${tokenGen.genToken()}`;
+        headers['maxContentLength'] = Infinity
+        headers['maxBodyLength'] = Infinity
         console.log(headers)
         return axios.post(apiHost + path, body, headers);
     },

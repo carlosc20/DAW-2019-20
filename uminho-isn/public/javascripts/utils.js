@@ -30,3 +30,15 @@ function downVotePost(idPost, email){
         .then(dados =>  window.location.assign('/post/' + idPost))
         .catch(error => {console.log(error)})
 }
+
+function subscribe(tag){
+    axios.post('/subscribe/public/' + tag)
+        .then(dados => window.location.assign('/subscriptions'))
+        .catch(error => {console.log(error)})
+}
+
+function subscribeRequest(tag){
+    axios.post('/subscribe/request/' + tag)
+        .then(dados => window.location.assign('/subscriptions'))
+        .catch(error => {console.log(error)})
+}

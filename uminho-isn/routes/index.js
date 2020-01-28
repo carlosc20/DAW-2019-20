@@ -93,11 +93,22 @@ router.get('/', checkAuth, function(req, res) {
 router.get('/profile/:name', checkAuth, function(req, res){
   apiReq.get('/users/name/' + req.params.name)
     .then(user => {
-      console.log("USER: " +req.user); 
-      console.log("Profile:" + user.data);
-      res.render('user', {user: req.user, userProfile: user.data})
+      apiReq.get('/users/mentions/' + req.params.name)
+        .then(result => {
+          console.log(req.user); 
+          console.log(user.data);
+          console.log(result)
+          res.render('user', {user: req.user, userProfile: user.data, mentions: result.data})
+        }).catch(erro => res.status(500).render('error', {error: erro}))
     })
-    .catch(erro => res.status(500).render('error', {error: erro}) )
+    .catch(erro => res.status(500).render('error', {error: erro}))
+})
+
+
+router.get('/subscriptions', function(req, res){
+  apiReq.get('/tags')
+    .then(response =>{console.log(response);res.render('subscriptions', {user: req.user, tags: response.data})})
+    .catch(e => res.status(500).render('error', {error: erro}))
 })
 
 
@@ -125,23 +136,29 @@ router.post('/register', function(req, res){
 })
 
 
-// outros
-router.post('/subscription/:name', /*checkAuth,*/ function(req, res){
-  let sub = req.body.text
+router.post('/subscription/group', checkAuth, function(req, res){
+  apiReq.post('/users/group/' + req.user.name + '/tag/' + req.body.text)
+    .then(dados => res.redirect('/subscriptions'))
+    .catch(erro => res.status(500).render('error', {error: erro}))
+})
+
+router.post('/subscription/:tag/request', checkAuth, function(req, res){
+  let tag = req.paramsg.tag
   let array = req.user.subscriptions
+  let name = req.user.name
   let b = true
   for(var i = 0; i<array.length; i++){
-    if(array[i].tag == sub){
+    if(array[i].tag == tag){
       b = false
-      res.redirect('/profile/'+ req.params.name)
+      res.redirect('/profile/'+ name)
     }
   }
   if(b){
-    apiReq.post('/users/' + req.params.name + '/subscription/' + sub)
-      .then(user => res.redirect('/profile/'+ req.params.name))
+    apiReq.post('/users/' + name + '/subscription/request/' + tag)
+      .then(user => res.redirect('/profile/'+ name))
       .catch(erro => {
         if(erro.response.data.name != undefined){
-          apiReq.get('/users/name/'+req.params.name)
+          apiReq.get('/users/name/'+ name)
             .then(user => res.render('user', {user: req.user, userProfile: user.data, erroTag: erro.response.data.name}))
             .catch(erro => res.status(500).render('error', {error: erro}))     
         }
@@ -151,7 +168,29 @@ router.post('/subscription/:name', /*checkAuth,*/ function(req, res){
   }
 })
 
-router.post('/profile/:name/image', upload.single('img'), /*checkAuth,*/ function(req, res){
+
+// outros
+router.post('/subscription/public/:tag', checkAuth, function(req, res){
+  let tag = req.paramsg.tag
+  let array = req.user.subscriptions
+  let name = req.user.name
+  let b = true
+  for(var i = 0; i<array.length; i++){
+    if(array[i].tag == tag){
+      b = false
+      res.redirect('/profile/'+ name)
+    }
+  }
+  if(b){
+    apiReq.post('/users/' + name + '/subscription/' + tag)
+      .then(user => res.redirect('/profile/'+ name))
+      .catch(erro => res.status(500).render('error', {error: erro}))     
+  }
+  else
+    res.status(500).render('error', {error: erro})
+})
+
+router.post('/profile/:name/image', upload.single('img'), checkAuth, function(req, res){
   let form = new FormData()
   let name = req.params.name
   form.append('img', req.file.buffer, req.file.originalname)
@@ -176,7 +215,7 @@ router.get('/profile/:name/image', function(req, res){
   request.get(options).pipe(res)
 })
 
-router.delete('/subscription/:name/tag/:sub', /*checkAuth,*/ function(req, res){
+router.delete('/subscription/:name/tag/:sub', checkAuth, function(req, res){
   apiReq.delete('/users/' + req.params.name + '/subscription/' + req.params.sub)
     .then(user => res.jsonp(user.email))
     .catch(erro => res.status(500).render('error', {error: erro}) )
@@ -188,10 +227,11 @@ router.get('/publish', checkAuth, function(req, res){
   res.render('publish', {user: user})
 })
 
-router.post('/publish', upload.array('files'), /* checkAuth,*/ function(req, res){
+router.post('/publish', upload.array('files'), checkAuth, function(req, res){
   let form = new FormData()
   form.append('title', req.body.title)
   form.append('description', req.body.description)
+  form.append('poster', req.user.name)
   if(req.files)
     req.files.forEach(file => {
       form.append('files' , file.buffer, file.originalname)
