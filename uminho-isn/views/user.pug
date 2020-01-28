@@ -24,9 +24,12 @@ block page
           .container(style="padding-top: 10px;").text-center.bg-white
             h4 Subscrições atuais
             form(action=('/subscription/' + userProfile.name) method='POST')
-                textarea.form-control(placeholder='Escreva o nome de uma tag para adicionar...' name="text", rows='1' required)
+                input.form-control(placeholder='Escreva o nome de uma tag para adicionar...' name="text", rows='1' required)
                 br
                 button.btn.btn-primary(type='submit') Subscrever
+            if(erroTag != undefined)
+              .container(style="color: rgba(240, 43, 43, 0.945); padding-top:10px") 
+                h5= 'Essa tag não existe: ' + erroTag  
             if(userProfile.subscriptions.length > 0)
               hr
               table.table

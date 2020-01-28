@@ -137,7 +137,15 @@ router.post('/subscription/:name', /*checkAuth,*/ function(req, res){
   if(b){
     apiReq.post('/users/' + req.params.name + '/subscription/' + sub)
       .then(user => res.redirect('/profile/'+ req.params.name))
-      .catch(erro => res.status(500).render('error', {error: erro}))
+      .catch(erro => {
+        if(erro.response.data.name != undefined){
+          apiReq.get('/users/name/'+req.params.name)
+            .then(user => res.render('user', {user: req.user, userProfile: user.data, erroTag: erro.response.data.name}))
+            .catch(erro => res.status(500).render('error', {error: erro}))     
+        }
+        else
+          res.status(500).render('error', {error: erro})
+      })
   }
 })
 
