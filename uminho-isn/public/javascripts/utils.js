@@ -42,3 +42,5 @@ function subscribeRequest(tag){
         .then(dados => window.location.assign('/subscriptions'))
         .catch(error => {console.log(error)})
 }
+
+$.fn.selectpicker.Constructor.BootstrapVersion = '4' 
