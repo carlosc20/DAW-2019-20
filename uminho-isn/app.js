@@ -67,16 +67,20 @@ app.use(cookieParser());
 
 //Middleware que devolve os pedidos dos ficheiros
 app.use((req, res, next) =>{
+  let mimetype = req.query.mimeType || 'image/png'
+  console.log(mimetype)
   if(req.path.startsWith('/ficheiros') || req.path.startsWith('/usersImg')){
+    console.log(apiHost + req.path + '?mimeType=' + mimetype)
     let options = {
-      url: apiHost + req.path,
+      url: apiHost + req.path + '?mimeType=' + mimetype,
       headers: {
         'User-Agent': 'request',
-        'Authorization' : `Bearer ${tokenGen.genToken()}` 
+        'Authorization' : `Bearer ${tokenGen.genToken()}` ,
+        'Content-type' : mimetype,
+        'Accept' : '*/*'
       }
     };
     request.get(options).pipe(res);
-    return
   } else if(req.path.startsWith('/download')){  
     let options = {
       url: apiHost + '/api' + req.path,
@@ -86,7 +90,6 @@ app.use((req, res, next) =>{
       }
     };
     request.get(options).pipe(res)
-    return
   } else {
     next()
   }

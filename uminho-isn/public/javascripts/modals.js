@@ -1,6 +1,6 @@
 function showFicheiro(f, postId){
-    if(f.mimetype.match(/image\/.+/))
-        var ficheiro = $('<img src="/ficheiros/' + postId + '/' + f.name + '" width= "40%" id="modal-img"/>')
+    if(f.mimetype.match(/image\/.+/) || f.mimetype == 'application/pdf')
+        var ficheiro = $('<img src="/ficheiros/' + postId + '/' + f.name + '?mimeType=' + f.mimetype + '" width= "40%" id="modal-img"/>')
     else 
         var ficheiro = $('<p>' + JSON.stringify(f) + '<p>')
     var download = $('<a class="btn btn-dark" href="/download/' + postId + '/' + f.name + '">Download</a>')
