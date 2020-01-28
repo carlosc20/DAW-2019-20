@@ -1,7 +1,7 @@
 extends mainLayout
 
 block page
-	.album.py-5.bg-light
+	.album.py-5.bg-light.background
 		.container
 			form(action='/publish' method='POST' enctype="multipart/form-data")
 				.form-group
@@ -13,4 +13,10 @@ block page
 				.form-group
 					label.w3-cell Ficheiro:
 					input.w3-input.w3-cell(type="file" name="files" multiple)
+				.form-group
+					label.w3-cell Tags:
+					select.selectpicker(data-live-search='true')
+						each tag in tags 
+							option(data-tokens=tag.tag) #{tag.tag}
+		
 				button.btn.btn-primary(type='submit') Publicar

@@ -30,3 +30,5 @@ function downVotePost(idPost, email){
         .then(dados =>  window.location.assign('/post/' + idPost))
         .catch(error => {console.log(error)})
 }
+
+$.fn.selectpicker.Constructor.BootstrapVersion = '4'

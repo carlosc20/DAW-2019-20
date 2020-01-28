@@ -31,7 +31,6 @@ passport.serializeUser((user,done) => {
 passport.deserializeUser((email, done) => {
   // can receive variable email from google api
   let userEmail = email.value && email.verified ? email.value : email
-  console.log("email: " + userEmail)
   apiReq.get('/users/' + userEmail)
     .then(dados => done(null, dados.data))
     .catch(erro => done(erro, false))
@@ -68,9 +67,7 @@ app.use(cookieParser());
 //Middleware que devolve os pedidos dos ficheiros
 app.use((req, res, next) =>{
   let mimetype = req.query.mimeType || 'image/png'
-  console.log(mimetype)
   if(req.path.startsWith('/ficheiros') || req.path.startsWith('/usersImg')){
-    console.log(apiHost + req.path + '?mimeType=' + mimetype)
     let options = {
       url: apiHost + req.path + '?mimeType=' + mimetype,
       headers: {

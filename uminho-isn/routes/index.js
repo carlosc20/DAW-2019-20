@@ -93,8 +93,6 @@ router.get('/', checkAuth, function(req, res) {
 router.get('/profile/:name', checkAuth, function(req, res){
   apiReq.get('/users/name/' + req.params.name)
     .then(user => {
-      console.log("USER: " +req.user); 
-      console.log("Profile:" + user.data);
       res.render('user', {user: req.user, userProfile: user.data})
     })
     .catch(erro => res.status(500).render('error', {error: erro}) )
@@ -108,7 +106,6 @@ router.get('/register', function(req, res){
 
 router.post('/register', function(req, res){
   let hash = bcrypt.hashSync(req.body.password, 10);
-  console.log(req.body)
   apiReq.post('/users', {
     email: req.body.email,
     password: hash,
@@ -117,7 +114,6 @@ router.post('/register', function(req, res){
   })
   .then(_ => res.redirect('/login') )
   .catch(erro => {
-    console.log(erro.response.data); 
     if(erro.response.data.erro == 'email' || erro.response.data.erro == 'name')
       res.render('register', {erro: erro.response.data.erro})
     else
@@ -185,7 +181,10 @@ router.delete('/subscription/:name/tag/:sub', /*checkAuth,*/ function(req, res){
 // publish
 router.get('/publish', checkAuth, function(req, res){
   let user = req.user
-  res.render('publish', {user: user})
+  apiReq.get('/tags')
+    .then(tags =>{console.dir(tags.data); res.render('publish', {user: user, tags: tags.data})})
+    .catch(erro => res.status(500).render('error', {error: erro}))
+  
 })
 
 router.post('/publish', upload.array('files'), /* checkAuth,*/ function(req, res){
