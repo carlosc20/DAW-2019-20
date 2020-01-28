@@ -21,16 +21,25 @@ block page
             .card-body
               h5.card-title= file.name
               a.btn.btn-sm.btn-outline-secondary(href="/download/"+ post._id + '/' + file.name)
-                i.fas.fa-file-download  
+                i.fas.fa-file-download
                 
     if post.upVotes.includes(user.email)
-      i.btn.borderless.btn-selected.fas.fa-thumbs-up(id="pthumbs-up-done")
+      i.btn.borderless.btn-selected
+        | #{post.upVotes.length}    
+        span.fas.fa-thumbs-up(id="pthumbs-up-done")
     else
-      button.btn.borderless.btn-not-selected.fas.fa-thumbs-up(onclick='upVotePost("'+ post._id + '", "' + user.email + '")' id = "pthumbs-up-ok")
+      button.btn.borderless.btn-not-selected(onclick='upVotePost("'+ post._id + '", "' + user.email + '")' id = "pthumbs-up-ok")
+        | #{post.upVotes.length}  
+        span.fas.fa-thumbs-up
+
     if post.downVotes.includes(user.email)
-      i.btn.borderless.btn-selected.fas.fa-thumbs-down(id="pthumbs-down-done")
+      i.btn.borderless.btn-selected
+        | #{post.downVotes.length}  
+        span.fas.fa-thumbs-down(id="pthumbs-down-done")
     else
-      button.btn.borderless.btn-not-selected.fas.fa-thumbs-down(onclick='downVotePost("'+ post._id + '", "' + user.email + '")' id = "pthumbs-down-ok")
+      button.btn.borderless.btn-not-selected(onclick='downVotePost("'+ post._id + '", "' + user.email + '")' id = "pthumbs-down-ok")
+        | #{post.downVotes.length}  
+        span.fas.fa-thumbs-down
 
     a.btn.btn-selected.container(href="/download/"+ post._id)
       | Download todos
