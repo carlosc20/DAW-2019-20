@@ -11,6 +11,23 @@ function showFicheiro(f, postId){
     $('.close-modal').addClass("btn-dark")
 }
 
+function showRequests(username){
+    //axios.get(....)
+    let tags = ["test", "test", "another test"]
+    let requesters = ["ola1", "ola2", "ola1"]
+
+    let table = $('<table class="table table-hover table-danger table-bordered"><tr class="table-header"><th>Tag</th><th>Requester</th> <th></th><th></th></tr></table>')
+    for(let i = 0; i < tags.length; i++){
+        let row = $('<tr><td>' + tags[i] + '</td><td>' + requesters[i] + '</td> <td><i class="fas fa-check-square"></i> </td> <td><i class="fas fa-times"></i></td></tr>')
+        table.append(row)
+    }
+    $("#display").empty()
+    $('#display').append(table) 
+    $('#display').modal()
+    $('.close-modal').addClass("btn")
+    $('.close-modal').addClass("btn-dark")
+}
+
 $(function(){
     var cont = 1
 

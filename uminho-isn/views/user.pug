@@ -1,6 +1,7 @@
 extends mainLayout
 
 block page
+  .w3-card-4.modal.modal-container(id='display')
   .album.py-5.bg-light.background
     .row
       .col(style='margin-left: 20px')
@@ -44,6 +45,8 @@ block page
             else
               .container(style="padding-bottom: 10px; padding-top: 20px;" )
                 h5 De momento não tens subscrições
+            button.btn.btn-primary(onclick='showRequests("' + user.name + '")') Ver pedidos
+          
                 
     .row
       .container(style="margin-top: 50px").text-center.bg-white
