@@ -31,4 +31,14 @@ function downVotePost(idPost, email){
         .catch(error => {console.log(error)})
 }
 
-$.fn.selectpicker.Constructor.BootstrapVersion = '4'
+function subscribe(tag){
+    axios.post('/subscribe/public/' + tag)
+        .then(dados => window.location.assign('/subscriptions'))
+        .catch(error => {console.log(error)})
+}
+
+function subscribeRequest(tag){
+    axios.post('/subscribe/request/' + tag)
+        .then(dados => window.location.assign('/subscriptions'))
+        .catch(error => {console.log(error)})
+}

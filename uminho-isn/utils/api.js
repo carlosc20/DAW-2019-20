@@ -24,8 +24,11 @@ module.exports = {
     post: function(path, body, headers){
         if(!headers) headers = {'headers': {}}
         if(!body) body = {}
-        headers.headers['Authorization'] = `Bearer ${genToken()}`;
-        return axios.post(process.env.API_HOST + path, body, headers);
+        headers.headers['Authorization'] = `Bearer ${tokenGen.genToken()}`;
+        headers['maxContentLength'] = Infinity
+        headers['maxBodyLength'] = Infinity
+        console.log(headers)
+        return axios.post(apiHost + path, body, headers);
     },
 
     delete: function(path){
