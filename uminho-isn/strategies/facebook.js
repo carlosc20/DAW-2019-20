@@ -25,7 +25,7 @@ const verifyCallback = async (accessToken, refreshToken, profile, done) => {
       console.log("Facebook: sucesso -> primeiro login, vai criar user")
       user = {        
         email: verifiedEmail.value,
-        name: profile.displayName,
+        name: profile.displayName.replace(' ', ''),
         type: "facebook",
       }
       console.dir(user)

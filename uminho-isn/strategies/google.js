@@ -20,7 +20,7 @@ const verifyCallback = async (accessToken, refreshToken, profile, done) => {
       console.log("Criar user")
       user = {        
         email: verifiedEmail,
-        name: profile.displayName,
+        name: profile.displayName.replace(' ', ''),
         type: "google"
       }
       console.dir(user)

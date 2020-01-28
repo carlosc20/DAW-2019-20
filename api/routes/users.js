@@ -231,11 +231,9 @@ router.post('/userImg/:name', upload.single('img'), function(req,res){
 })
 
 router.get('/:name/image', function(req,res){
-  console.log("I AM HERE")
   Users.getByName(req.params.name)
     .then(user => {
       fs.readFile('public/usersImg/' + user.name + '/' + user.image.name, (err, data) =>{
-        console.log('public/usersImg/' + user.name + '/' + user.image.name)
         if(!err)
           res.end(data)
         else {

@@ -25,17 +25,6 @@ router.post('/login', passport.authenticate('local', {
   })
 );
 
-
-router.get('/blank', function(req, res){
-  res.render('blank')
-})
-
-// login, ??
-router.post('/', function(req, res){
-  res.redirect('/login')
-});
-
-
 router.get('/login', function(req, res) {
   res.render('login');
 });
@@ -85,7 +74,7 @@ router.get('/profile/:name', checkAuth, function(req, res){
 })
 
 
-router.get('/subscriptions', function(req, res){
+router.get('/subscriptions', checkAuth, function(req, res){
   apiReq.get('/tags')
     .then(response =>{console.log(response);res.render('subscriptions', {user: req.user, tags: response.data})})
     .catch(e => res.status(500).render('error', {error: erro}))
@@ -93,11 +82,11 @@ router.get('/subscriptions', function(req, res){
 
 
 // register
-router.get('/register', function(req, res){
+router.get('/register', checkAuth, function(req, res){
   res.render('register');
 });
 
-router.post('/register', function(req, res){
+router.post('/register', checkAuth, function(req, res){
   let hash = bcrypt.hashSync(req.body.password, 10);
   apiReq.post('/users', {
     email: req.body.email,
@@ -182,7 +171,7 @@ router.post('/profile/:name/image', upload.single('img'), checkAuth, function(re
 })
 
 
-router.get('/profile/:name/image', function(req, res){
+router.get('/profile/:name/image', checkAuth, function(req, res){
   apiReq.get_bin('/users/' + req.params.name + '/image').pipe(res)
 })
 
@@ -219,7 +208,7 @@ router.post('/publish', upload.array('files'), checkAuth, function(req, res){
   .catch(erro => res.status(500).render('error', {error: erro}))
 })
 
-router.post('/comment/:idPost/:email', function(req,res){
+router.post('/comment/:idPost/:email', checkAuth, function(req,res){
   req.body.owner = req.params.email
   apiReq.post('/api/comment/' + req.params.idPost, req.body)
     .then(dados => res.redirect('/post/' + req.params.idPost))
@@ -229,7 +218,7 @@ router.post('/comment/:idPost/:email', function(req,res){
 /**
  * Respondes to axios in client side
  */
-router.post('/comment/upvote/:idComment/:email', function(req, res){
+router.post('/comment/upvote/:idComment/:email', checkAuth, function(req, res){
   apiReq.post('/api/comment/upvote/' + req.params.idComment +'/' + req.params.email)
     .then(dados => { res.jsonp(dados.data)})
     .catch(erro => { res.status(500).render('error', {error: erro})})
@@ -238,7 +227,7 @@ router.post('/comment/upvote/:idComment/:email', function(req, res){
 /**
  * Respondes to axios in client side
  */
-router.post('/comment/downvote/:idComment/:email', function(req, res){
+router.post('/comment/downvote/:idComment/:email', checkAuth, function(req, res){
   apiReq.post('/api/comment/downvote/' + req.params.idComment +'/' + req.params.email)
     .then(dados => { res.jsonp(dados.data)})
     .catch(erro => res.status(500).render('error', {error: erro}))

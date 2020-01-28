@@ -56,7 +56,6 @@ app.use(function(req,res,next){
   let match = req.path.match(/\/ficheiros\/(.+)\/(.+)/)
   if(match){
     let mimeType = req.query.mimeType//match[2].match(/(.*)[.](.*)/)
-    console.log("mimeType: " + mimeType)
     let file; 
     if(mimeType == 'application/pdf'){
       let pdfImage = new PDFImage(filePath.getFile(match[1], match[2]) ,{
@@ -64,7 +63,6 @@ app.use(function(req,res,next){
       })
       pdfImage.convertPage(0)
         .then((imagePath) => {
-          console.log("I AM A PDF")
           fs.readFile(imagePath, (err, data) =>{
             if(!err){
               res.setHeader('Content-type' , 'image/png')
@@ -76,7 +74,6 @@ app.use(function(req,res,next){
         })
         .catch(err => console.log(err))
     } else{
-      console.log("I AM A NORMAL IMG")
       file = filePath.getFile(match[1], match[2])
       fs.readFile(file, (err, data) =>{
         if(!err)
