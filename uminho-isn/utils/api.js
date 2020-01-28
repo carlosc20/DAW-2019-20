@@ -11,7 +11,6 @@ module.exports = {
         if(!headers) headers = {'headers': {}}
         if(!body) body = {}
         headers.headers['Authorization'] = `Bearer ${tokenGen.genToken()}`;
-        console.log(headers)
         return axios.post(apiHost + path, body, headers);
     },
 

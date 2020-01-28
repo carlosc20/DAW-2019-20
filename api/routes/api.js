@@ -16,6 +16,7 @@ var filePath = require('../utils/filePath')
 
 /* POST a post */
 router.post('/post', upload.array('files'), function(req, res, next) {
+    console.dir(req.body)
     let newPost = req.body
     if(newPost.files == undefined)
         newPost.files = []
@@ -61,7 +62,6 @@ router.get('/post/:id', function(req, res, next) {
     Posts.getById(req.params.id)
         .then(dados => { 
             let post = JSON.parse(JSON.stringify(dados));
-            console.log(post)
             post.comments = addTimeSwapToList(post.comments)
             res.jsonp(post) })
         .catch(erro => { res.status(500).jsonp(erro) })
