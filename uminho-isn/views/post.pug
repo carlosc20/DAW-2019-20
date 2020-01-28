@@ -1,7 +1,7 @@
 extends mainLayout
 
 block page
-  .w3-card-4.modal.modal-container.background(id='display')
+  .w3-card-4.modal.modal-container(id='display')
   secction
     .container.text-center.post-info
       h1= post.title
@@ -32,10 +32,10 @@ block page
     else
       button.btn.borderless.btn-not-selected.fas.fa-thumbs-down(onclick='downVotePost("'+ post._id + '", "' + user.email + '")' id = "pthumbs-down-ok")
 
-    a.btn.btn-selected.container(href="/download/"+ post._id)
-      | Download todos
-      i.fas.fa-file-download
-      .row
+    if post.files && post.files.length > 1
+      a.btn.btn-selected.container(href="/download/"+ post._id)
+        | Download todos
+        i.fas.fa-file-download
 
     hr
     .row.bootstrap.snippets

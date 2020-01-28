@@ -15,8 +15,6 @@ var bcrypt = require('bcryptjs');
 
 
 function checkAuth(req,res,next) {
-  console.log("AUTH: ")
-  console.dir(req.user)
   if(req.isAuthenticated()){
     next();
   } else {
@@ -33,6 +31,10 @@ router.get('/auth/google',
       ]
   }
 ));
+
+router.get('/blank', function(req, res){
+  res.render('blank')
+})
 
 router.get('/auth/google/callback',
   passport.authenticate('google', {  
@@ -158,8 +160,8 @@ router.post('/profile/:name/image', upload.single('img'), /*checkAuth,*/ functio
       'Content-Type': 'multipart/form-data; boundary='+form._boundary
     }
   })
-  .then(user => res.redirect('/profile/'+ name))
-  .catch(erro => res.status(500).render('error', {error: erro}))
+    .then(user => res.redirect('/profile/'+ name))
+    .catch(erro => res.status(500).render('error', {error: erro}))
 })
 
 

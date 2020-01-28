@@ -1,5 +1,4 @@
 function showFicheiro(f, postId){
-    console.log("HELLO")
     if(f.mimetype.match(/image\/.+/))
         var ficheiro = $('<img src="/ficheiros/' + postId + '/' + f.name + '" width= "40%" id="modal-img"/>')
     else 
