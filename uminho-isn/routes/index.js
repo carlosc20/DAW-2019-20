@@ -128,12 +128,26 @@ router.post('/register', function(req, res){
 // outros
 router.post('/subscription/:name', /*checkAuth,*/ function(req, res){
   let sub = req.body.text
-  if(req.user.subscriptions.includes(sub))
-    res.redirect('/profile/'+ req.params.name)
-  else{
+  let array = req.user.subscriptions
+  let b = true
+  for(var i = 0; i<array.length; i++){
+    if(array[i].tag == sub){
+      b = false
+      res.redirect('/profile/'+ req.params.name)
+    }
+  }
+  if(b){
     apiReq.post('/users/' + req.params.name + '/subscription/' + sub)
       .then(user => res.redirect('/profile/'+ req.params.name))
-      .catch(erro => res.status(500).render('error', {error: erro}))
+      .catch(erro => {
+        if(erro.response.data.name != undefined){
+          apiReq.get('/users/name/'+req.params.name)
+            .then(user => res.render('user', {user: req.user, userProfile: user.data, erroTag: erro.response.data.name}))
+            .catch(erro => res.status(500).render('error', {error: erro}))     
+        }
+        else
+          res.status(500).render('error', {error: erro})
+      })
   }
 })
 
