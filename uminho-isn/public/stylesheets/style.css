@@ -27,6 +27,12 @@ a {
   width: 40%;
 }
 
+.modal-container a {
+  border-radius: 0;
+}
+
+
+
 /* Style the navigation bar */
 .navbar {
   width: 100%;
@@ -132,6 +138,10 @@ a {
   color: whitesmoke !important;
 }
 
+.table-header {
+  background-color: rgb(190, 69, 69);
+}
+
 .btn-not-selected {
   background-color: rgb(156, 156, 156);
   color:  white;
@@ -154,4 +164,9 @@ a {
 .pagination a{
   margin: 0;
   border-radius : 0;
+}
+
+#display table{
+  margin: auto;
+  width: 50% !important; 
 }

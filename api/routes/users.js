@@ -169,7 +169,7 @@ router.post('/:name/subscription/:tag', function(req, res){
     .then(identifier => {
       if(identifier == null){
         console.log("oi")
-        res.status(400).jsonp(tag)
+        res.status(400).jsonp({name: tag})
       }
       else{
         Users.subscribe(name, identifier)

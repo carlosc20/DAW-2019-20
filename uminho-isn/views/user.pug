@@ -1,6 +1,7 @@
 extends mainLayout
 
 block page
+  .w3-card-4.modal.modal-container(id='display')
   .album.py-5.bg-light.background
     .row
       .col(style='margin-left: 20px')
@@ -24,26 +25,41 @@ block page
           .container(style="padding-top: 10px;").text-center.bg-white
             h4 Subscrições atuais
             form(action=('/subscription/' + userProfile.name) method='POST')
-                textarea.form-control(placeholder='Escreva o nome de uma tag para adicionar...' name="text", rows='1' required)
+                input.form-control(placeholder='Escreva o nome de uma tag para adicionar...' name="text", rows='1' required)
                 br
                 button.btn.btn-primary(type='submit') Subscrever
+            if(erroTag != undefined)
+              .container(style="color: rgba(240, 43, 43, 0.945); padding-top:10px") 
+                h5= 'Essa tag não existe: ' + erroTag  
             if(userProfile.subscriptions.length > 0)
               hr
               table.table
                 thead
                   tr
-                    th(scope="col" style="width: 80%") Tag
+                    th(scope="col" style="width: 40%") Tag
+                    th(scope="col" style="width: 20%") Domain
+                    th(scope="col" style="width: 20%") Owner
                     th(scope="col") 
                 tbody
                   each sub in userProfile.subscriptions
                     tr
                       td
-                        a(href='/?tag=' + sub role="button")= sub
+                        a(href='/?tag=' + sub.tag role="button")= sub.tag
+                      if sub.public
+                        td public
+                      else
+                        td private
+                      if !sub.public
+                        td= sub.owner
+                      else
+                        td
                       td 
-                        button.btn.btn-sm.i.fas.fa-window-close(onclick="apagarSub('" + sub +"','" + userProfile.name + "')")
+                        button.btn.btn-sm.i.fas.fa-window-close(onclick="apagarSub('" + sub.tag +"','" + userProfile.name + "')")
             else
               .container(style="padding-bottom: 10px; padding-top: 20px;" )
                 h5 De momento não tens subscrições
+            button.btn.btn-primary(onclick='showRequests("' + user.name + '")') Ver pedidos
+          
                 
     .row
       .container(style="margin-top: 50px").text-center.bg-white
