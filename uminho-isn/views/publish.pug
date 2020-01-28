@@ -13,10 +13,15 @@ block page
 				.form-group
 					label.w3-cell Ficheiro:
 					input.w3-input.w3-cell(type="file" name="files" multiple)
-				.form-group
+				table.form-group(id='taglist')
 					label.w3-cell Tags:
-					select.selectpicker(data-live-search='true')
-						each tag in tags 
-							option(data-tokens=tag.tag) #{tag.tag}
-		
+					.row
+						.col-3
+							select.selectpicker(data-live-search='true' name='tags' id='tagselector')
+								each tag in tags
+									option(data-tokens=tag.tag) #{tag.tag}
+						.col
+							button.btn.btn-primary.ml-3(id='tagbutton') Adicionar
+
+
 				button.btn.btn-primary(type='submit') Publicar

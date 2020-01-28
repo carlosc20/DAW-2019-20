@@ -16,6 +16,7 @@ var filePath = require('../utils/filePath')
 
 /* POST a post */
 router.post('/post', upload.array('files'), function(req, res, next) {
+    console.dir(req.body)
     let newPost = req.body
     if(newPost.files == undefined)
         newPost.files = []
@@ -45,7 +46,7 @@ router.post('/post', upload.array('files'), function(req, res, next) {
                                 throw err
                             }
                             console.log("file: " + dados.files[i].name, "; post id: " + dados._id)
-                            console.log("Saved file at: "+  filePath.getFile(dados._id, dados.files[i].name))
+                            console.log("Saved file at: " + filePath.getFile(dados._id, dados.files[i].name))
                         })
                     }
                 });
