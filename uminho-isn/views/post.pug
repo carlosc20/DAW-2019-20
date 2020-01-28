@@ -17,11 +17,11 @@ block page
       each file in post.files
         .col-sm-3
           .card.mb-4.box-shadow
-            img.card-img-top(style='height: 225px; width: 100%; display: block;' src='/ficheiros/' + post._id + '/' + file.name onclick='showFicheiro(' + JSON.stringify(file) + ', "' + post._id + '")')
+            img.card-img-top(style='height: 225px; width: 100%; display: block;' src='/ficheiros/' + post._id + '/' + file.name + '?mimeType=' + file.mimetype onclick='showFicheiro(' + JSON.stringify(file) + ', "' + post._id + '")')
             .card-body
               h5.card-title= file.name
-              a.btn.btn-sm.btn-outline-secondary(href="/download/"+ post._id + '/' + file.name)
-                i.fas.fa-file-download
+              a.btn.btn-sm.btn-outline-secondary(href="/download/"+ post._id + '/' + file.name + '?mimeType=' + file.mimetype)
+                i.fas.fa-file-download  
                 
     if post.upVotes.includes(user.email)
       i.btn.borderless.btn-selected

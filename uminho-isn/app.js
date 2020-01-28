@@ -62,12 +62,11 @@ app.use(cookieParser());
 
 //Middleware que devolve os pedidos dos ficheiros
 app.use((req, res, next) =>{
+  let mimetype = req.query.mimeType || 'image/png'
   if(req.path.startsWith('/ficheiros') || req.path.startsWith('/usersImg')){
-    apiReq.get_bin(req.path).pipe(res);
-    return
+    apiReq.get_bin_type(req.path,mimetype).pipe(res);
   } else if(req.path.startsWith('/download')){  
-    apiReq.get_bin('/api' + req.path).pipe(res);
-    return
+    apiReq.get_bin('/api' + req.path).pipe(res)
   } else {
     next()
   }

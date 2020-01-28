@@ -25,7 +25,6 @@ module.exports = {
         if(!headers) headers = {'headers': {}}
         if(!body) body = {}
         headers.headers['Authorization'] = `Bearer ${genToken()}`;
-        console.log(headers)
         return axios.post(process.env.API_HOST + path, body, headers);
     },
 
@@ -46,5 +45,19 @@ module.exports = {
             }
         };
         return request.get(options)
+    },
+
+    get_bin_type: function(path, mimetype){
+        let options = {
+            url: process.env.API_HOST + path + '?mimeType=' + mimetype,
+            headers: {
+              'User-Agent': 'request',
+              'Authorization' : `Bearer ${genToken()}` ,
+              'Content-type' : mimetype,
+              'Accept' : '*/*'
+            }
+        };
+        return request.get(options)
     }
+    
 }
