@@ -1,12 +1,11 @@
-var env = require('../config/env');
 var apiReq = require('../utils/api');
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 // Configuração da estratégia OAuth Google
 const strategyOptions = {
-  clientID: env.GOOGLE_CLIENT_ID,
-  clientSecret: env.GOOGLE_CLIENT_SECRET,
-  callbackURL: env.SERVER_URL + "/auth/google/callback"
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: process.env.SERVER_URL + "/auth/google/callback"
 }
 
 const verifyCallback = async (accessToken, refreshToken, profile, done) => {

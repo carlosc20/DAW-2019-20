@@ -1,11 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var axios = require('axios');
-const apiHost = require('../config/env').apiHost;
-
 var apiReq = require('../utils/api')
 
-var multer = require('multer')
 
 router.get('/:id', function(req, res){
     apiReq.get('/api/post/' + req.params.id)

@@ -1,11 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var passport = require('passport');
-var request = require('request')
-
 var apiReq = require('../utils/api');
-var tokenGen = require('../utils/token');
-var apiHost =  require('../config/env').apiHost
 
 /* To handle multipat/form-data requests */
 const FormData = require('form-data');
@@ -22,33 +18,17 @@ function checkAuth(req,res,next) {
   }
 }
 
-//-------------------------------------- google
-router.get('/auth/google', 
-  passport.authenticate('google', { 
-    scope: [
-      'https://www.googleapis.com/auth/userinfo.profile',
-      'https://www.googleapis.com/auth/userinfo.email'
-      ]
-  }
-));
-
-router.get('/blank', function(req, res){
-  res.render('blank')
-})
-
-router.get('/auth/google/callback',
-  passport.authenticate('google', {  
-    successRedirect: '/',
-    failureRedirect: '/login'
-  })
-);
 
 router.post('/login', passport.authenticate('local', {  
     successRedirect: '/',
     failureRedirect: '/login'
   })
 );
-//--------------------------------------
+
+
+router.get('/blank', function(req, res){
+  res.render('blank')
+})
 
 // login, ??
 router.post('/', function(req, res){
@@ -166,14 +146,7 @@ router.post('/profile/:name/image', upload.single('img'), /*checkAuth,*/ functio
 
 
 router.get('/profile/:name/image', function(req, res){
-  let options = {
-    url: apiHost + '/users/' + req.params.name + '/image',
-    headers: {
-      'User-Agent': 'request',
-      'Authorization' : `Bearer ${tokenGen.genToken()}` 
-    }
-  };
-  request.get(options).pipe(res)
+  apiReq.get_bin('/users/' + req.params.name + '/image').pipe(res)
 })
 
 router.delete('/subscription/:name/tag/:sub', /*checkAuth,*/ function(req, res){
