@@ -29,8 +29,8 @@ var ExtractJwt = require('passport-jwt').ExtractJwt;
 passport.use(
   new JWTStrategy(
     {
-    secretOrKey: 'daw2019',
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
+      secretOrKey: 'daw2019',
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
     }, 
     async (payload, done) => {
       try{

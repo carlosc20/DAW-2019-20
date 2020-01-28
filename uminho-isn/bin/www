@@ -1,9 +1,14 @@
 #!/usr/bin/env node
 
 /**
+ * Environment variables.
+ */
+const dotenv = require('dotenv');
+dotenv.config();
+
+/**
  * Module dependencies.
  */
-
 var app = require('../app');
 var http = require('http');
 

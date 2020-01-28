@@ -1,24 +1,63 @@
-var tokenGen = require('./token');
 var axios = require('axios');
-const apiHost = require('../config/env').API_HOST;
+var request = require('request');
+var jwt = require('jsonwebtoken');
+
+
+genToken = function(){
+    return jwt.sign({}, process.env.JWT_SECRET, 
+        {
+            expiresIn: 3000, 
+            issuer: "usn"
+        })
+    }
+
+ 
+getTokenConfig = function(){ 
+    return {headers: { Authorization: `Bearer ${genToken()}` }};
+}
 
 module.exports = {
     get: function(path){
-        return axios.get(apiHost + path, tokenGen.getTokenConfig());
+        return axios.get(process.env.API_HOST + path, {headers: { Authorization: `Bearer ${genToken()}` }});
     },
 
     post: function(path, body, headers){
         if(!headers) headers = {'headers': {}}
         if(!body) body = {}
-        headers.headers['Authorization'] = `Bearer ${tokenGen.genToken()}`;
-        return axios.post(apiHost + path, body, headers);
+        headers.headers['Authorization'] = `Bearer ${genToken()}`;
+        return axios.post(process.env.API_HOST + path, body, headers);
     },
 
     delete: function(path){
-        return axios.delete(apiHost + path, tokenGen.getTokenConfig());
+        return axios.delete(process.env.API_HOST + path, {headers: { Authorization: `Bearer ${genToken()}` }});
     },
 
     put: function(path, body){
-        return axios.put(apiHost + path, body, tokenGen.getTokenConfig());
+        return axios.put(process.env.API_HOST + path, body, {headers: { Authorization: `Bearer ${genToken()}` }});
+    },
+
+    get_bin: function(path){
+        let options = {
+            url: process.env.API_HOST + path,
+            headers: {
+              'User-Agent': 'request',
+              'Authorization' : `Bearer ${genToken()}` 
+            }
+        };
+        return request.get(options)
+    },
+
+    get_bin_type: function(path, mimetype){
+        let options = {
+            url: process.env.API_HOST + path + '?mimeType=' + mimetype,
+            headers: {
+              'User-Agent': 'request',
+              'Authorization' : `Bearer ${genToken()}` ,
+              'Content-type' : mimetype,
+              'Accept' : '*/*'
+            }
+        };
+        return request.get(options)
     }
+    
 }

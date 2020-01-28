@@ -3,6 +3,9 @@ const apiReq = require('./utils/api')
 const axios = require('axios')
 const FormData = require('form-data');
 
+const dotenv = require('dotenv');
+dotenv.config();
+
 getDirectories = source => 
   fs.readdirSync(source, { withFileTypes: true })
     .filter(dirent => dirent.isDirectory())
@@ -49,9 +52,9 @@ searchPost = (source, level, tags)  =>{
             form.append('title', title)
             form.append('description', description)
             form.append('poster', 'test') // alterar
-            tags.forEach(elementTag => {
-                form.append('tags', {tag: elementTag, public: true})
-            })
+            /*tags.forEach(elementTag => {
+                form.append('tags', elementTag)
+            })*/
             getFiles(source).forEach(elementFile => {
                 fs.readFile(source + '/' + elementFile, (err, data) => {
                     if(err) throw err
@@ -78,6 +81,8 @@ searchPost = (source, level, tags)  =>{
         .catch(e => {console.log(e); process.exit()})*/
     }
 }
+
+
 
 var knownTags = []
 searchTags = (source, level) => {

@@ -2,7 +2,7 @@ extends authLayout
 
 block content
 	.container
-		.d-flex.justify-content-center.h-100
+		.d-flex.justify-content-center
 			.card
 				.card-header
 					h3 Sign In
@@ -19,10 +19,14 @@ block content
 									i.fas.fa-key
 							input.form-control(type='password' placeholder='password' name="password")
 						.form-group
-							input.btn.float-right.login_btn(type='submit' value='Login')
-					a.google-sign-up.btn(href="/auth/google")
-						| Sign in with Google
-						i.fab.fa-google
+							input.btn.float-right.login_btn.w-30(type='submit' value='Login')
+					.container
+						a.btn.login_btn.float-left.mb-1(href="/auth/google")
+							| Sign in with Google
+							i.fab.fa-google
+						a.btn.login_btn.float-left(href="/auth/facebook")
+							| Sign in with Facebook
+							i.fab.fa-facebook
 				.card-footer
 					.d-flex.justify-content-center.links
 						| Não tens uma conta?

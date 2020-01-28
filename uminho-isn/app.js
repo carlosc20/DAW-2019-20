@@ -3,25 +3,20 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var apiHost = require('./config/env').API_HOST;
-var request = require('request');
-
 var apiReq = require('./utils/api');
-var tokenGen = require('./utils/token')
 
 
 // Módulos de suporte à autenticação
 var uuid = require('uuid/v4')
 var session = require('express-session')
 var FileStore = require('session-file-store')(session)
-
-
-// passport
 var passport = require('passport')
 var googleStrategy = require('./strategies/google').strategy;
+var facebookStrategy = require('./strategies/facebook').strategy;
 var localStrategy = require('./strategies/local').strategy;
 
 passport.use(googleStrategy);
+passport.use(facebookStrategy);
 passport.use(localStrategy);
 
 passport.serializeUser((user,done) => {
@@ -39,6 +34,7 @@ passport.deserializeUser((email, done) => {
 // routers
 var indexRouter = require('./routes/index');
 var postRouter = require('./routes/post');
+var authRouter = require('./routes/auth');
 
 var app = express();
 
@@ -68,25 +64,9 @@ app.use(cookieParser());
 app.use((req, res, next) =>{
   let mimetype = req.query.mimeType || 'image/png'
   if(req.path.startsWith('/ficheiros') || req.path.startsWith('/usersImg')){
-    let options = {
-      url: apiHost + req.path + '?mimeType=' + mimetype,
-      headers: {
-        'User-Agent': 'request',
-        'Authorization' : `Bearer ${tokenGen.genToken()}` ,
-        'Content-type' : mimetype,
-        'Accept' : '*/*'
-      }
-    };
-    request.get(options).pipe(res);
+    apiReq.get_bin_type(req.path,mimetype).pipe(res);
   } else if(req.path.startsWith('/download')){  
-    let options = {
-      url: apiHost + '/api' + req.path,
-      headers: {
-        'User-Agent': 'request',
-        'Authorization' : `Bearer ${tokenGen.genToken()}` 
-      }
-    };
-    request.get(options).pipe(res)
+    apiReq.get_bin('/api' + req.path).pipe(res)
   } else {
     next()
   }
@@ -94,8 +74,10 @@ app.use((req, res, next) =>{
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/auth', authRouter);
 app.use('/', indexRouter);
 app.use('/post', postRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
