@@ -29,8 +29,8 @@ var ExtractJwt = require('passport-jwt').ExtractJwt;
 passport.use(
   new JWTStrategy(
     {
-    secretOrKey: 'daw2019',
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
+      secretOrKey: 'daw2019',
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
     }, 
     async (payload, done) => {
       try{
@@ -56,15 +56,35 @@ app.use(cookieParser());
 app.use(function(req,res,next){
   let match = req.path.match(/\/ficheiros\/(.+)\/(.+)/)
   if(match){
-    let mimeType = match[2].match(/(.*)[.](.*)/)
-    console.log(mimeType)
-    let file = filePath.getFile(match[1], match[2])
+    let mimeType = req.query.mimeType//match[2].match(/(.*)[.](.*)/)
+    console.log("mimeType: " + mimeType)
+    let file; 
+    if(mimeType == 'application/pdf'){
+      let pdfImage = new PDFImage(filePath.getFile(match[1], match[2]) ,{
+        graphicsMagick: true,
+      })
+      pdfImage.convertPage(0)
+        .then((imagePath) => {
+          console.log("I AM A PDF")
+          fs.readFile(imagePath, (err, data) =>{
+            if(!err){
+              res.setHeader('Content-type' , 'image/png')
+              res.send(data)
+            }
+              
+            else next()
+          })
+        })
+        .catch(err => console.log(err))
+    } else{
+      console.log("I AM A NORMAL IMG")
+      file = filePath.getFile(match[1], match[2])
       fs.readFile(file, (err, data) =>{
         if(!err)
           res.send(data)
         else next()
       })
-    
+    }
   } else {
     next()
   }

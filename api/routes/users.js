@@ -74,7 +74,8 @@ router.get('/:email', function(req, res) {
     .catch(e => res.status(500).jsonp(e))
 });
 
-router.post('/', function(req, res) {
+router.post('/', function(req, res) {~
+  console.log('AT /users')
   console.log(req.body)
   let email = ""
   // in case its a post from google api
@@ -85,6 +86,7 @@ router.post('/', function(req, res) {
   } else {
     email = req.body.email
   }
+  console.log('email', email, req.body.email )
   Users.get(email)
     .then(user => {
       console.log(user)

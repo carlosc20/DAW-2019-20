@@ -1,11 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var passport = require('passport');
-var request = require('request')
-
 var apiReq = require('../utils/api');
-var tokenGen = require('../utils/token');
-var apiHost =  require('../config/env').apiHost
 
 /* To handle multipat/form-data requests */
 const FormData = require('form-data');
@@ -22,33 +18,17 @@ function checkAuth(req,res,next) {
   }
 }
 
-//-------------------------------------- google
-router.get('/auth/google', 
-  passport.authenticate('google', { 
-    scope: [
-      'https://www.googleapis.com/auth/userinfo.profile',
-      'https://www.googleapis.com/auth/userinfo.email'
-      ]
-  }
-));
-
-router.get('/blank', function(req, res){
-  res.render('blank')
-})
-
-router.get('/auth/google/callback',
-  passport.authenticate('google', {  
-    successRedirect: '/',
-    failureRedirect: '/login'
-  })
-);
 
 router.post('/login', passport.authenticate('local', {  
     successRedirect: '/',
     failureRedirect: '/login'
   })
 );
-//--------------------------------------
+
+
+router.get('/blank', function(req, res){
+  res.render('blank')
+})
 
 // login, ??
 router.post('/', function(req, res){
@@ -119,7 +99,6 @@ router.get('/register', function(req, res){
 
 router.post('/register', function(req, res){
   let hash = bcrypt.hashSync(req.body.password, 10);
-  console.log(req.body)
   apiReq.post('/users', {
     email: req.body.email,
     password: hash,
@@ -128,7 +107,6 @@ router.post('/register', function(req, res){
   })
   .then(_ => res.redirect('/login') )
   .catch(erro => {
-    console.log(erro.response.data); 
     if(erro.response.data.erro == 'email' || erro.response.data.erro == 'name')
       res.render('register', {erro: erro.response.data.erro})
     else
@@ -205,14 +183,7 @@ router.post('/profile/:name/image', upload.single('img'), checkAuth, function(re
 
 
 router.get('/profile/:name/image', function(req, res){
-  let options = {
-    url: apiHost + '/users/' + req.params.name + '/image',
-    headers: {
-      'User-Agent': 'request',
-      'Authorization' : `Bearer ${tokenGen.genToken()}` 
-    }
-  };
-  request.get(options).pipe(res)
+  apiReq.get_bin('/users/' + req.params.name + '/image').pipe(res)
 })
 
 router.delete('/subscription/:name/tag/:sub', checkAuth, function(req, res){
@@ -224,7 +195,10 @@ router.delete('/subscription/:name/tag/:sub', checkAuth, function(req, res){
 // publish
 router.get('/publish', checkAuth, function(req, res){
   let user = req.user
-  res.render('publish', {user: user})
+  apiReq.get('/tags')
+    .then(tags =>{console.dir(tags.data); res.render('publish', {user: user, tags: tags.data})})
+    .catch(erro => res.status(500).render('error', {error: erro}))
+  
 })
 
 router.post('/publish', upload.array('files'), checkAuth, function(req, res){

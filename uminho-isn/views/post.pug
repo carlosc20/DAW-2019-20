@@ -17,20 +17,29 @@ block page
       each file in post.files
         .col-sm-3
           .card.mb-4.box-shadow
-            img.card-img-top(style='height: 225px; width: 100%; display: block;' src='/ficheiros/' + post._id + '/' + file.name onclick='showFicheiro(' + JSON.stringify(file) + ', "' + post._id + '")')
+            img.card-img-top(style='height: 225px; width: 100%; display: block;' src='/ficheiros/' + post._id + '/' + file.name + '?mimeType=' + file.mimetype onclick='showFicheiro(' + JSON.stringify(file) + ', "' + post._id + '")')
             .card-body
               h5.card-title= file.name
-              a.btn.btn-sm.btn-outline-secondary(href="/download/"+ post._id + '/' + file.name)
+              a.btn.btn-sm.btn-outline-secondary(href="/download/"+ post._id + '/' + file.name + '?mimeType=' + file.mimetype)
                 i.fas.fa-file-download  
                 
     if post.upVotes.includes(user.email)
-      i.btn.borderless.btn-selected.fas.fa-thumbs-up(id="pthumbs-up-done")
+      i.btn.borderless.btn-selected
+        | #{post.upVotes.length}    
+        span.fas.fa-thumbs-up(id="pthumbs-up-done")
     else
-      button.btn.borderless.btn-not-selected.fas.fa-thumbs-up(onclick='upVotePost("'+ post._id + '", "' + user.email + '")' id = "pthumbs-up-ok")
+      button.btn.borderless.btn-not-selected(onclick='upVotePost("'+ post._id + '", "' + user.email + '")' id = "pthumbs-up-ok")
+        | #{post.upVotes.length}  
+        span.fas.fa-thumbs-up
+
     if post.downVotes.includes(user.email)
-      i.btn.borderless.btn-selected.fas.fa-thumbs-down(id="pthumbs-down-done")
+      i.btn.borderless.btn-selected
+        | #{post.downVotes.length}  
+        span.fas.fa-thumbs-down(id="pthumbs-down-done")
     else
-      button.btn.borderless.btn-not-selected.fas.fa-thumbs-down(onclick='downVotePost("'+ post._id + '", "' + user.email + '")' id = "pthumbs-down-ok")
+      button.btn.borderless.btn-not-selected(onclick='downVotePost("'+ post._id + '", "' + user.email + '")' id = "pthumbs-down-ok")
+        | #{post.downVotes.length}  
+        span.fas.fa-thumbs-down
 
     if post.files && post.files.length > 1
       a.btn.btn-selected.container(href="/download/"+ post._id)
@@ -45,29 +54,37 @@ block page
             form(action='/comment/' + post._id + '/' + user.name method='POST')
               textarea.form-control(placeholder='Escreva um comentário...' name="text", rows='3')
               br
-              button.btn.btn-not-selected.pull-right(type='submit') Post
+              button.btn.btn-not-selected.pull-right(type='submit') Comentar
             .clearfix
             hr
             ul.media-list
               each comment in post.comments
                 li.media
-                  a.pull-left(href='/profile/' + comment.owner)
-                    img.userImg.img-circle(src='/profile/'+ comment.owner +'/image'  , alt='')
+                  a.pull-left(href='/profile/' + comment.owner) 
+                    img.userImg.img-circle.mr-3(src='/profile/'+ comment.owner +'/image' onerror="this.onerror=null;this.src='/images/default_user_image.jpg';")
                   .media-body
                     span.text-muted.pull-right
                       small.text-muted #{comment.timeSwap}
                     strong.text-success 
                       a(href='/profile/' + comment.owner) 
                       | @#{comment.owner}
-                    span.thumbs
+                    span.float-right
                       if comment.upVotes.includes(user.email)
-                        i.btn.btn-selected.borderless.fas.fa-thumbs-up
+                        i.btn.borderless.btn-selected
+                          | #{comment.upVotes.length}    
+                          span.fas.fa-thumbs-up(id="pthumbs-up-done")
                       else
-                        button.btn.btn-not-selected.borderless.fas.fa-thumbs-up(onclick='upVoteComment("'+ post._id + '", "' + comment._id + '", "' + user.email + '")')
+                        button.btn.btn-not-selected.borderless(onclick='upVoteComment("'+ post._id + '", "' + comment._id + '", "' + user.email + '")')
+                          | #{comment.upVotes.length}    
+                          span.fas.fa-thumbs-up(id="pthumbs-up-done")
                       if comment.downVotes.includes(user.email)
-                        i.btn.btn-selected.borderless.fas.fa-thumbs-down
+                        i.btn.borderless.btn-selected
+                          | #{comment.downVotes.length}  
+                          span.fas.fa-thumbs-down(id="pthumbs-down-done")
                       else
-                        button.btn.btn-not-selected.borderless.fas.fa-thumbs-down(onclick='downVoteComment("'+ post._id + '", "' + comment._id + '", "' + user.email + '")')
+                        button.btn.btn-not-selected.borderless(onclick='downVoteComment("'+ post._id + '", "' + comment._id + '", "' + user.email + '")')
+                          | #{comment.downVotes.length}  
+                          span.fas.fa-thumbs-down
                     p= comment.text
 
 
