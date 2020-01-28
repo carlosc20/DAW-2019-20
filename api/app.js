@@ -6,13 +6,12 @@ var logger = require('morgan');
 var mongoose = require('mongoose');
 var fs = require('fs');
 var PDFImage = require("pdf-image").PDFImage;
-const PDF2Pic = require("pdf2pic");
 
 var passport = require('passport');
 
 var filePath = require('./utils/filePath')
 
-mongoose.connect('mongodb://127.0.0.1:27017/uminho-isn', {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(process.env.DB_CONNECTION_STRING, {useNewUrlParser: true, useUnifiedTopology: true})
   .then(() => console.log('Mongo: ready(' + mongoose.connection.readyState + ')'))
   .catch(() => console.log('Mongo: connection error(' + mongoose.connection.readyState + ')'));
 

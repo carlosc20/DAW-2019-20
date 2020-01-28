@@ -28,7 +28,7 @@ module.exports = {
         headers['maxContentLength'] = Infinity
         headers['maxBodyLength'] = Infinity
         console.log(headers)
-        return axios.post(apiHost + path, body, headers);
+        return axios.post(process.env.API_HOST + path, body, headers);
     },
 
     delete: function(path){

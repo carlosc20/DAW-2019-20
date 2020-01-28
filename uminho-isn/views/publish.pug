@@ -9,7 +9,7 @@ block page
 					input#title.form-control(type='text' name="title" placeholder='Introduzir titulo' required)
 				.form-group
 					label(for='description') Texto
-					textarea#title.form-control(type='text' name="description" placeholder='Introduzir descrição' rows='2' required)
+					textarea#description.form-control(type='text' name="description" placeholder='Introduzir descrição' rows='2' required)
 				.form-group
 					label Ficheiro:
 					input(type="file" name="files" multiple)
@@ -21,7 +21,7 @@ block page
 								each tag in tags
 									option(data-tokens=tag.tag) #{tag.tag}
 						.col
-							button.btn.btn-primary.ml-3(id='tagbutton') Adicionar
+							button.btn.btn-primary.ml-3(type="button" id='tagbutton') Adicionar
 					table.table(id='taglist')
 
 

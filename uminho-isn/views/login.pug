@@ -11,22 +11,21 @@ block content
 						.input-group.form-group
 							.input-group-prepend
 								span.input-group-text
-									i.fas.fa-user
+									i.fas.fa-user.text-light
 							input.form-control(type='text' placeholder='email' name='email')
 						.input-group.form-group
 							.input-group-prepend
 								span.input-group-text
-									i.fas.fa-key
+									i.fas.fa-key.text-light
 							input.form-control(type='password' placeholder='password' name="password")
 						.form-group
-							input.btn.float-right.login_btn.w-30(type='submit' value='Login')
-					.container
-						a.btn.login_btn.float-left.mb-1(href="/auth/google")
-							| Sign in with Google
-							i.fab.fa-google
-						a.btn.login_btn.float-left(href="/auth/facebook")
-							| Sign in with Facebook
-							i.fab.fa-facebook
+							input.btn.float-right.login_btn.w-100.my-2.text-light(type='submit' value='Entrar com email')
+							a.btn.login_btn.float-left.w-100.my-2.text-light(href="/auth/google")
+								|Entrar com Google
+								i.fab.fa-google
+							a.btn.login_btn.float-left.w-100.my-2.text-light(href="/auth/facebook")
+								| Entrar com Facebook
+								i.fab.fa-facebook
 				.card-footer
 					.d-flex.justify-content-center.links
 						| Não tens uma conta?

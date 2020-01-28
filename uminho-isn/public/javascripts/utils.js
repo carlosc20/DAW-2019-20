@@ -1,3 +1,5 @@
+$.fn.selectpicker.Constructor.BootstrapVersion = '4'
+
 function apagarSub(sub, email){
     console.log('Vou tentar apagar a sub ' + sub + ' do utilizador ' + email + ' ....')
     axios.delete('/subscription/' + email + '/tag/' + sub)

@@ -1,5 +1,4 @@
-var axios = require('axios');
-/*
+
 function showFicheiro(f, postId){
     if(f.mimetype.match(/image\/.+/) || f.mimetype == 'application/pdf')
         var ficheiro = $('<img src="/ficheiros/' + postId + '/' + f.name + '?mimeType=' + f.mimetype + '" width= "40%" id="modal-img"/>')
@@ -13,7 +12,7 @@ function showFicheiro(f, postId){
     $('.close-modal').addClass("btn-dark")
 }
 
-/*
+
 function showRequests(user){
     let requests = user.requestsRcv
 
@@ -34,11 +33,11 @@ function showRequests(user){
     $('.close-modal').addClass("btn")
     $('.close-modal').addClass("btn-dark")
 }
-*/
+
 
 $(function(){
     var cont = 1
-
+    console.log()
     $("#tagbutton").click(e => {
         e.preventDefault()
         let tag = $("#tagselector option:selected").text()

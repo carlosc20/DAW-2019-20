@@ -1,12 +1,9 @@
-"use strict";
-
 var express = require('express');
 var Posts = require('../controllers/posts')
 var Users = require('../controllers/users')
 var router = express.Router();
 const fs = require('fs')
 var mkdirp = require('mkdirp');
-var zip = require('express-zip');
 
 
 var multer = require('multer')
