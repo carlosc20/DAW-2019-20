@@ -7,19 +7,6 @@ block page
         -var searched = search ? '&search=' + search : ''
         a.btn.borderless.btn-selected(href="?page="+(page-1 > 0? page-1 : 0) + searched )
           <em><</em>
-        -var i = -2
-        -var numPages = Math.floor(lista.length/15)
-        if page + i > 0
-          a.btn.borderless.btn-selected(href="/?page=0" +searched)
-            <em>0</em>
-        -for(; i < 3; i++)
-          if page + i >= 0 && page + i <= numPages
-            if i == 0
-              a.btn.borderless.btn-selected(href="/?page=" + page + searched)
-                b=(page+i)
-            else
-              a.btn.borderless.btn-selected(href="/?page=" + (page + i) + searched)=(page+i)
-          a.btn.borderless.btn-selected(href="/?page=" + numPages + searched)= numPages       
         a.btn.borderless.btn-selected(href="/?page="+(page+1 >= numPages? numPages : page+1) + searched) 
           <em>> </em>
 
