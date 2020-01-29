@@ -5,11 +5,15 @@ block page
   secction
     .container.text-center.post-info
       h1= post.title
+      h2 Por:
+        a(href="/profile/" + post.poster)
+          |  @#{post.poster}
       b tags: 
       if post.tags.length == 0
         | nenhuma
       each tag in post.tags 
-        | #{tag.tag};
+         a(href='/?tag='+tag.tag)
+          |  #{tag.tag}  
     .container
       p= post.description  
   .container
