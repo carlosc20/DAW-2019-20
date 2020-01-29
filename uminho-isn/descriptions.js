@@ -383,13 +383,3 @@ getRandomEmail = (username) => {
 }
 
 
-var generatedUsers = names.map(user => {
-    console.log(numName + " generating user " + user )
-    numName++
-    return {
-        name : user,
-        email: getRandomEmail(user),
-        type: 'local',
-        password : bcrypt.hashSync('123', 10)
-    }
-})

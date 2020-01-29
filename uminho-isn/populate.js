@@ -28,18 +28,17 @@ hasDirectories = source => {
 }
 
 var numPosts = 0
-searchPost = (source, level, tags)  =>{
-    if(numPosts > 100) return
-    level = level || 0
-    tags = tags || new Array
+searchPost = (source, users, level, tags)  =>{
+    if(numPosts > 150) return
     if(hasDirectories(source)){
         getDirectories(source).forEach(elementDirectory => {
             let tags2 = tags.slice()
-            if(level > 2)
+            if(level < 4)
                 tags2.push(elementDirectory)
-            searchPost(source + '/' + elementDirectory, level + 1, tags2)
+            searchPost(source + '/' + elementDirectory, users, level + 1, tags2)
         })
     }
+    console.log(tags)
     if(level >= 3 && hasFile(source)){
         let title = ''
         let match = source.split('/')
@@ -49,7 +48,11 @@ searchPost = (source, level, tags)  =>{
         let description = rGen.getRandomDescription()
         form.append('title', title)
         form.append('description', description)
-        form.append('poster', 'test') // alterar
+        let userIndex = Math.floor(Math.random()*(users.length-1))
+        form.append('poster', users[userIndex].name) 
+        tags.forEach(elementTag => {
+            form.append('tags', elementTag)
+        })
         getFiles(source).forEach(elementFile => {
             let data = fs.readFileSync(source + '/' + elementFile)
             form.append('files', data , elementFile)
@@ -58,24 +61,19 @@ searchPost = (source, level, tags)  =>{
         console.log("   At: " + source)
         numPosts++
 
-        apiReq.post('/api/post', form, {
-            headers: {
-            'Content-Type': 'multipart/form-data; boundary='+form._boundary
-            }
-        }).then({})
-        .catch(e => {console.log(e); process.exit()})
-        
-        /*apiReq.post('/api/post', form, {
-            headers: {
-            'Content-Type': 'multipart/form-data; boundary='+form._boundary
-            }
-        })
-        .catch(e => {console.log(e); process.exit()})*/
+        if(numPosts > 0 && numPosts <= 150 ){
+            apiReq.post('/api/post', form, {
+                headers: {
+                'Content-Type': 'multipart/form-data; boundary='+form._boundary
+                }
+            }).then({})
+            .catch(e => {console.log(e.message); process.exit()})
+        } 
     }
 }
 
-generateUpDownVotes = (post) => {
-    let users = rGen.getUsers()
+generateUpDownVotes = (post, users) => {
+    console.dir(post)
     let randLength = Math.floor(Math.random()*users.length)
     for(let i = 0; i < randLength; i++){
         let rand = Math.random()
@@ -92,18 +90,20 @@ generateUpDownVotes = (post) => {
     }
 }
 
-generateComments = (post) => {
-    let users = rGen.getUsers()
+var numPostComment = 0
+generateComments = (post, users) => {
     let randLength = Math.ceil(Math.random()*users.length/10)
     for(let i = 0; i < randLength; i++){
         let comment =  {
             text : rGen.getRandomDescription(),
             owner : users[i]
         }
-        apiReq.send('/comment/' + post._id, comment).then(comm => {
+        apiReq.post('/comment/' + post._id, comment).then(comm => {
+            console.log( numPostComment + " Comment added ")
+            numPostComment++
             let randVoteLength = Math.ceil(Math.random()*users.length/50)
             for(let j = 0; j < randVoteLength; j++){
-                let userIndex = Math.floor(Math.random()*users.length)
+                let userIndex = Math.floor(Math.random()*users.length-1)
                 let vote = Math.random()
                 if(vote < 0.5){
                     apiReq.post('/comment/upvote/' + comm.data._id  +'/' + users[userIndex].email)
@@ -116,6 +116,7 @@ generateComments = (post) => {
                 }
             }
         })
+        .catch(e => console.log(e.message))
     }
 }
 
@@ -151,8 +152,34 @@ populateUsers = () => {
 
 main = () => { 
     let src = 'C:/Users/CésarAugustodaCostaB/Dropbox/dropbox MIEI'
-    //searchTags(src)
-    //populateUsers()
-    searchPost(src)
+    //searchTags(src) //1
+    //populateUsers() //2
+   /* apiReq.get('/users') //3
+        .then(users => {
+            searchPost(src, users.data, 0, [])
+        })
+        .catch(e => console.log(e.message))*/
+    /*apiReq.get('/users') //4
+        .then(users => {
+            apiReq.get('/api/posts')
+                .then(posts => {
+                    posts.data.forEach(post => {
+                        generateUpDownVotes(post, users.data)
+                    })
+                })
+                .catch(e => console.log(e.message)) 
+        })
+        .catch(e => console.log(e.message)) */
+    apiReq.get('/users') //4
+        .then(users => {
+            apiReq.get('/api/posts')
+                .then(posts => {
+                    posts.data.forEach(post => {
+                        generateComments(post, users.data)
+                    })
+                })
+                .catch(e => console.log(e.message)) 
+        })
+        .catch(e => console.log(e.message))
 }
 main();

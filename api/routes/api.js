@@ -32,7 +32,8 @@ router.post('/post', upload.array('files'), function(req, res, next) {
                     let c = 0
                     let found = 0
                     for(var i = 0; i < resultTags.length; i++){
-                        if(!resultTags[i].public){
+                        console.log(resultTags)
+                        if(resultTags[i] && !resultTags[i].public){
                             c++
                             for(var j = 0; j < user.subscriptions.length; j++){
                                 if(resultTags[i].tag == user.subscriptions[j].tag)

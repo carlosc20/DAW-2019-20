@@ -28,7 +28,7 @@ module.exports.getByIdForMentions = id => {
 
 module.exports.getByTag = (tag, page) => {
     page = page || 0
-    return Post.find({'identifier.tag': tag}, {})
+    return Post.find({'tags.tag': tag}, {})
         .sort({date: -1})
         .skip((page)*15)
         .limit(15)

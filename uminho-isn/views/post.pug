@@ -5,13 +5,14 @@ block page
   secction
     .container.text-center.post-info
       h1= post.title
-      p= post.description
       p 
         b tags: 
         if post.tags.length == 0
           | nenhuma
-        each tag in post.tags
-          | #{tag};  
+        each tag in post.tags 
+          | #{tag.tag};
+    .container
+      p= post.description  
   .container
     .row
       each file in post.files
