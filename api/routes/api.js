@@ -17,66 +17,75 @@ var filePath = require('../utils/filePath')
 router.post('/post', upload.array('files'), function(req, res, next) {
     let newPost = req.body
     let postTags = newPost.tags
-    console.log(newPost)
+    console.dir(newPost.tags)
+    if(postTags == null || postTags == undefined)
+        res.status(400).jsonp({erro: "no tag selected"})
+    else{
+    if(!Array.isArray(postTags))
+        postTags = [postTags]
     Promise.all(postTags.map(Tags.get))
         .then(resultTags => {
-    Users.getByName(newPost.poster)
-        .then(user => {
-            let c = 0
-            let found = 0
-            for(var i = 0; resultTags.length; i++){
-                if(!postTags[i].public){
-                    c++
-                    for(var j = 0; user.subscriptions.length; j++){
-                        if(postTags[i].tag == user.subscriptions.tag)
-                            found++
+            console.log('resultTags', resultTags)
+            Users.getByName(newPost.poster)
+                .then(user => {
+                    console.log(user)
+                    let c = 0
+                    let found = 0
+                    for(var i = 0; i < resultTags.length; i++){
+                        if(!resultTags[i].public){
+                            c++
+                            for(var j = 0; j < user.subscriptions.length; j++){
+                                if(resultTags[i].tag == user.subscriptions[j].tag)
+                                    found++
+                            }
+                        }
                     }
-                }
-            }
-            console.log(c)
-            console.log(found)
-            if(c == found){
-                if(newPost.files == undefined)
-                    newPost.files = []
-                newPost.date = new Date().toISOString()
+                    console.log(c)
+                    console.log(found)
+                    if(c == found){
+                        newPost.tags = resultTags
+                        if(newPost.files == undefined)
+                            newPost.files = []
+                        newPost.date = new Date().toISOString()
 
-                for(let i = 0; i < req.files.length; i++){
-                    let novoFicheiro = {
-                        name: req.files[i].originalname,
-                        mimetype: req.files[i].mimetype,
-                        size: req.files[i].size
-                    }
-                    newPost.files.push(novoFicheiro)
-                }
-                Posts.insert(newPost)
-                    .then(dados => {
-                        for(let i = 0; i < dados.files.length;  i++){
-                            let oldPath = __dirname + '/../' + req.files[i].path
-                            mkdirp(filePath.getFilePath(dados._id, dados.files[i].name), function(err) { 
-                                if(err){
-                                    Posts.delete(dados._id)
-                                    throw err
-                                }
-                                else {
-                                    fs.rename(oldPath, filePath.getFile(dados._id, dados.files[i].name), function (err){
-                                        if (err) {
+                        for(let i = 0; i < req.files.length; i++){
+                            let novoFicheiro = {
+                                name: req.files[i].originalname,
+                                mimetype: req.files[i].mimetype,
+                                size: req.files[i].size
+                            }
+                            newPost.files.push(novoFicheiro)
+                        }
+                        Posts.insert(newPost)
+                            .then(dados => {
+                                for(let i = 0; i < dados.files.length;  i++){
+                                    let oldPath = __dirname + '/../' + req.files[i].path
+                                    mkdirp(filePath.getFilePath(dados._id, dados.files[i].name), function(err) { 
+                                        if(err){
                                             Posts.delete(dados._id)
                                             throw err
                                         }
-                                        console.log("file: " + dados.files[i].name, "; post id: " + dados._id)
-                                        console.log("Saved file at: " + filePath.getFile(dados._id, dados.files[i].name))
-                                    })
+                                        else {
+                                            fs.rename(oldPath, filePath.getFile(dados._id, dados.files[i].name), function (err){
+                                                if (err) {
+                                                    Posts.delete(dados._id)
+                                                    throw err
+                                                }
+                                                console.log("file: " + dados.files[i].name, "; post id: " + dados._id)
+                                                console.log("Saved file at: " + filePath.getFile(dados._id, dados.files[i].name))
+                                            })
+                                        }
+                                    });
                                 }
-                            });
+                                res.jsonp(dados)
+                            })
+                            .catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})  
                         }
-                        res.jsonp(dados)
-                    })
-                    .catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})
-                }
-            else
-                res.status(406).jsonp({erro: "permission denied"})
-        }).catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})
+                    else
+                        res.status(406).jsonp({erro: "permission denied"})
+            }).catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})
     }).catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})
+}
 })
 
 /* GET a post by ID. */
