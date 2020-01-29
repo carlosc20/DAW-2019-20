@@ -9,10 +9,6 @@ var mkdirp = require('mkdirp');
 var multer = require('multer')
 var upload = multer({dest: 'uploads/'})
 
-
-
-
-
 router.get('/', function(req, res) {
   Users.getAll()
     .then(data => res.jsonp(data))

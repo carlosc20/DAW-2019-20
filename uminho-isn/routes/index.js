@@ -189,7 +189,7 @@ router.get('/publish', checkAuth, function(req, res){
     .catch(erro => res.status(500).render('error', {error: erro}))
 })
 
-router.post('/publish', upload.array('files'), checkAuth, function(req, res){
+router.post('/publish',  checkAuth, upload.array('files'), function(req, res){
   console.dir(req.body)
   let form = new FormData()
   form.append('title', req.body.title)
