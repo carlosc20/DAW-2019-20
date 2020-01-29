@@ -83,6 +83,7 @@ router.get('/posts/tag/:tag/:name', function(req, res, next) {
     Tags.get(req.params.tag)
         .then(ident => {
             if(ident.public){
+                console.log("oioioioio")
                 Posts.getByTag(req.params.tag, page)
                 .then(dados => { 
                     let result = addTimeSwapToList(dados)
@@ -93,6 +94,7 @@ router.get('/posts/tag/:tag/:name', function(req, res, next) {
             else{
                 Users.getByName(req.params.name)
                 .then(user => {
+                    console.log(user)
                     let b = false
                     for(var i = 0; i < user.subscriptions.length; i++)
                         if(user.subscriptions[i].tag == req.params.tag)
