@@ -18,19 +18,28 @@ const verifyCallback = async (accessToken, refreshToken, profile, done) => {
     console.dir(user)
     if(!user) {
       console.log("Criar user")
-      user = {        
-        email: verifiedEmail,
-        name: profile.displayName.replace(' ', ''),
-        type: "google"
-      }
-      console.dir(user)
-      apiReq.post('/users', user)
-      .then(() => {
-        return done(null, user)
-      })
-      .catch(erro => {
-        return done(erro)
-      })
+      var userName = profile.displayName.replace(' ', '')
+      console.log("Nammmeeee  --- "  + userName)
+      apiReq.get('/users/name/'+ userName)
+        .then(user => {
+          if(user.data != null)
+            return done(null, false)
+          else{
+            newUser = {        
+              email: verifiedEmail,
+              name: userName,
+              type: "google"
+            }
+            apiReq.post('/users', newUser)
+            .then(() => {
+              return done(null, newUser)
+            })
+            .catch(erro => {
+              return done(erro)
+            })
+          }
+        }).catch(erro => {
+            return done(erro)})
     }
     else if(user.type == "google"){
       console.log('Autentificação feita com sucesso')
@@ -42,7 +51,6 @@ const verifyCallback = async (accessToken, refreshToken, profile, done) => {
   })
   .catch(erro => done(erro))
 }
-
 const strategy = new GoogleStrategy(strategyOptions, verifyCallback);
 
 module.exports = { strategy }

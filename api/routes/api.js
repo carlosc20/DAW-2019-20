@@ -1,6 +1,7 @@
 var express = require('express');
 var Posts = require('../controllers/posts')
 var Users = require('../controllers/users')
+var Tags = require('../controllers/identifiers')
 var router = express.Router();
 const fs = require('fs')
 var mkdirp = require('mkdirp');
@@ -12,46 +13,71 @@ var upload = multer({dest: 'uploads/'})
 var filePath = require('../utils/filePath')
 
 /* POST a post */
+
 router.post('/post', upload.array('files'), function(req, res, next) {
     let newPost = req.body
-    console.log(newPost.tags)
-    if(newPost.files == undefined)
-        newPost.files = []
-    newPost.date = new Date().toISOString()
-    
-    for(let i = 0; i < req.files.length; i++){
-        let novoFicheiro = {
-            name: req.files[i].originalname,
-            mimetype: req.files[i].mimetype,
-            size: req.files[i].size
-        }
-        newPost.files.push(novoFicheiro)
-    }
-    
-    Posts.insert(newPost)
-        .then(dados => {
-            for(let i = 0; i < dados.files.length;  i++){
-                let oldPath = __dirname + '/../' + req.files[i].path
-                mkdirp(filePath.getFilePath(dados._id, dados.files[i].name), function(err) { 
-                    if(err){
-                        Posts.delete(dados._id)
-                        throw err
+    let postTags = newPost.tags
+    console.log(newPost)
+    Promise.all(postTags.map(Tags.get))
+        .then(resultTags => {
+    Users.getByName(newPost.poster)
+        .then(user => {
+            let c = 0
+            let found = 0
+            for(var i = 0; resultTags.length; i++){
+                if(!postTags[i].public){
+                    c++
+                    for(var j = 0; user.subscriptions.length; j++){
+                        if(postTags[i].tag == user.subscriptions.tag)
+                            found++
                     }
-                    else {
-                        fs.rename(oldPath, filePath.getFile(dados._id, dados.files[i].name), function (err){
-                            if (err) {
-                                Posts.delete(dados._id)
-                                throw err
-                            }
-                        })
-                    }
-                });
+                }
             }
-            res.jsonp(dados)
-        })
-        .catch(erro => { res.status(500).jsonp(erro)})
-});
+            console.log(c)
+            console.log(found)
+            if(c == found){
+                if(newPost.files == undefined)
+                    newPost.files = []
+                newPost.date = new Date().toISOString()
 
+                for(let i = 0; i < req.files.length; i++){
+                    let novoFicheiro = {
+                        name: req.files[i].originalname,
+                        mimetype: req.files[i].mimetype,
+                        size: req.files[i].size
+                    }
+                    newPost.files.push(novoFicheiro)
+                }
+                Posts.insert(newPost)
+                    .then(dados => {
+                        for(let i = 0; i < dados.files.length;  i++){
+                            let oldPath = __dirname + '/../' + req.files[i].path
+                            mkdirp(filePath.getFilePath(dados._id, dados.files[i].name), function(err) { 
+                                if(err){
+                                    Posts.delete(dados._id)
+                                    throw err
+                                }
+                                else {
+                                    fs.rename(oldPath, filePath.getFile(dados._id, dados.files[i].name), function (err){
+                                        if (err) {
+                                            Posts.delete(dados._id)
+                                            throw err
+                                        }
+                                        console.log("file: " + dados.files[i].name, "; post id: " + dados._id)
+                                        console.log("Saved file at: " + filePath.getFile(dados._id, dados.files[i].name))
+                                    })
+                                }
+                            });
+                        }
+                        res.jsonp(dados)
+                    })
+                    .catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})
+                }
+            else
+                res.status(406).jsonp({erro: "permission denied"})
+        }).catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})
+    }).catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})
+})
 
 /* GET a post by ID. */
 router.get('/post/:id', function(req, res, next) {
@@ -178,8 +204,8 @@ router.post('/post/upvote/:idPost/:email', function(req,res){
 
 router.get('/post/fuzzy/title/:title', function(req,res){
     Posts.fuzzySearchByTitle(req.params.title)
-        .then(dados => { res.jsonp(dados) })
-        .catch(erro => { res.status(500).jsonp(dados) })
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).jsonp(dados))
 })
 
 module.exports = router;

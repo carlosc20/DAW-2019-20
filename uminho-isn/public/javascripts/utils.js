@@ -34,15 +34,25 @@ function downVotePost(idPost, email){
 }
 
 function subscribe(tag){
-    axios.post('/subscribe/public/' + tag)
+    console.log(tag)
+    axios.post('/subscription/public/' + tag)
         .then(dados => window.location.assign('/subscriptions'))
         .catch(error => {console.log(error)})
 }
 
 function subscribeRequest(tag){
-    axios.post('/subscribe/request/' + tag)
+    console.log(tag)
+    axios.post('/subscription/request/' + tag) 
         .then(dados => window.location.assign('/subscriptions'))
         .catch(error => {console.log(error)})
 }
 
-$.fn.selectpicker.Constructor.BootstrapVersion = '4' 
+function answerRequest(tag, requester, boolean){
+    console.log(tag)
+    console.log(requester)
+    console.log(boolean)
+    axios.post('/answer/' + boolean + '/request/' + tag + '/' + requester)
+            .then(dados => window.location.assign('/subscriptions'))
+            .catch(error => {console.log(error)})
+}
+

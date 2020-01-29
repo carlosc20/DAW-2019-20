@@ -1,4 +1,3 @@
-
 function showFicheiro(f, postId){
     if(f.mimetype.match(/image\/.+/) || f.mimetype == 'application/pdf')
         var ficheiro = $('<img src="/ficheiros/' + postId + '/' + f.name + '?mimeType=' + f.mimetype + '" width= "40%" id="modal-img"/>')
@@ -11,7 +10,6 @@ function showFicheiro(f, postId){
     $('.close-modal').addClass("btn")
     $('.close-modal').addClass("btn-dark")
 }
-
 
 function showRequests(user){
     let requests = user.requestsRcv

@@ -64,9 +64,6 @@ router.get('/profile/:name', checkAuth, function(req, res){
     .then(user => {
       apiReq.get('/users/mentions/' + req.params.name)
         .then(result => {
-          console.log(req.user); 
-          console.log(user.data);
-          console.log(result)
           res.render('user', {user: req.user, userProfile: user.data, mentions: result.data})
         }).catch(erro => res.status(500).render('error', {error: erro}))
     })
@@ -76,7 +73,7 @@ router.get('/profile/:name', checkAuth, function(req, res){
 
 router.get('/subscriptions', checkAuth, function(req, res){
   apiReq.get('/tags')
-    .then(response =>{console.log(response);res.render('subscriptions', {user: req.user, tags: response.data})})
+    .then(response =>{res.render('subscriptions', {user: req.user, tags: response.data})})
     .catch(e => res.status(500).render('error', {error: erro}))
 })
 
@@ -86,7 +83,7 @@ router.get('/register', function(req, res){
   res.render('register');
 });
 
-router.post('/register',  function(req, res){
+router.post('/register', function(req, res){
   let hash = bcrypt.hashSync(req.body.password, 10);
   apiReq.post('/users', {
     email: req.body.email,
@@ -102,6 +99,24 @@ router.post('/register',  function(req, res){
       res.status(500).render('error', {error: erro})})
 })
 
+router.post('/answer/:ans/request/:tag/:requester', checkAuth, function(req, res){
+  if(req.params.ans){
+    console.log(req.params.requester)
+    console.log(req.params.ans)
+    apiReq.post('/users/' + req.params.requester + '/subscription/' + req.params.tag)
+      .then(dados => {
+        apiReq.delete('/users/' + req.user.name + '/request/' + req.params.requester + '/' + req.params.tag)
+          .then(dados => res.jsonp())
+          .catch(erro => res.status(500).render('error', {error: erro}))
+      })
+      .catch(erro => res.status(500).render('error', {error: erro}))
+  }
+  else
+    apiReq.delete('/users/' + req.users.name + '/request/' + req.requester + '/' + req.params.tag)
+      .then(dados => res.jsonp())
+      .catch(erro => res.status(500).render('error', {error: erro}))
+})
+
 
 router.post('/subscription/group', checkAuth, function(req, res){
   apiReq.post('/users/group/' + req.user.name + '/tag/' + req.body.text)
@@ -109,8 +124,8 @@ router.post('/subscription/group', checkAuth, function(req, res){
     .catch(erro => res.status(500).render('error', {error: erro}))
 })
 
-router.post('/subscription/:tag/request', checkAuth, function(req, res){
-  let tag = req.paramsg.tag
+router.post('/subscription/request/:tag', checkAuth, function(req, res){
+  let tag = req.params.tag
   let array = req.user.subscriptions
   let name = req.user.name
   let b = true
@@ -189,11 +204,12 @@ router.get('/publish', checkAuth, function(req, res){
     .catch(erro => res.status(500).render('error', {error: erro}))
 })
 
-router.post('/publish', upload.array('files'), checkAuth, function(req, res){
+router.post('/publish',  checkAuth, upload.array('files'), function(req, res){
   console.dir(req.body)
   let form = new FormData()
   form.append('title', req.body.title)
   form.append('description', req.body.description)
+  console.log(req.body)
   form.append('poster', req.user.name)
   if(req.body.tags && Array.isArray(req.body.tags)){
     for(let i = 0; i < req.body.tags.length; i++){
