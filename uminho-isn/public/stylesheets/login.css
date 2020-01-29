@@ -66,14 +66,6 @@ color: black;
 background-color: rgb(255, 81, 81);
 }
 
-.google-sign-up i{
-    margin: 5px;
-}
-
-.google-sign-up {
-    border: 0px;
-    background-color: rgba(180, 43, 43, 0.945);
-}
 
 
 .links{
@@ -82,4 +74,9 @@ color: white;
 
 .links a{
 margin-left: 4px;
+}
+
+.card {
+background-color: rgba(0,0,0,0.7) !important;
+height: max-content
 }

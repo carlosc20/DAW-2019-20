@@ -7,9 +7,9 @@ block page
       .col(style='margin-left: 20px')
         .container(style="padding-top: 50px;").text-center.bg-white
           if(userProfile.image != undefined)
-            img(style="height:300px;max-width:200px;width: expression(this.width > 200 ? 200: true);" src='/usersImg/' + userProfile.name + '/' + userProfile.image.name alt="http://placehold.it/200x200")
+            img(style="height:200px;max-width:200px;width: expression(this.width > 200 ? 200: true);" src='/usersImg/' + userProfile.name + '/' + userProfile.image.name alt="http://placehold.it/200x200")
           else
-            img(src="http://placehold.it/200x200" alt="http://placehold.it/200x200")
+            img(src="http://placehold.it/200x200" alt="Não tem imagem")
           .container
             .container.user-text
               h6= userProfile.name
@@ -52,12 +52,11 @@ block page
                         td
                       td
                         if(sub.owner != userProfile.name) 
-                          button.btn.btn-sm.i.fas.fa-window-close(onclick="apagarSub(" + sub.tag +"," + userProfile.name + ")")
+                          button.btn.btn-sm.i.fas.fa-window-close(onclick="apagarSub('" + sub.tag +"','" + userProfile.name + "')")
             else
               .container(style="padding-bottom: 10px; padding-top: 20px;" )
                 h5 De momento não tens subscrições
-            button.btn.btn-primary(onclick='showRequests("' + user+ '")') Ver pedidos
-          
+        
                 
     .row
       .container(style="margin-top: 50px").text-center.bg-white
@@ -66,16 +65,18 @@ block page
           table.table
             thead
               tr
-                th(scope="col") Id
+                th(scope="col") Post
                 th(scope="col") Titulo
                 th(scope="col") Autor
                 th(scope="col") Data
             tbody
               each m in mentions
                 tr
-                  td= m._id
+                  td
+                    a(href="/post/" + m._id) link
                   td= m.title
                   td= m.poster
-                  td= m.date
+                  - var date = m.date.substring(0, 10);
+                  td= date
         else
           h5 Ainda não foste mencionado

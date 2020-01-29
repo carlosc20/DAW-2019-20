@@ -25,17 +25,6 @@ router.post('/login', passport.authenticate('local', {
   })
 );
 
-
-router.get('/blank', function(req, res){
-  res.render('blank')
-})
-
-// login, ??
-router.post('/', function(req, res){
-  res.redirect('/login')
-});
-
-
 router.get('/login', function(req, res) {
   res.render('login');
 });
@@ -82,8 +71,7 @@ router.get('/profile/:name', checkAuth, function(req, res){
 })
 
 
-router.get('/subscriptions', function(req, res){
-  console.log(req.user)
+router.get('/subscriptions', checkAuth, function(req, res){
   apiReq.get('/tags')
     .then(response =>{res.render('subscriptions', {user: req.user, tags: response.data})})
     .catch(e => res.status(500).render('error', {error: erro}))
@@ -117,15 +105,15 @@ router.post('/answer/:ans/request/:tag/:requester', checkAuth, function(req, res
     console.log(req.params.ans)
     apiReq.post('/users/' + req.params.requester + '/subscription/' + req.params.tag)
       .then(dados => {
-        apiReq.delete('/users/' + req.user.name + '/request/' + req.params.requester)
+        apiReq.delete('/users/' + req.user.name + '/request/' + req.params.requester + '/' + req.params.tag)
           .then(dados => res.jsonp())
           .catch(erro => res.status(500).render('error', {error: erro}))
       })
       .catch(erro => res.status(500).render('error', {error: erro}))
   }
   else
-    apiReq.delete('/users/' + req.users.name + '/request/' + req.requester)
-      .then(dados => res.jsonp(dados))
+    apiReq.delete('/users/' + req.users.name + '/request/' + req.requester + '/' + req.params.tag)
+      .then(dados => res.jsonp())
       .catch(erro => res.status(500).render('error', {error: erro}))
 })
 
@@ -198,7 +186,7 @@ router.post('/profile/:name/image', upload.single('img'), checkAuth, function(re
 })
 
 
-router.get('/profile/:name/image', function(req, res){
+router.get('/profile/:name/image', checkAuth, function(req, res){
   apiReq.get_bin('/users/' + req.params.name + '/image').pipe(res)
 })
 
@@ -216,7 +204,7 @@ router.get('/publish', checkAuth, function(req, res){
     .catch(erro => res.status(500).render('error', {error: erro}))
 })
 
-router.post('/publish', upload.array('files'), checkAuth, function(req, res){
+router.post('/publish',  checkAuth, upload.array('files'), function(req, res){
   console.dir(req.body)
   let form = new FormData()
   form.append('title', req.body.title)
@@ -237,7 +225,7 @@ router.post('/publish', upload.array('files'), checkAuth, function(req, res){
   .catch(erro => res.status(500).render('error', {error: erro}))
 })
 
-router.post('/comment/:idPost/:email', function(req,res){
+router.post('/comment/:idPost/:email', checkAuth, function(req,res){
   req.body.owner = req.params.email
   apiReq.post('/api/comment/' + req.params.idPost, req.body)
     .then(dados => res.redirect('/post/' + req.params.idPost))
@@ -247,7 +235,7 @@ router.post('/comment/:idPost/:email', function(req,res){
 /**
  * Respondes to axios in client side
  */
-router.post('/comment/upvote/:idComment/:email', function(req, res){
+router.post('/comment/upvote/:idComment/:email', checkAuth, function(req, res){
   apiReq.post('/api/comment/upvote/' + req.params.idComment +'/' + req.params.email)
     .then(dados => { res.jsonp(dados.data)})
     .catch(erro => { res.status(500).render('error', {error: erro})})
@@ -256,7 +244,7 @@ router.post('/comment/upvote/:idComment/:email', function(req, res){
 /**
  * Respondes to axios in client side
  */
-router.post('/comment/downvote/:idComment/:email', function(req, res){
+router.post('/comment/downvote/:idComment/:email', checkAuth, function(req, res){
   apiReq.post('/api/comment/downvote/' + req.params.idComment +'/' + req.params.email)
     .then(dados => { res.jsonp(dados.data)})
     .catch(erro => res.status(500).render('error', {error: erro}))

@@ -9,10 +9,6 @@ var mkdirp = require('mkdirp');
 var multer = require('multer')
 var upload = multer({dest: 'uploads/'})
 
-
-
-
-
 router.get('/', function(req, res) {
   Users.getAll()
     .then(data => res.jsonp(data))
@@ -130,8 +126,8 @@ router.post('/group/:name/tag/:tag', function(req, res) {
     }).catch(e => {console.log("3");res.status(500).jsonp(e)})
 });
 
-router.delete('/:name/request/:requester', function(req, res){
-  Users.removeRequest(req.params.name, req.params.requester)
+router.delete('/:name/request/:requester/:tag', function(req, res){
+  Users.removeRequest(req.params.name, req.params.requester, req.params.tag)
     .then(r => res.jsonp(r))
     .catch(e => res.status(500).jsonp(e))
 })
@@ -139,27 +135,45 @@ router.delete('/:name/request/:requester', function(req, res){
 router.post('/:name/subscription/request/:tag', function(req, res){
   let name = req.params.name
   let tag = req.params.tag
-  Tags.get(tag)
-    .then(identifier => {
-      console.log(identifier)
-      if(identifier == null)
-        res.status(400).jsonp(tag)
-      else{
-        let owner = identifier.owner
-        let request = {
-          requester: name,
-          tag: tag
-        }
-        Users.checkRequest(owner, name)
-          .then(data => {
-          if(data == null){
-            Users.insertRequest(owner, request)
-              .then(data => res.jsonp(data))
-              .catch(e => res.status(500).jsonp(e))
+  Users.getByName(name)
+    .then(found => {
+      let b = false
+      for(var i = 0; i < found.subscriptions.length; i++){
+          let sub = found.subscriptions[i]
+          console.log(sub)
+            if(tag == sub.tag){
+              b = true
             }
-          else
-            res.status(400).jsonp(tag) 
-          }).catch(e => res.status(500).jsonp(e))
+          }
+      if(b){
+        console.log("boolean " + b)
+        res.status(406).jsonp({erro: "already subscribed"})
+      }
+      else{
+        console.log("boolean " +b)
+        Tags.get(tag)
+        .then(identifier => {
+          console.log(identifier)
+          if(identifier == null)
+            res.status(400).jsonp(tag)
+          else{
+            let owner = identifier.owner
+            let request = {
+              requester: name,
+              tag: tag
+            }
+            Users.checkRequest(owner, name, tag)
+              .then(data => {
+              if(data == null){
+                Users.insertRequest(owner, request)
+                  .then(data => res.jsonp(data))
+                  .catch(e => res.status(500).jsonp(e))
+                }
+              else
+                res.status(400).jsonp(tag) 
+              }).catch(e => res.status(500).jsonp(e))
+          }
+        }).catch(e => res.status(500).jsonp(e))
       }
     }).catch(e => res.status(500).jsonp(e))
 })
@@ -231,11 +245,9 @@ router.post('/userImg/:name', upload.single('img'), function(req,res){
 })
 
 router.get('/:name/image', function(req,res){
-  console.log("I AM HERE")
   Users.getByName(req.params.name)
     .then(user => {
       fs.readFile('public/usersImg/' + user.name + '/' + user.image.name, (err, data) =>{
-        console.log('public/usersImg/' + user.name + '/' + user.image.name)
         if(!err)
           res.end(data)
         else {

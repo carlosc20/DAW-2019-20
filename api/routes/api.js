@@ -104,9 +104,7 @@ router.get('/posts', function(req, res, next) {
 function addTimeSwapToList(lista){
     var nowDate = new Date()
     return lista.map(post => {
-        console.log(post)
         let newPost = JSON.parse(JSON.stringify(post))
-        console.log(newPost)
         let timeSwap = Math.floor(Math.abs(nowDate - new Date(post.date))/1000/60); 
         if(timeSwap == 0) newPost.timeSwap = 'agora'
         else if(timeSwap < 60) newPost.timeSwap = timeSwap + ' mins'
@@ -148,7 +146,6 @@ router.get('/posts/poster/:poster', function(req, res, next){
 })
 
 router.get('/download/:idPost/:fnome', function(req, res){
-    console.log(filePath.getFile(req.params.idPost, req.params.fnome))
     res.download(filePath.getFile(req.params.idPost, req.params.fnome))
 })
 
@@ -158,23 +155,18 @@ router.get('/download/:idPost', function(req, res){
     Posts.getById(req.params.idPost)
         .then(post => {
             for(let i = 0; i < post.files.length; i++){
-                console.log(post.files[i].name)
                 list.push({path: filePath.getFile(req.params.idPost, post.files[i].name), name:  post.files[i].name})
             }
-            console.log("list " + list)
             res.zip(list);
         })
         .catch(erro => { res.status(500).jsonp(erro) })	
 })
 
 router.post('/comment/:idPost', function(req,res){
-    //console.log(req.params.idPost)
-    //console.dir(req.body)
     req.body.date = new Date().toISOString()
     let comment = req.body
     comment.upVotes = []
     comment.downVotes = []
-    console.log(req.body)
     let regex = /@[^\ ]+/g;
     //let mentions = dados.comments.map(match(regex).map(subs   tr(1)));
     //mentions.map(Users.insertMention)
