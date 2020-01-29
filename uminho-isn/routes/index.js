@@ -31,7 +31,7 @@ router.get('/login', function(req, res) {
 
 /* GET home page. */
 router.get('/', checkAuth, function(req, res) {
-  let tag = req.query.tag
+  let tag = req.query.tag 
   let user = req.user
   let search = req.query.search
   let page = parseInt(req.query.page) || 0

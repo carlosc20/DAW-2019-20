@@ -5,6 +5,7 @@ var Tags = require('../controllers/identifiers')
 var router = express.Router();
 const fs = require('fs')
 var mkdirp = require('mkdirp');
+var zip = require('express-zip');
 
 
 var multer = require('multer')
@@ -207,12 +208,14 @@ router.get('/download/:idPost', function(req, res){
     let list = new Array
     Posts.getById(req.params.idPost)
         .then(post => {
+            console.log(post)
             for(let i = 0; i < post.files.length; i++){
+                console.log({path: filePath.getFile(req.params.idPost, post.files[i].name), name:  post.files[i].name})
                 list.push({path: filePath.getFile(req.params.idPost, post.files[i].name), name:  post.files[i].name})
             }
             res.zip(list);
         })
-        .catch(erro => { res.status(500).jsonp(erro) })	
+        .catch(erro => { console.log(erro); res.status(500).jsonp(erro) })	
 })
 
 router.post('/comment/:idPost', function(req,res){

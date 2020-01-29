@@ -223,6 +223,7 @@ router.post('/userImg/:name', upload.single('img'), function(req,res){
         console.log(r)
         mkdirp(newDir, function(err) {
           if(err){
+            res.status(500).jsonp()
             console.log("cant make dir")
             throw err
           }
