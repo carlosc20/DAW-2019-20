@@ -122,7 +122,7 @@ router.post('/group/:name/tag/:tag', function(req, res) {
           }).catch(e => {console.log("2");res.status(500).jsonp(e)})
         }
       else
-        res.status(500).jsonp(e)
+        res.status(400).jsonp({erro: "tag não disponível"})
     }).catch(e => {console.log("3");res.status(500).jsonp(e)})
 });
 
@@ -147,7 +147,7 @@ router.post('/:name/subscription/request/:tag', function(req, res){
           }
       if(b){
         console.log("boolean " + b)
-        res.status(406).jsonp({erro: "already subscribed"})
+        res.status(406).jsonp({erro: "Subscrição já foi feita"})
       }
       else{
         console.log("boolean " +b)
@@ -155,7 +155,7 @@ router.post('/:name/subscription/request/:tag', function(req, res){
         .then(identifier => {
           console.log(identifier)
           if(identifier == null)
-            res.status(400).jsonp(tag)
+            res.status(400).jsonp({erro: "Essa tag não existe"})
           else{
             let owner = identifier.owner
             let request = {
@@ -170,7 +170,7 @@ router.post('/:name/subscription/request/:tag', function(req, res){
                   .catch(e => res.status(500).jsonp(e))
                 }
               else
-                res.status(400).jsonp(tag) 
+                res.status(406).jsonp({erro: "Pedido já foi efetuado"}) 
               }).catch(e => res.status(500).jsonp(e))
           }
         }).catch(e => res.status(500).jsonp(e))
