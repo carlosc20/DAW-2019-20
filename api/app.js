@@ -68,23 +68,31 @@ app.use(function(req,res,next){
               res.setHeader('Content-type' , 'image/png')
               res.send(data)
             }
-              
-            else next()
+            else sendNotFoundImage(res, next)
           })
         })
-        .catch(err => console.log(err))
+        .catch(e => {sendNotFoundImage(res, next)})
     } else{
       file = filePath.getFile(match[1], match[2])
       fs.readFile(file, (err, data) =>{
         if(!err)
           res.send(data)
-        else next()
+        else sendNotFoundImage(res, next)
       })
     }
   } else {
     next()
   }
 })
+
+sendNotFoundImage = (res, next) => {
+  fs.readFile('/public/ficheiros/image-not-found.png', (err, data) =>{
+    if(!err)
+      res.send(data)
+    else next()
+  })
+}
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(passport.authenticate('jwt', {session: false}));
