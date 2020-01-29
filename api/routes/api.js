@@ -17,7 +17,7 @@ var filePath = require('../utils/filePath')
 router.post('/post', upload.array('files'), function(req, res, next) {
     let newPost = req.body
     let postTags = newPost.tags
-    console.log(newPost)
+    console.dir(newPost)
     Promise.all(postTags.map(Tags.get))
         .then(resultTags => {
     Users.getByName(newPost.poster)
@@ -71,7 +71,7 @@ router.post('/post', upload.array('files'), function(req, res, next) {
                         }
                         res.jsonp(dados)
                     })
-                    .catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})
+                    .catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})  
                 }
             else
                 res.status(406).jsonp({erro: "permission denied"})

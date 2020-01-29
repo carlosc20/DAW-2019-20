@@ -211,9 +211,20 @@ router.post('/publish',  checkAuth, upload.array('files'), function(req, res){
   form.append('description', req.body.description)
   console.log(req.body)
   form.append('poster', req.user.name)
-  form.append('tags', req.body.tags)
+  if(req.body.tags && Array.isArray(req.body.tags)){
+    for(let i = 0; i < req.body.tags.length; i++){
+      console.log('tags', req.body.tags[i])
+      form.append('tags', req.body.tags[i]) 
+      
+    }
+  } else if(req.body.tags){
+    console.log('tags', req.body.tags) 
+    form.append('tags', req.body.tags)
+    
+  }
   if(req.files)
     req.files.forEach(file => {
+      console.log(file.buffer)
       form.append('files' , file.buffer, file.originalname)
     })
   apiReq.post('/api/post', form, {
