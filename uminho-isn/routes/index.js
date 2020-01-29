@@ -100,7 +100,8 @@ router.post('/register', function(req, res){
 })
 
 router.post('/answer/:ans/request/:tag/:requester', checkAuth, function(req, res){
-  if(req.params.ans){
+  if(req.params.ans == "true"){
+    console.log("accepting request")
     console.log(req.params.requester)
     console.log(req.params.ans)
     apiReq.post('/users/' + req.params.requester + '/subscription/' + req.params.tag)
@@ -111,10 +112,12 @@ router.post('/answer/:ans/request/:tag/:requester', checkAuth, function(req, res
       })
       .catch(erro => res.status(500).render('error', {error: erro}))
   }
-  else
-    apiReq.delete('/users/' + req.users.name + '/request/' + req.requester + '/' + req.params.tag)
+  else{
+    console.log("declining request")
+    apiReq.delete('/users/' + req.user.name + '/request/' + req.params.requester + '/' + req.params.tag)
       .then(dados => res.jsonp())
       .catch(erro => res.status(500).render('error', {error: erro}))
+  }
 })
 
 

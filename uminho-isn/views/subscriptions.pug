@@ -2,8 +2,9 @@ extends mainLayout
 
 block page
     .album.py-5.bg-light.background
-        .container(style="padding-top: 10px; padding-bottom: 20px;").text-center.bg-white
+        .container(style="padding-top: 20px; padding-bottom: 30px;").text-center.bg-white
             if(user.requestsRcv.length > 0)
+                h4 Pedidos para grupos
                 table.table
                     thead
                         tr
@@ -20,12 +21,14 @@ block page
                                     button.btn.btn-sm.i.fas.fa-check(onclick="answerRequest('" + r.tag + "','" + r.requester + "', true)") 
                                 td 
                                     button.btn.btn-sm.i.fas.fa-times(onclick="answerRequest('" + r.tag + "','" + r.requester + "', false)")  
+            .container(style="padding-top: 20px; padding-bottom: 30px;").text-center.bg-white
             h4 Criação de um grupo
             form(action=('/subscription/group') method='POST')
                 .input-group.form-group
                     .input-group-prepend
                     input.form-control(placeholder='Escreva o nome de uma tag para criar um grupo...' name="text", rows='1' required)
                     button.btn.btn-primary(type='submit') Criar
+            .container(style="padding-top: 20px; padding-bottom: 30px;").text-center.bg-white
             h4 Tags existentes
             if(tags.length > 0)
                 table.table
