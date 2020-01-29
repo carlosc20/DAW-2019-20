@@ -12,24 +12,13 @@ block page
         if page + i > 0
           a.btn.borderless.btn-selected(href="/?page=0" +searched)
             <em>0</em>
-          span.btn.borderless.btn-selected
-            <em>...</em>
         -for(; i < 3; i++)
           if page + i >= 0 && page + i <= numPages
             if i == 0
               a.btn.borderless.btn-selected(href="/?page=" + page + searched)
                 b=(page+i)
-              if (page + i) != numPages
-                span.btn.borderless.btn-selected
-                  <em>,</em>    
             else
               a.btn.borderless.btn-selected(href="/?page=" + (page + i) + searched)=(page+i)
-              if (page + i) < numPages && i != 2
-                span.btn.borderless.btn-selected
-                  <em>,</em>  
-        if page + i < numPages
-          span.btn.borderless.btn-selected
-            <em>...</em>
           a.btn.borderless.btn-selected(href="/?page=" + numPages + searched)= numPages       
         a.btn.borderless.btn-selected(href="/?page="+(page+1 >= numPages? numPages : page+1) + searched) 
           <em>> </em>
