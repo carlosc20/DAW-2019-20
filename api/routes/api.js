@@ -14,10 +14,11 @@ var filePath = require('../utils/filePath')
 /* POST a post */
 router.post('/post', upload.array('files'), function(req, res, next) {
     let newPost = req.body
+    console.log(newPost.tags)
     if(newPost.files == undefined)
         newPost.files = []
     newPost.date = new Date().toISOString()
-
+    
     for(let i = 0; i < req.files.length; i++){
         let novoFicheiro = {
             name: req.files[i].originalname,
@@ -26,6 +27,7 @@ router.post('/post', upload.array('files'), function(req, res, next) {
         }
         newPost.files.push(novoFicheiro)
     }
+    
     Posts.insert(newPost)
         .then(dados => {
             for(let i = 0; i < dados.files.length;  i++){
@@ -41,15 +43,13 @@ router.post('/post', upload.array('files'), function(req, res, next) {
                                 Posts.delete(dados._id)
                                 throw err
                             }
-                            console.log("file: " + dados.files[i].name, "; post id: " + dados._id)
-                            console.log("Saved file at: " + filePath.getFile(dados._id, dados.files[i].name))
                         })
                     }
                 });
             }
             res.jsonp(dados)
         })
-        .catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})
+        .catch(erro => { res.status(500).jsonp(erro)})
 });
 
 
@@ -155,25 +155,25 @@ router.post('/comment/:idPost', function(req,res){
 router.post('/comment/upvote/:idComment/:email', function(req,res){
     Posts.upvoteComment(req.params.idComment, req.params.email)
         .then(dados => { res.jsonp({added: true}) })
-        .catch(erro => { console.log(erro);res.status(500).jsonp({added: false}) })
+        .catch(erro => { res.status(500).jsonp({added: false}) })
 })
 
 router.post('/comment/downvote/:idComment/:email', function(req,res){
     Posts.downvoteComment(req.params.idComment, req.params.email)
         .then(dados => { res.jsonp({added: true}) })
-        .catch(erro => { console.log(erro); res.status(500).jsonp({added: false}) })
+        .catch(erro => {  res.status(500).jsonp({added: false}) })
 })
 
 router.post('/post/downvote/:idPost/:email', function(req,res){
     Posts.downVotePost(req.params.idPost, req.params.email)
         .then(dados => { res.jsonp({added: true}) })
-        .catch(erro => { console.log(erro); res.status(500).jsonp({added: false}) })
+        .catch(erro => { ; res.status(500).jsonp({added: false}) })
 })
 
 router.post('/post/upvote/:idPost/:email', function(req,res){
     Posts.upVotePost(req.params.idPost, req.params.email)
         .then(dados => { res.jsonp({added: true}) })
-        .catch(erro => { console.log(erro); res.status(500).jsonp({added: false}) })
+        .catch(erro => { ; res.status(500).jsonp({added: false}) })
 })
 
 router.get('/post/fuzzy/title/:title', function(req,res){

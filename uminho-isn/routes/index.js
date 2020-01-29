@@ -82,11 +82,11 @@ router.get('/subscriptions', checkAuth, function(req, res){
 
 
 // register
-router.get('/register', checkAuth, function(req, res){
+router.get('/register', function(req, res){
   res.render('register');
 });
 
-router.post('/register', checkAuth, function(req, res){
+router.post('/register',  function(req, res){
   let hash = bcrypt.hashSync(req.body.password, 10);
   apiReq.post('/users', {
     email: req.body.email,
@@ -195,8 +195,20 @@ router.post('/publish', upload.array('files'), checkAuth, function(req, res){
   form.append('title', req.body.title)
   form.append('description', req.body.description)
   form.append('poster', req.user.name)
+  if(req.body.tags && Array.isArray(req.body.tags)){
+    for(let i = 0; i < req.body.tags.length; i++){
+      console.log('tags', req.body.tags[i])
+      form.append('tags', req.body.tags[i]) 
+      
+    }
+  } else if(req.body.tags){
+    console.log('tags', req.body.tags) 
+    form.append('tags', req.body.tags)
+    
+  }
   if(req.files)
     req.files.forEach(file => {
+      console.log(file.buffer)
       form.append('files' , file.buffer, file.originalname)
     })
   apiReq.post('/api/post', form, {

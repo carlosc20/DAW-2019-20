@@ -27,7 +27,6 @@ module.exports = {
         headers.headers['Authorization'] = `Bearer ${genToken()}`;
         headers['maxContentLength'] = Infinity
         headers['maxBodyLength'] = Infinity
-        console.log(headers)
         return axios.post(process.env.API_HOST + path, body, headers);
     },
 
