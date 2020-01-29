@@ -26,16 +26,10 @@ hasFile = source => {
 hasDirectories = source => {
     return getDirectories(source).length > 0
 }
-/*
-getRandomDescription = () => {
-    return axios.get('https://baconipsum.com/api/?type=all-meat&sentences=1')
-                .then(dados => {return dados.data[0]})
-                .catch(e => console.log(e))
-}*/
 
 var numPosts = 0
 searchPost = (source, level, tags)  =>{
-    if(numPosts > 50) return
+    if(numPosts > 100) return
     level = level || 0
     tags = tags || new Array
     if(hasDirectories(source)){
@@ -46,7 +40,7 @@ searchPost = (source, level, tags)  =>{
             searchPost(source + '/' + elementDirectory, level + 1, tags2)
         })
     }
-    if(level > 2 && hasFile(source)){
+    if(level >= 3 && hasFile(source)){
         let title = ''
         let match = source.split('/')
         for(let i = match.length-1; !tags.includes(match[i]); i-- )
@@ -64,13 +58,11 @@ searchPost = (source, level, tags)  =>{
         console.log("   At: " + source)
         numPosts++
 
-        let response = await apiReq.post('/api/post', form, {
+        apiReq.post('/api/post', form, {
             headers: {
             'Content-Type': 'multipart/form-data; boundary='+form._boundary
             }
-        }).then(post => {
-            generateUpDownVotes(post.data)
-        })
+        }).then({})
         .catch(e => {console.log(e); process.exit()})
         
         /*apiReq.post('/api/post', form, {
@@ -97,6 +89,33 @@ generateUpDownVotes = (post) => {
                 .then(_ => console.log("    " + post._id + " : Upvote from " + users[i].name))
                 .catch(e => console.log(e.message))
         }
+    }
+}
+
+generateComments = (post) => {
+    let users = rGen.getUsers()
+    let randLength = Math.ceil(Math.random()*users.length/10)
+    for(let i = 0; i < randLength; i++){
+        let comment =  {
+            text : rGen.getRandomDescription(),
+            owner : users[i]
+        }
+        apiReq.send('/comment/' + post._id, comment).then(comm => {
+            let randVoteLength = Math.ceil(Math.random()*users.length/50)
+            for(let j = 0; j < randVoteLength; j++){
+                let userIndex = Math.floor(Math.random()*users.length)
+                let vote = Math.random()
+                if(vote < 0.5){
+                    apiReq.post('/comment/upvote/' + comm.data._id  +'/' + users[userIndex].email)
+                        .then(_ => console.log("comment " + comm.data._id + " has been upvoted by " + users[userIndex].name))
+                        .catch(e => console.log(e.message))
+                }else if(vote < 0.7){
+                    apiReq.post('/comment/downvote/' + comm.data._id  +'/' + users[userIndex].email)
+                        .then(_ => console.log("comment " + comm.data._id + " has been downvoted by " + users[userIndex].name))
+                        .catch(e => console.log(e.message))
+                }
+            }
+        })
     }
 }
 
@@ -132,8 +151,8 @@ populateUsers = () => {
 
 main = () => { 
     let src = 'C:/Users/CésarAugustodaCostaB/Dropbox/dropbox MIEI'
-    searchTags(src)
-    populateUsers()
+    //searchTags(src)
+    //populateUsers()
     searchPost(src)
 }
 main();
