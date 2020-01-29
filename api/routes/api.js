@@ -267,7 +267,7 @@ router.get('/post/fuzzy/title/:title/:name', function(req,res){
                 .then(user => {
                     let filtered = dados.filter(function(value, index, arr){
                         if(tagComparer.checkTags(value.tags, user.subscriptions))
-                            return value
+                            return true
                       })
                     res.jsonp(filtered)
                 }).catch(erro => res.status(500).jsonp(erro))

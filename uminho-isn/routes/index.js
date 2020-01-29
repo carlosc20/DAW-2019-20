@@ -45,7 +45,7 @@ router.get('/', checkAuth, function(req, res) {
       }else{
           apiReq.get('/api/post/fuzzy/title/' + search  + '/' + req.user.name + '/' + '?page=' + page)
               .then(dados => {res.render('index', {lista: dados.data, user: user, page: page, search: search})})
-              .catch(erro => res.render('error', {error: e}))
+              .catch(erro => res.render('error', {error: erro}))
       }
   } else if(tag){
     apiReq.get('/api/posts/tag/'+ tag + '/' + req.user.name + '/' + '?page=' + page)

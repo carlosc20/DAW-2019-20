@@ -32,7 +32,6 @@ var Post = new mongoose.Schema({
     comments: [commentSchema],
     upVotes: [String],
     downVotes : [String]
-    // updates/edits   
 })
 
 Post.plugin(mongoose_fuzzy_searching, {fields: ['title']})
