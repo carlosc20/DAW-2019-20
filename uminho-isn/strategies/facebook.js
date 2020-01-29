@@ -22,22 +22,31 @@ const verifyCallback = async (accessToken, refreshToken, profile, done) => {
     var user = dados.data
     console.dir(user)
     if(!user) {
-      console.log("Facebook: sucesso -> primeiro login, vai criar user")
-      user = {        
-        email: verifiedEmail.value,
-        name: profile.displayName,
-        type: "facebook",
-      }
-      console.dir(user)
-      apiReq.post('/users', user)
-      .then(() => {
-          console.log("Facebook: utilizador criado")
-        return done(null, user)
-      })
-      .catch(erro => {
-        console.log("Facebook: post utilizador falhou")
-        return done(erro)
-      })
+      var userName = profile.displayName.replace(' ', '')
+      apiReq.get('/users/name/'+ userName)
+        .then(user => {
+            if(user.data != null)
+              return done(null, false);
+            else{
+              console.log("Facebook: sucesso -> primeiro login, vai criar user")
+              newUser = {        
+                email: verifiedEmail.value,
+                name: userName,
+                type: "facebook",
+              }
+              console.dir(user)
+              apiReq.post('/users', newUser)
+              .then(() => {
+                  console.log("Facebook: utilizador criado")
+                return done(null, newUser)
+              })
+              .catch(erro => {
+                console.log("Facebook: post utilizador falhou")
+                return done(erro)
+              })
+            }
+        }).catch(erro => {
+          return done(erro)})
     }
     else if(user.type == "facebook"){
       console.log('Facebook: sucesso -> conta correspondente já existe')

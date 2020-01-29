@@ -9,13 +9,20 @@ block page
 					input#title.form-control(type='text' name="title" placeholder='Introduzir titulo' required)
 				.form-group
 					label(for='description') Texto
-					textarea#title.form-control(type='text' name="description" placeholder='Introduzir descrição' rows='2' required)
+					textarea#description.form-control(type='text' name="description" placeholder='Introduzir descrição' rows='2' required)
 				.form-group
-					label.w3-cell Ficheiro:
-					input.w3-input.w3-cell(type="file" name="files" multiple)
-				.form-group
-					label.w3-cell Tags:
-					select.selectpicker(data-live-search='true')
-						each tag in tags 
-							option(data-tokens=tag.tag) #{tag.tag}
+					label Ficheiro:
+					input(type="file" name="files" multiple)
+				tb.form-group
+					label Tags:
+					.row
+						.col-3
+							select.selectpicker(data-live-search='true' id='tagselector')
+								each tag in tags
+									option(data-tokens=tag.tag) #{tag.tag}
+						.col
+							button.btn.btn-primary.ml-3(type="button" id='tagbutton') Adicionar
+					table.table(id='taglist')
+
+
 				button.btn.btn-primary(type='submit') Publicar

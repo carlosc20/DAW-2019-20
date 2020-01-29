@@ -1,5 +1,3 @@
-"use strict";
-
 var express = require('express');
 var router = express.Router();
 var Posts = require('../controllers/posts');
@@ -11,10 +9,8 @@ var mkdirp = require('mkdirp');
 var multer = require('multer')
 var upload = multer({dest: 'uploads/'})
 
-var passport = require('passport');
 
-var mongoose = require('mongoose')
-var ObjectId = mongoose.Types.ObjectId
+
 
 
 router.get('/', function(req, res) {
@@ -74,7 +70,7 @@ router.get('/:email', function(req, res) {
     .catch(e => res.status(500).jsonp(e))
 });
 
-router.post('/', function(req, res) {~
+router.post('/', function(req, res) {
   console.log('AT /users')
   console.log(req.body)
   let email = ""

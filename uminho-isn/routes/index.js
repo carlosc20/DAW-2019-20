@@ -214,14 +214,16 @@ router.get('/publish', checkAuth, function(req, res){
   apiReq.get('/tags')
     .then(tags =>{console.dir(tags.data); res.render('publish', {user: user, tags: tags.data})})
     .catch(erro => res.status(500).render('error', {error: erro}))
-  
 })
 
 router.post('/publish', upload.array('files'), checkAuth, function(req, res){
+  console.dir(req.body)
   let form = new FormData()
   form.append('title', req.body.title)
   form.append('description', req.body.description)
+  console.log(req.body)
   form.append('poster', req.user.name)
+  form.append('tags', req.body.tags)
   if(req.files)
     req.files.forEach(file => {
       form.append('files' , file.buffer, file.originalname)

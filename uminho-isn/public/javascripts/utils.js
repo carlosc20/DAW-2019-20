@@ -1,3 +1,5 @@
+$.fn.selectpicker.Constructor.BootstrapVersion = '4'
+
 function apagarSub(sub, email){
     console.log('Vou tentar apagar a sub ' + sub + ' do utilizador ' + email + ' ....')
     axios.delete('/subscription/' + email + '/tag/' + sub)
@@ -45,7 +47,6 @@ function subscribeRequest(tag){
         .catch(error => {console.log(error)})
 }
 
-
 function answerRequest(tag, requester, boolean){
     console.log(tag)
     console.log(requester)
@@ -54,3 +55,4 @@ function answerRequest(tag, requester, boolean){
             .then(dados => window.location.assign('/subscriptions'))
             .catch(error => {console.log(error)})
 }
+

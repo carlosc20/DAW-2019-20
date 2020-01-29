@@ -1,12 +1,10 @@
-"use strict";
-
 var express = require('express');
 var Posts = require('../controllers/posts')
 var Users = require('../controllers/users')
+var Tags = require('../controllers/identifiers')
 var router = express.Router();
 const fs = require('fs')
 var mkdirp = require('mkdirp');
-var zip = require('express-zip');
 
 
 var multer = require('multer')
@@ -15,15 +13,18 @@ var upload = multer({dest: 'uploads/'})
 var filePath = require('../utils/filePath')
 
 /* POST a post */
+
 router.post('/post', upload.array('files'), function(req, res, next) {
-    console.dir(req.body)
     let newPost = req.body
     let postTags = newPost.tags
-    Users.getByName(req.body.poster)
+    console.log(newPost)
+    Promise.all(postTags.map(Tags.get))
+        .then(resultTags => {
+    Users.getByName(newPost.poster)
         .then(user => {
             let c = 0
             let found = 0
-            for(var i = 0; postTags.length; i++){
+            for(var i = 0; resultTags.length; i++){
                 if(!postTags[i].public){
                     c++
                     for(var j = 0; user.subscriptions.length; j++){
@@ -35,7 +36,6 @@ router.post('/post', upload.array('files'), function(req, res, next) {
             console.log(c)
             console.log(found)
             if(c == found){
-                console.log("valid POST")
                 if(newPost.files == undefined)
                     newPost.files = []
                 newPost.date = new Date().toISOString()
@@ -56,7 +56,7 @@ router.post('/post', upload.array('files'), function(req, res, next) {
                                 if(err){
                                     Posts.delete(dados._id)
                                     throw err
-                                } 
+                                }
                                 else {
                                     fs.rename(oldPath, filePath.getFile(dados._id, dados.files[i].name), function (err){
                                         if (err) {
@@ -64,17 +64,20 @@ router.post('/post', upload.array('files'), function(req, res, next) {
                                             throw err
                                         }
                                         console.log("file: " + dados.files[i].name, "; post id: " + dados._id)
-                                        console.log("Saved file at: "+  filePath.getFile(dados._id, dados.files[i].name))
+                                        console.log("Saved file at: " + filePath.getFile(dados._id, dados.files[i].name))
                                     })
                                 }
                             });
                         }
                         res.jsonp(dados)
-                    }).catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})
-            }
-        })
-});
-
+                    })
+                    .catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})
+                }
+            else
+                res.status(406).jsonp({erro: "permission denied"})
+        }).catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})
+    }).catch(erro => {console.log('Erro ' + erro); res.status(500).jsonp(erro)})
+})
 
 /* GET a post by ID. */
 router.get('/post/:id', function(req, res, next) {
@@ -209,8 +212,8 @@ router.post('/post/upvote/:idPost/:email', function(req,res){
 
 router.get('/post/fuzzy/title/:title', function(req,res){
     Posts.fuzzySearchByTitle(req.params.title)
-        .then(dados => { res.jsonp(dados) })
-        .catch(erro => { res.status(500).jsonp(dados) })
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).jsonp(dados))
 })
 
 module.exports = router;
