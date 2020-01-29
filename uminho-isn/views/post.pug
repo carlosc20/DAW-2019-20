@@ -11,7 +11,7 @@ block page
         if post.tags.length == 0
           | nenhuma
         each tag in post.tags
-          | #{tag};  
+          | #{tag.tag};  
   .container
     .row
       each file in post.files

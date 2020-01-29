@@ -36,15 +36,18 @@ function downVotePost(idPost, email){
 function subscribe(tag){
     console.log(tag)
     axios.post('/subscription/public/' + tag)
-        .then(dados => window.location.assign('/subscriptions'))
-        .catch(error => {console.log(error)})
+        .then(dados => {
+            alert("Subscrição feita")
+        })
+        .catch(error => {alert(error.response.data.erro)})
 }
 
 function subscribeRequest(tag){
     console.log(tag)
     axios.post('/subscription/request/' + tag) 
-        .then(dados => window.location.assign('/subscriptions'))
-        .catch(error => {console.log(error)})
+        .then(dados => {
+            alert("Pedido de subscrição feito")})
+        .catch(error => {alert(error.response.data.erro)})
 }
 
 function answerRequest(tag, requester, boolean){

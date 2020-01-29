@@ -126,41 +126,25 @@ router.post('/subscription/group', checkAuth, function(req, res){
 
 router.post('/subscription/request/:tag', checkAuth, function(req, res){
   let tag = req.params.tag
-  let array = req.user.subscriptions
   let name = req.user.name
-  let b = true
-  for(var i = 0; i<array.length; i++){
-    if(array[i].tag == tag){
-      b = false
-      res.redirect('/profile/'+ name)
-    }
-  }
-  if(b){
-    apiReq.post('/users/' + name + '/subscription/request/' + tag)
-      .then(user => res.redirect('/profile/'+ name))
-      .catch(erro => {
-        if(erro.response.data.name != undefined){
-          apiReq.get('/users/name/'+ name)
-            .then(user => res.render('user', {user: req.user, userProfile: user.data, erroTag: erro.response.data.name}))
-            .catch(erro => res.status(500).render('error', {error: erro}))     
-        }
-        else
-          res.status(500).render('error', {error: erro})
-      })
-  }
+  apiReq.post('/users/' + name + '/subscription/request/' + tag)
+    .then(user => res.redirect('/profile/'+ name))
+    .catch(erro => {
+      console.log(erro)
+        res.status(500).jsonp(erro.response.data)
+    })
 })
 
 
 // outros
 router.post('/subscription/public/:tag', checkAuth, function(req, res){
-  let tag = req.paramsg.tag
+  let tag = req.params.tag
   let array = req.user.subscriptions
   let name = req.user.name
   let b = true
   for(var i = 0; i<array.length; i++){
     if(array[i].tag == tag){
       b = false
-      res.redirect('/profile/'+ name)
     }
   }
   if(b){
@@ -169,7 +153,7 @@ router.post('/subscription/public/:tag', checkAuth, function(req, res){
       .catch(erro => res.status(500).render('error', {error: erro}))     
   }
   else
-    res.status(500).render('error', {error: erro})
+    res.status(500).jsonp({erro: "Subscrição já foi feita"})
 })
 
 router.post('/profile/:name/image', upload.single('img'), checkAuth, function(req, res){
