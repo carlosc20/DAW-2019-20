@@ -1,0 +1,57 @@
+{"_id":{"$oid":"5e3114f292e0262d880e5e12"},"tag":"2º Ano","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e13"},"tag":"1º Semestre","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e14"},"tag":"AC","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e15"},"tag":"Apontamentos extras","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e16"},"tag":"Folhas de exercícios","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e17"},"tag":"Matéria","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e18"},"tag":"Mini-testes","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e19"},"tag":"Slides","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e1a"},"tag":"Testes e exames","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e1b"},"tag":"Testes e exames de LESI","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e1c"},"tag":"Algoritmos","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e1d"},"tag":"CD","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e1e"},"tag":"EA","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e1f"},"tag":"Formulários","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e20"},"tag":"Momentos elearning","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e21"},"tag":"EE","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e22"},"tag":"Parte I - Engenharia Económica","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e23"},"tag":"Parte II - Análise de Custos","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e24"},"tag":"ISD","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e25"},"tag":"Resumos das folhas para os testes","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e26"},"tag":"2º Semestre","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e27"},"tag":"CP","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e28"},"tag":"Projectos","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e29"},"tag":"Testes e exames de LCC","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e2a"},"tag":"Electro","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e2b"},"tag":"Mini-Testes","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e2c"},"tag":"Testes e exames de outros cursos","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e2d"},"tag":"LI3","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e2e"},"tag":"Exercícios","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e2f"},"tag":"Projecto","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e30"},"tag":"Opção UMinho","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e31"},"tag":"Língua Estrangeira Nível 1 - Italiano","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e32"},"tag":"POO","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e33"},"tag":"Slides-Teóricas","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e34"},"tag":"SO","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e35"},"tag":"3º Ano","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e36"},"tag":"4º Ano","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e37"},"tag":"CG","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e38"},"tag":"UC1 - Visualização e Iluminação I","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e39"},"tag":"SDC","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e3a"},"tag":"UC1 - Criptografia e Segurança da Informação","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e3b"},"tag":"Apontamentos","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e3c"},"tag":"Testes-Exames","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e3d"},"tag":"UC2 - Paradigmas de Sistemas Distribuídos","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e3e"},"tag":"Code Examples","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e3f"},"tag":"Lab Guides","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e40"},"tag":"CeSIUM","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e41"},"tag":"Bash","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e42"},"tag":"Elixir","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e43"},"tag":"Git","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e44"},"tag":"HTML-CSS","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e45"},"tag":"Java","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e46"},"tag":"Java Swing","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e47"},"tag":"JDBC","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e48"},"tag":"Laravel","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e49"},"tag":"PHP","public":true,"__v":0}
+{"_id":{"$oid":"5e3114f292e0262d880e5e4a"},"tag":"Ruby","public":true,"__v":0}

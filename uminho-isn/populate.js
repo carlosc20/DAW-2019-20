@@ -159,7 +159,7 @@ main = () => {
             searchPost(src, users.data, 0, [])
         })
         .catch(e => console.log(e.message))*/
-    /*apiReq.get('/users') //4
+    apiReq.get('/users') //4
         .then(users => {
             apiReq.get('/api/posts')
                 .then(posts => {
@@ -169,8 +169,8 @@ main = () => {
                 })
                 .catch(e => console.log(e.message)) 
         })
-        .catch(e => console.log(e.message)) */
-    apiReq.get('/users') //4
+        .catch(e => console.log(e.message)) 
+    /*apiReq.get('/users') //4
         .then(users => {
             apiReq.get('/api/posts')
                 .then(posts => {
@@ -180,6 +180,6 @@ main = () => {
                 })
                 .catch(e => console.log(e.message)) 
         })
-        .catch(e => console.log(e.message))
+        .catch(e => console.log(e.message))*/
 }
 main();
