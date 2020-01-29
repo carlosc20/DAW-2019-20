@@ -39,20 +39,20 @@ router.get('/', checkAuth, function(req, res) {
   if(search && search != null && search != ''){
       let match = search.match(/(.+):(.+)/)
       if(match){
-          apiReq.get('/api/post/fuzzy/' + match[1] + '/' + match[2] + '?page=' + page)
+          apiReq.get('/api/post/fuzzy/' + match[1] + '/' + match[2] + '/' + req.user.name + '/' + '?page=' + page)
               .then(dados => {res.render('index', {lista: dados.data, user: user, page: page, search: search})})
               .catch(erro => res.render('error', {error: e}))
       }else{
-          apiReq.get('/api/post/fuzzy/title/' + search + '?page=' + page)
+          apiReq.get('/api/post/fuzzy/title/' + search  + '/' + req.user.name + '/' + '?page=' + page)
               .then(dados => {res.render('index', {lista: dados.data, user: user, page: page, search: search})})
               .catch(erro => res.render('error', {error: e}))
       }
   } else if(tag){
-    apiReq.get('/api/posts/tag/'+ tag + '?page=' + page)
+    apiReq.get('/api/posts/tag/'+ tag + '/' + req.user.name + '/' + '?page=' + page)
       .then(dados => { res.render('index', {lista: dados.data, user: user, page: page})})
       .catch(e => res.render('error', {error: e}))
   } else {
-    apiReq.get('/api/posts' + '?page=' + page)
+    apiReq.get('/api/posts/' + req.user.name + '/' + '?page=' + page)
       .then(dados => { res.render('index', {lista: dados.data, user: user, page: page})})
       .catch(e => res.render('error', {error: e}))
   }

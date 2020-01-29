@@ -12,7 +12,7 @@ function checkAuth(req,res,next) {
   }
   
 router.get('/:id', checkAuth, function(req, res){
-    apiReq.get('/api/post/' + req.params.id)
+    apiReq.get('/api/post/' + req.params.id + '/' + req.user.name)
         .then(dados => {res.render('post', {post: dados.data, user: req.user})})
         .catch(erro => res.render('error',  {error: erro}))
 })

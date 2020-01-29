@@ -11,6 +11,7 @@ var multer = require('multer')
 var upload = multer({dest: 'uploads/'})
 
 var filePath = require('../utils/filePath')
+var tagComparer = require('../utils/tagComp')
 
 /* POST a post */
 
@@ -29,20 +30,7 @@ router.post('/post', upload.array('files'), function(req, res, next) {
             Users.getByName(newPost.poster)
                 .then(user => {
                     console.log(user)
-                    let c = 0
-                    let found = 0
-                    for(var i = 0; i < resultTags.length; i++){
-                        if(!resultTags[i].public){
-                            c++
-                            for(var j = 0; j < user.subscriptions.length; j++){
-                                if(resultTags[i].tag == user.subscriptions[j].tag)
-                                    found++
-                            }
-                        }
-                    }
-                    console.log(c)
-                    console.log(found)
-                    if(c == found){
+                    if(tagComparer.checkTags(resultTags, user.subscriptions)){
                         newPost.tags = resultTags
                         if(newPost.files == undefined)
                             newPost.files = []
@@ -88,24 +76,78 @@ router.post('/post', upload.array('files'), function(req, res, next) {
 }
 })
 
+/* GET all posts by a tag */
+router.get('/posts/tag/:tag/:name', function(req, res, next) {
+    let page = req.params.page || 0
+    Tags.get(req.params.tag)
+        .then(ident => {
+            if(ident.public){
+                Posts.getByTag(req.params.tag, page)
+                .then(dados => { 
+                    let result = addTimeSwapToList(dados)
+                    res.jsonp(result)
+                })
+                .catch(erro => { res.status(500).jsonp(erro) })
+            }
+            else{
+                Users.getByName(req.params.name)
+                .then(user => {
+                    let b = false
+                    for(var i = 0; i < user.subscriptions.length; i++)
+                        if(user.subscriptions[i].tag == req.params.tag)
+                            b=true
+                    if(b){
+                        Posts.getByTag(req.params.tag, page)
+                            .then(dados => { 
+                                let result = addTimeSwapToList(dados)
+                                res.jsonp(result)
+                            })
+                            .catch(erro => { res.status(500).jsonp(erro) })
+                    }
+                    else
+                        res.status(406).jsonp({erro: "not authorized"}) 
+                })
+            }
+        })   
+})
+
+
 /* GET a post by ID. */
-router.get('/post/:id', function(req, res, next) {
+router.get('/post/:id/:name', function(req, res, next) {
     Posts.getById(req.params.id)
         .then(dados => { 
-            let post = JSON.parse(JSON.stringify(dados));
-            post.comments = addTimeSwapToList(post.comments)
-            res.jsonp(post) })
-        .catch(erro => { res.status(500).jsonp(erro) })
+            let resultTags = dados.tags
+            Users.getByName(req.params.name)
+                .then(user => {
+                    if(tagComparer.checkTags(resultTags, user.subscriptions)){
+                        let post = JSON.parse(JSON.stringify(dados));
+                        post.comments = addTimeSwapToList(post.comments)
+                        res.jsonp(post)
+                    }
+                    else{
+                        res.status(406).jsonp({erro: "not authorized"})
+                    }}).catch(erro => { res.status(500).jsonp(erro) })
+            }).catch(erro => { res.status(500).jsonp(erro) })
   });
 
 /* GET all posts. */
-router.get('/posts', function(req, res, next) {
+router.get('/posts/:name', function(req, res, next) {
     let page = 0
     if(req.query.page) page = req.query.page
     Posts.sortedList(page)
         .then(dados => {
-            let result = addTimeSwapToList(dados)
-            res.jsonp(result)
+            console.log("oiioio")
+            Users.getByName(req.params.name)
+                .then(user => {
+                    console.log(user)
+                    let filtered = dados.filter(function(value, index, arr){
+                        if(tagComparer.checkTags(value.tags, user.subscriptions))
+                            return value
+                      })
+                    console.log(filtered)
+                    let result = addTimeSwapToList(filtered)
+                    res.jsonp(result)
+                })
         })
         .catch(erro => { res.status(500).jsonp(erro) })
 });
@@ -125,34 +167,36 @@ function addTimeSwapToList(lista){
     })
 }
 
-/* GET all posts by a tag */
-router.get('/posts/tag/:tag', function(req, res, next) {
-    let page = req.params.page || 0
-    Posts.getByTag(req.params.tag, page)
-        .then(dados => { 
-            let result = addTimeSwapToList(dados)
-            res.jsonp(result)
-        })
-        .catch(erro => { res.status(500).jsonp(erro) })
-})
-
 /* GET all posts sorted by date */
-router.get('/posts/sorted', function(req,res){
+router.get('/posts/sorted/:name', function(req,res){
     Posts.sortedList()
         .then(dados => { 
-            let result = addTimeSwapToList(dados)
-            res.jsonp(result) })
-        .catch(erro => { res.status(500).jsonp(erro) })
+            Users.getByName(req.params.name)
+                .then(user => {
+                    let filtered = dados.filter(function(value, index, arr){
+                        if(tagComparer.checkTags(value.tags, user.subscriptions))
+                            return value
+                      })
+                    let result = addTimeSwapToList(filtered)
+                    res.jsonp(result) }).catch(erro => { res.status(500).jsonp(erro) })
+                }).catch(erro => { res.status(500).jsonp(erro) })
 })
 
 /* GET all posts by its owner*/
 router.get('/posts/poster/:poster', function(req, res, next){
     Posts.getByPoster(req.params.poster)
         .then(dados => { 
-            let result = addTimeSwapToList(dados)
-            res.jsonp(result) })
-        .catch(erro => { res.status(500).jsonp(erro) })	
+            Users.getByName(req.params.name)
+                .then(user => {
+                    let filtered = dados.filter(function(value, index, arr){
+                        if(tagComparer.checkTags(value.tags, user.subscriptions))
+                            return value
+                      })
+                    let result = addTimeSwapToList(filtered)
+                    res.jsonp(result) }).catch(erro => { res.status(500).jsonp(erro) })
+                }).catch(erro => { res.status(500).jsonp(erro) })
 })
+
 
 router.get('/download/:idPost/:fnome', function(req, res){
     res.download(filePath.getFile(req.params.idPost, req.params.fnome))
@@ -211,10 +255,18 @@ router.post('/post/upvote/:idPost/:email', function(req,res){
         .catch(erro => { ; res.status(500).jsonp({added: false}) })
 })
 
-router.get('/post/fuzzy/title/:title', function(req,res){
+router.get('/post/fuzzy/title/:title/:name', function(req,res){
     Posts.fuzzySearchByTitle(req.params.title)
-        .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).jsonp(dados))
+        .then(dados => {
+            Users.getByName(req.params.name)
+                .then(user => {
+                    let filtered = dados.filter(function(value, index, arr){
+                        if(tagComparer.checkTags(value.tags, user.subscriptions))
+                            return value
+                      })
+                    res.jsonp(filtered)
+                }).catch(erro => res.status(500).jsonp(erro))
+        }).catch(erro => res.status(500).jsonp(erro))
 })
 
 module.exports = router;
